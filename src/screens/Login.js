@@ -1,0 +1,99 @@
+import React, { useState } from "react";
+import { StyleSheet, View, Text, TextInput, TouchableOpacity } from "react-native";
+import { Image } from "react-native";
+
+export default function Login({ navigation }) {
+  const [username, setUsername] = useState("");
+  const [password, setPassword] = useState("");
+
+  const handleLogin = () => {
+    // Add your login logic here
+    // username === "user" && password === "password"
+    if (true) {
+      // Successful login, navigate to the next screen
+      navigation.navigate("Home");
+    } else {
+      // Display an error message or handle unsuccessful login
+      alert("Invalid credentials. Please try again.");
+    }
+  };
+  const createLogin = () => {
+    // Add your login logic here
+    // username === "user" && password === "password"
+    if (true) {
+      // Successful login, navigate to the next screen
+      navigation.navigate("Home");
+    } else {
+      // Display an error message or handle unsuccessful login
+      alert("Invalid credentials. Please try again.");
+    }
+  };
+
+  return (
+    <View style={styles.container}>
+      <Image source={require('../../assets/logo.png')} style={styles.image} />
+      <TextInput
+        style={styles.input}
+        placeholder="Username"
+        value={username}
+        onChangeText={(text) => setUsername(text)}
+        placeholderTextColor="white"
+      />
+      <TextInput
+        style={styles.input}
+        placeholder="Password"
+        secureTextEntry={true}
+        value={password}
+        onChangeText={(text) => setPassword(text)}
+        placeholderTextColor="white"
+      />
+      <TouchableOpacity style={styles.button} onPress={handleLogin}>
+        <Text style={styles.buttonText}>Login</Text>
+      </TouchableOpacity>
+      <TouchableOpacity style={styles.button} onPress={createLogin}>
+        <Text style={styles.buttonText}>Create Account</Text>
+      </TouchableOpacity>
+    </View>
+  );
+}
+
+const styles = StyleSheet.create({
+  container: {
+    flex: 1,
+    justifyContent: "center",
+    alignItems: "center",
+    backgroundColor: "#333366",
+  },
+  image: {
+    width: 300,
+    height: 300,
+    marginBottom: 10,
+  },
+  title: {
+    fontSize: 24,
+    marginBottom: 20,
+    color: "#ffffff",
+  },
+  input: {
+    width: 300,
+    height: 40,
+    borderColor: "#ffffff",
+    borderWidth: 1,
+    marginBottom: 10,
+    padding: 10,  
+  },
+  button: {
+    backgroundColor: "blue",
+    width: 200,
+    height: 40,
+    justifyContent: "center",
+    alignItems: "center",
+    borderRadius: 5,
+    marginBottom: 10,
+  },
+  buttonText: {
+    color: "white",
+    fontSize: 18,
+    fontWeight: 400,
+  },
+});
