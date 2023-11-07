@@ -6,17 +6,16 @@ import registerNNPushToken from 'native-notify';
 
 import Login from './src/screens/Login';
 import ChosenTask from './src/screens/ChosenTask';
+import MapScreen from './src/screens/MapScreen';
+import Tabs from './src/navigation/tabs';
 
 const Stack = createNativeStackNavigator();
 
 
 export default function App() {
   return (
-  //Navigation
   <NavigationContainer>
-    <Stack.Navigator>
-      <Stack.Screen name ="Login" options ={{ headerShown: false}} component={Login}/>
-    </Stack.Navigator>
+    <Tabs/>
   </NavigationContainer>
   );
 }
