@@ -8,7 +8,7 @@ import { View } from "react-native";
 
 const Tab = createBottomTabNavigator();
 
-function Tabs() {
+function MainTabScreen() {
     return (
         <Tab.Navigator
             screenOptions={{
@@ -56,4 +56,4 @@ function Tabs() {
     );
 }
 
-export default Tabs;
+export default MainTabScreen;

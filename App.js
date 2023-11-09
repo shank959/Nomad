@@ -1,22 +1,27 @@
 import { StyleSheet, Text, View } from 'react-native';
-import react, {useState, useEffect} from 'react';
+import React, {useState, useEffect} from 'react';
 import { NavigationContainer } from '@react-navigation/native';
 import { createNativeStackNavigator } from '@react-navigation/native-stack';
 import registerNNPushToken from 'native-notify';
 
-import Login from './src/screens/Login';
-import ChosenTask from './src/screens/ChosenTask';
-import MapScreen from './src/screens/MapScreen';
-import Tabs from './src/navigation/tabs';
+import LoginScreen from './src/screens/LoginScreen';
+import MainTabScreen from './src/navigation/MainTabScreen';
 
 const Stack = createNativeStackNavigator();
 
 
+
 export default function App() {
   return (
-  <NavigationContainer>
-    <Tabs/>
-  </NavigationContainer>
+    <NavigationContainer>
+      <Stack.Navigator>
+        {/* The Login screen should not have the bottom tabs, so it's outside the MainTabScreen */}
+        <Stack.Screen name="LoginScreen" component={LoginScreen} options={{ headerShown: false }} />
+        {/* MainTabScreen is the screen component that renders the bottom tabs */}
+        <Stack.Screen name="MainTabScreen" component={MainTabScreen} options={{ headerShown: false }} />
+        {/* ... other screens if needed ... */}
+      </Stack.Navigator>
+    </NavigationContainer>
   );
 }
 

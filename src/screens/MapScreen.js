@@ -16,6 +16,7 @@ function MapScreen({ navigation }) {
             <MapView 
                 style={styles.map} 
                 initialRegion={region}
+                provider="google"
             />
         </View>
     );

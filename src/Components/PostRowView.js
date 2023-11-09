@@ -1,13 +1,9 @@
 import React from 'react';
 import { View, Text, Image, StyleSheet, TouchableOpacity } from 'react-native';
-import { Ionicons, AntDesign, FontAwesome, FontAwesome5 } from '@expo/vector-icons';
+import { Ionicons, AntDesign, FontAwesome, FontAwesome5, Feather } from '@expo/vector-icons';
 
 const PostRowView = () => {
-  // Functions to handle button presses could be defined here
-  // For example:
-  // const handleLike = () => {
-  //   console.log('Like button pressed');
-  // };
+  // Arrow Functions to handle button presses defined here
 
   return (
     <View style={styles.container}>
@@ -44,7 +40,7 @@ const PostRowView = () => {
           <FontAwesome name="comment-o" size={24} color="black" />
         </TouchableOpacity>
         <TouchableOpacity style={styles.actionRowButton} onPress={() => {/* share button action */}}>
-          <FontAwesome name="share" size={24} color="black" />
+          <Feather name="share" size={24} color="black" />
         </TouchableOpacity>
         <View style={{ flex: 1 }} />
         <TouchableOpacity style={styles.actionRowButton} onPress={() => {/* see location button action */}}>
@@ -96,7 +92,7 @@ const styles = StyleSheet.create({
   },
   postImage: {
     width: '100%',
-    aspectRatio: 1, // Adjust the aspect ratio according to your needs
+    aspectRatio: 1, // Adjust the aspect ratio according to needs
     marginBottom: 10,
     borderWidth: 2,
     borderColor: 'black',
