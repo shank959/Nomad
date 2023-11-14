@@ -14,6 +14,9 @@ function MainTabScreen() {
             screenOptions={{
                 tabBarShowLabel: false,
                 headerShown: false,
+                tabBarStyle: {
+                    backgroundColor: "black",
+                },
             }}>
             <Tab.Screen 
                 name="FeedScreen" 
@@ -22,7 +25,7 @@ function MainTabScreen() {
                     tabBarIcon: () => {
                         return (
                             <View>
-                                <Entypo name="home" size={24} color="black" />
+                                <Entypo name="home" size={24} color="white" />
                             </View>
                         )
                     }
@@ -35,7 +38,7 @@ function MainTabScreen() {
                     tabBarIcon: () => {
                         return (
                             <View>
-                                <Entypo name="map" size={24} color="black" />
+                                <Entypo name="map" size={24} color="white" />
                             </View>
                         )
                     }
@@ -47,7 +50,7 @@ function MainTabScreen() {
                     tabBarIcon: () => {
                         return (
                             <View>
-                                <Ionicons name="person" size={24} color="black" />
+                                <Ionicons name="person" size={24} color="white" />
                             </View>
                         )
                     }
