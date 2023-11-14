@@ -41,7 +41,6 @@ function ProfileScreen() {
 
                 {/*Space to push down navigator:*/}
                 <View style={{ height: 30 }} />
-                <ProfileScreenNavigation navigation={navigation}/>
                 <ProfileScreenNavigation onTabSelect = {handleTabSelect}/>
                 {selectedTab === 'Posts' && <PostsPage />}
                 {selectedTab === 'Friends' && <FriendsPage />}
@@ -49,7 +48,6 @@ function ProfileScreen() {
             </ScrollView>
         </View>
     );
-
 }
 
 const styles = StyleSheet.create({
@@ -85,7 +83,6 @@ const styles = StyleSheet.create({
         color: 'white', // Text color
         marginLeft: 10, // Left margin
         fontSize: 30,
-        fontFamily: "Feather",
     },
     statsContainer: {
         flexDirection: 'row', // Align children horizontally
