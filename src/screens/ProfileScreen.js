@@ -1,10 +1,18 @@
-
-import React from 'react';
+import React, {useState} from 'react';
 import { View, Text, StyleSheet, ScrollView, TouchableOpacity } from 'react-native';
 import { ProfileScreenNavigation } from '../Components/ProfileScreenNavigation';
 import { Feather } from '@expo/vector-icons';
+import PostsPage from '../Components/PostsPage';
+import FriendsPage from '../Components/FriendsPage';
+import BadgesPage from '../Components/BadgesPage';
 
-function ProfileScreen({ navigation }) {
+function ProfileScreen() {
+    const [selectedTab, setSelectedTab] = useState('Posts');
+
+    const handleTabSelect = (tabName) => {
+        setSelectedTab(tabName);
+      };
+    
     return (
         <View style={styles.outerContainer}>
             <ScrollView contentContainerStyle={styles.scrollViewContent}>
@@ -34,9 +42,14 @@ function ProfileScreen({ navigation }) {
                 {/*Space to push down navigator:*/}
                 <View style={{ height: 30 }} />
                 <ProfileScreenNavigation navigation={navigation}/>
+                <ProfileScreenNavigation onTabSelect = {handleTabSelect}/>
+                {selectedTab === 'Posts' && <PostsPage />}
+                {selectedTab === 'Friends' && <FriendsPage />}
+                {selectedTab === 'Badges' && <BadgesPage />}
             </ScrollView>
         </View>
     );
+
 }
 
 const styles = StyleSheet.create({

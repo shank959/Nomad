@@ -2,19 +2,19 @@ import React from 'react';
 import { View, StyleSheet, TouchableOpacity} from 'react-native';
 import { FontAwesome5, SimpleLineIcons, FontAwesome } from '@expo/vector-icons';
 
-function ProfileScreenNavigation({ navigation }){
+function ProfileScreenNavigation({ onTabSelect }){
     return (
         <>
             <View style={styles.horizontalLine} />
                 <View style={styles.navContainer}>
-                    <TouchableOpacity onPress={() => navigation.navigate('Posts')}>
+                    <TouchableOpacity onPress={() => onTabSelect('Posts')}>
                         <FontAwesome name="picture-o" size={24} color="white" />
                     </TouchableOpacity>
-                    <TouchableOpacity onPress={() => navigation.navigate('Friends')}>
-                        <FontAwesome5 name="user-friends" size={24} color="white" />
-                    </TouchableOpacity>
-                    <TouchableOpacity onPress={() => navigation.navigate('Badges')}>
+                    <TouchableOpacity onPress={() => onTabSelect('Badges')}>
                         <SimpleLineIcons name="badge" size={24} color="white" />
+                    </TouchableOpacity>
+                    <TouchableOpacity onPress={() => onTabSelect('Friends')}>
+                        <FontAwesome5 name="user-friends" size={24} color="white" />
                     </TouchableOpacity>
                 </View>
             <View style={styles.horizontalLine} />
