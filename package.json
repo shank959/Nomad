@@ -13,7 +13,7 @@
     "@react-navigation/bottom-tabs": "^6.5.11",
     "@react-navigation/native": "^6.1.9",
     "@react-navigation/native-stack": "^6.9.16",
-    "expo": "^49.0.16",
+    "expo": "^49.0.21",
     "expo-constants": "~14.4.2",
     "expo-device": "~5.4.0",
     "expo-notifications": "~0.20.1",

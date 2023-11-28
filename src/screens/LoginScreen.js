@@ -17,16 +17,9 @@ export default function LoginScreen({ navigation }) {
       alert("Invalid credentials. Please try again.");
     }
   };
-  const createLogin = () => {
-    // Add your login logic here
-    // username === "user" && password === "password"
-    if (true) {
-      // Successful login, navigate to the next screen
-      navigation.navigate("MainTabScreen", { screen: "MapScreen", });
-    } else {
-      // Display an error message or handle unsuccessful login
-      alert("Invalid credentials. Please try again.");
-    }
+  const createAccount = () => {
+    navigation.navigate("CreateAccountScreen");
+
   };
 
   return (
@@ -50,7 +43,7 @@ export default function LoginScreen({ navigation }) {
       <TouchableOpacity style={styles.button} onPress={handleLogin}>
         <Text style={styles.buttonText}>Login</Text>
       </TouchableOpacity>
-      <TouchableOpacity style={styles.button} onPress={createLogin}>
+      <TouchableOpacity style={styles.button} onPress={createAccount}>
         <Text style={styles.buttonText}>Create Account</Text>
       </TouchableOpacity>
     </View>
