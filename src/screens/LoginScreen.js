@@ -47,7 +47,7 @@ export default function LoginScreen({ navigation }) {
         onChangeText={(text) => setPassword(text)}
         placeholderTextColor="white"
       />
-      <TouchableOpacity style={styles.button} onPress={handleLogin}>
+      <TouchableOpacity style={[styles.button, styles.loginButton]} onPress={handleLogin}>
         <Text style={styles.buttonText}>Login</Text>
       </TouchableOpacity>
       <TouchableOpacity style={styles.button} onPress={createLogin}>
@@ -62,7 +62,7 @@ const styles = StyleSheet.create({
     flex: 1,
     justifyContent: "center",
     alignItems: "center",
-    backgroundColor: "#333366",
+    backgroundColor: "black",
   },
   image: {
     width: 230,
@@ -70,21 +70,25 @@ const styles = StyleSheet.create({
     marginBottom: 10,
   },
   title: {
-    fontSize: 24,
+    fontSize: 35,
     marginBottom: 20,
     color: "#ffffff",
   },
   input: {
     width: 300,
-    height: 40,
+    height: 50,
     borderColor: "#ffffff",
     borderWidth: 1,
     borderRadius: 10,
     marginVertical: 10,
     padding: 10,  
+    fontSize: 18,
+    color: 'white',
   },
   button: {
-    backgroundColor: "grey",
+    backgroundColor: "black",
+    borderColor: "white",
+    borderWidth: 1,
     width: 200,
     height: 40,
     justifyContent: "center",
@@ -92,10 +96,12 @@ const styles = StyleSheet.create({
     borderRadius: 15,
     marginVertical: 10,
   },
+  loginButton: {
+    marginTop: 35, 
+  },
   buttonText: {
     color: "white",
     fontSize: 18,
     fontWeight: 400,
-    
   },
 });
