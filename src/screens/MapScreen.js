@@ -2,6 +2,12 @@ import React, { useState } from 'react';
 import MapView from 'react-native-maps';
 import { StyleSheet, View, Text } from 'react-native';
 
+// access Native module for importing photos
+    // NativeModules is an object provided by React Native that 
+    // serves as a bridge to access any native modules
+import { NativeModules } from 'react-native';
+const { PhotoKitModule } = NativeModules;
+
 function MapScreen({ navigation }) {
     const [region, setRegion] = useState({
         latitude: 34.0549,
