@@ -1,6 +1,6 @@
 import React, { useState } from 'react';
 import MapView from 'react-native-maps';
-import { StyleSheet, View, Text } from 'react-native';
+import { StyleSheet, View, Text, Button } from 'react-native';
 
 // access Native module for importing photos
     // NativeModules is an object provided by React Native that 
@@ -16,6 +16,15 @@ function MapScreen({ navigation }) {
         longitudeDelta: 0.6,
     });
 
+    // Function to handle photo import
+    const handleImportPhotos = () => {
+        PhotoKitModule.fetchPhotos().then(photos => {
+            console.log('Imported Photos:', photos);
+        }).catch(error => {
+            console.error('Error importing photos:', error);
+        });
+    };
+
     return (
         <View style={styles.container} >
 
@@ -23,6 +32,10 @@ function MapScreen({ navigation }) {
                 style={styles.map} 
                 initialRegion={region}
                 provider="google"
+            />
+            <Button 
+                title="Import Photos" 
+                onPress={handleImportPhotos} 
             />
         </View>
     );
