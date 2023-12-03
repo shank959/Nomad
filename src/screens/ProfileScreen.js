@@ -6,7 +6,7 @@ import PostsPage from '../Components/PostsPage';
 import FriendsPage from '../Components/FriendsPage';
 import BadgesPage from '../Components/BadgesPage';
 
-function ProfileScreen() {
+function ProfileScreen({navigation}) {
     const [selectedTab, setSelectedTab] = useState('Posts');
     const [isModalVisible, setIsModalVisible] = useState(false);
 
@@ -17,7 +17,15 @@ function ProfileScreen() {
     const toggleModal = () => {
         setIsModalVisible(!isModalVisible);
     };
+    const Logout = () => {
+        setIsModalVisible(!isModalVisible);
+        navigation.navigate("LoginScreen");
+    }
 
+    const deleteAccount = ()  => {
+        setIsModalVisible(!isModalVisible);
+        navigation.navigate("LoginScreen");
+    }
     return (
         <View style={styles.outerContainer}>
             <ScrollView contentContainerStyle={styles.scrollViewContent}>
@@ -69,10 +77,10 @@ function ProfileScreen() {
                     activeOpacity={1}
                     onPressOut={toggleModal}>
                     <View style={styles.modalView}>
-                        <TouchableOpacity style={styles.modalButton} onPress={toggleModal}>
+                        <TouchableOpacity style={styles.modalButton} onPress={Logout}>
                             <Text style={styles.modalButtonText}>Logout</Text>
                         </TouchableOpacity>
-                        <TouchableOpacity style={styles.modalButton} onPress={toggleModal}>
+                        <TouchableOpacity style={styles.modalButton} onPress={deleteAccount}>
                             <Text style={styles.modalButtonText}>Delete Account</Text>
                         </TouchableOpacity>
                     </View>
