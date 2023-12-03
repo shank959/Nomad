@@ -1,6 +1,7 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import { StyleSheet, View, Text, Image } from "react-native";
 import MapView, { Polygon, Marker, Callout } from "react-native-maps";
+import * as Location from 'expo-location';
 import CenturyCity from '../../assets/century-city2.png';
 import GriffithObservatory from '../../assets/griffith-observatory2.jpeg';
 import BruinBear from '../../assets/bruin-bear.jpg';
@@ -20,6 +21,35 @@ function MapScreen({ navigation }) {
     latitudeDelta: 0.6,
     longitudeDelta: 0.6,
   });
+
+  useEffect(() => {
+    let locationSubscription;
+
+    const subscribeToLocationUpdates = async () => {
+        let { status } = await Location.requestForegroundPermissionsAsync();
+        if (status !== 'granted') {
+            console.error('Permission to access location was denied');
+            return;
+        }
+
+        locationSubscription = await Location.watchPositionAsync({
+            accuracy: Location.Accuracy.High,
+            timeInterval: 15000, // Update every 15000 milliseconds (15 seconds)
+            distanceInterval: 50 , // Or specify distance in meters
+        }, (location) => {
+            console.log(location);
+            // Do something with the updated location...
+        });
+    };
+
+    subscribeToLocationUpdates();
+
+    return () => {
+        if (locationSubscription) {
+            locationSubscription.remove();
+        }
+    };
+}, []);
 
   const darkMode = [
     // Define your dark map style here (as mentioned in the previous example)
@@ -306,6 +336,7 @@ function MapScreen({ navigation }) {
         initialRegion={region}
         provider="google"
         customMapStyle={darkMode}
+        showsUserLocation = {true}
       >
         {createGrid()}
         {/* Add markers with callouts */}

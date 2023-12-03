@@ -16,6 +16,7 @@
     "expo": "^49.0.16",
     "expo-constants": "~14.4.2",
     "expo-device": "~5.4.0",
+    "expo-location": "^16.3.0",
     "expo-notifications": "~0.20.1",
     "expo-sharing": "~11.5.0",
     "expo-status-bar": "~1.6.0",
