@@ -1,0 +1,13 @@
+//HTTP request testing
+@baseURL = 
+
+###Create New User
+POST {{{baseURL}}}/user/create_user
+Content-Type: application/json
+{
+    "email": "example@example.com",
+    "username": "exampleuser",
+    "password": "examplepassword"
+
+}
+
