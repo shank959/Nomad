@@ -1,6 +1,17 @@
 import React, { useState } from "react";
-import { StyleSheet, View, Text } from "react-native";
+import { StyleSheet, View, Text, Image } from "react-native";
 import MapView, { Polygon, Marker, Callout } from "react-native-maps";
+import CenturyCity from '../../assets/century-city2.png';
+import GriffithObservatory from '../../assets/griffith-observatory2.jpeg';
+import BruinBear from '../../assets/bruin-bear.jpg';
+import CryptoArena from '../../assets/crypto-arena2.jpeg';
+import DodgersStadium from '../../assets/dodgers-stadium.jpeg';
+import GrandCentralMarket from '../../assets/grand-central-market.jpeg';
+import HollywoodSign from '../../assets/hollywood-sign2.jpeg';
+import RoccosTavern from '../../assets/roccos-tavern2.jpeg';
+import SantaMonicaPier from '../../assets/santa-monica-pier2.jpeg';
+import UniversalStudios from '../../assets/universal-studios.jpeg';
+import WalkOfFame from '../../assets/walk-of-fame2.jpeg';
 
 function MapScreen({ navigation }) {
   const [region, setRegion] = useState({
@@ -98,7 +109,7 @@ function MapScreen({ navigation }) {
     // Define the condition under which a specific grid cell should be lightened
     return (
       (columnIndex === 3 && rowIndex === 7) || // Example condition
-      (columnIndex === 2 && rowIndex === 5) // Another example condition
+      (columnIndex === 6 && rowIndex === 5) // Another example condition
       // Add more conditions as needed
     );
   };
@@ -174,7 +185,7 @@ function MapScreen({ navigation }) {
               key={`row-${i}-col-${j}`}
               coordinates={cellCoordinates}
               strokeColor="black"
-              fillColor="rgba(255, 255, 0, 0.3)"
+              fillColor="rgba(255, 255, 0, 1)"
             />
           );
         }
@@ -188,67 +199,78 @@ function MapScreen({ navigation }) {
       id: 1,
       coordinate: { latitude: 34.1184, longitude: -118.3004 }, // Griffith Observatory
       title: "Griffith Observatory",
-      description: "An iconic observatory with great views of the city.",
+      description: "Planetarium and Observatory with beautiful views of LA.",
+      image: GriffithObservatory,
     },
     {
       id: 2,
       coordinate: { latitude: 34.0089, longitude: -118.4974 }, // Santa Monica Pier
       title: "Santa Monica Pier",
-      description: "A famous pier with an amusement park and aquarium.",
+      description: "Santa Monica Beach's famous pier that includes an amusement park.",
+      image: SantaMonicaPier,
     },
     {
       id: 3,
-      coordinate: { latitude: 34.0689, longitude: -118.4436 }, // Bruin Bear
+      coordinate: { latitude: 34.070897, longitude: -118.445003 }, // Bruin Bear
       title: "Bruin Bear",
-      description: "UCLA's beloved Bruin Bear statue.",
+      description: "Mascot of the best school in LA!",
+      image: BruinBear,
     },
     {
       id: 4,
       coordinate: { latitude: 34.1381, longitude: -118.3534 }, // Universal Studios
       title: "Universal Studios",
       description: "The famous Universal Studios Hollywood theme park.",
+      image: UniversalStudios,
     },
     {
       id: 5,
       coordinate: { latitude: 34.1017, longitude: -118.3314 }, // Walk of Fame
       title: "Walk of Fame",
       description: "The Hollywood Walk of Fame featuring celebrity stars.",
+      image: WalkOfFame,
     },
     {
       id: 6,
       coordinate: { latitude: 34.1341, longitude: -118.3215 }, // Hollywood Sign
       title: "Hollywood Sign",
       description: "The iconic Hollywood Sign in the Hollywood Hills.",
+      image: HollywoodSign,
     },
     {
       id: 7,
       coordinate: { latitude: 34.0522, longitude: -118.2571 }, // Crypto Arena
-      title: "Crypto Arena",
-      description: "A popular venue for cryptocurrency events.",
+      title: "Crypto.com Arena",
+      description: "Home to the Lakers, Clippers, Kings, and Sparks.",
+      image: CryptoArena,
     },
     {
       id: 8,
       coordinate: { latitude: 34.0736, longitude: -118.24 }, // Dodgers Stadium
       title: "Dodgers Stadium",
       description: "The home stadium of the Los Angeles Dodgers.",
+      image: DodgersStadium
     },
     {
       id: 9,
       coordinate: { latitude: 34.0505, longitude: -118.2483 }, // Grand Central Market
       title: "Grand Central Market",
       description: "A historic public market with diverse food vendors.",
+      image: GrandCentralMarket,
     },
     {
       id: 10,
       coordinate: { latitude: 34.0586, longitude: -118.4175 }, // Century City
-      title: "Century City",
-      description: "A commercial and residential district in West Los Angeles.",
+      title: "Century City Mall",
+      description: "120,000 square meter three-level shopping mall in Century City.",
+      image: CenturyCity,
     },
     {
       id: 11,
-      coordinate: { latitude: 34.0626, longitude: -118.3355 }, // Rocco's Tavern
+      coordinate: { latitude: 34.061909, longitude: -118.447647 }, // Rocco's Tavern
       title: "Rocco's Tavern",
-      description: "A popular sports bar and restaurant in Los Angeles.",
+      description: "A popular sports bar and restaurant that UCLA students frequent.",
+      image: RoccosTavern,
     },
   ];
 
@@ -271,6 +293,10 @@ function MapScreen({ navigation }) {
     description: {
       marginTop: 5,
       fontSize: 14,
+    },  image: {
+        width: 100,
+        height: 100,
+        borderRadius: 5,
     },
   });
   return (
@@ -290,8 +316,12 @@ function MapScreen({ navigation }) {
             title={marker.title}
             description={marker.description}
           >
-            <Callout>
-              <View>
+            <Callout style ={{width: 316, backgroundColor: 'white'}}>
+              <View> 
+              <Image
+                source={marker.image} // URL of the image
+                style={calloutStyles.image}
+               />
                 <Text style={calloutStyles.title}> {marker.title}</Text>
                 <Text style={calloutStyles.description}> {marker.description}</Text>
               </View>
