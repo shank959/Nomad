@@ -1,5 +1,5 @@
 import React, {useState} from 'react';
-import { View, Text, StyleSheet, ScrollView, TouchableOpacity } from 'react-native';
+import { View, Text, StyleSheet, ScrollView, TouchableOpacity, Modal } from 'react-native';
 import { ProfileScreenNavigation } from '../Components/ProfileScreenNavigation';
 import { Feather } from '@expo/vector-icons';
 import PostsPage from '../Components/PostsPage';
@@ -8,44 +8,76 @@ import BadgesPage from '../Components/BadgesPage';
 
 function ProfileScreen() {
     const [selectedTab, setSelectedTab] = useState('Posts');
+    const [isModalVisible, setIsModalVisible] = useState(false);
 
     const handleTabSelect = (tabName) => {
         setSelectedTab(tabName);
-      };
-    
+    };
+
+    const toggleModal = () => {
+        setIsModalVisible(!isModalVisible);
+    };
+
     return (
         <View style={styles.outerContainer}>
             <ScrollView contentContainerStyle={styles.scrollViewContent}>
-                 {/*Prof Pic:*/}
+                {/* Profile Picture Placeholder */}
                 <View style={styles.profilePicPlaceholder} />
 
-                {/*Settings Button:*/}
-                <TouchableOpacity style={styles.settingsIcon} onPress={() => navigation.navigate('Settings')} >
+                {/* Settings Button */}
+                <TouchableOpacity style={styles.settingsIcon} onPress={toggleModal}>
                     <Feather name="settings" size={24} color="white" />
                 </TouchableOpacity>
 
+                {/* Username */}
                 <Text style={styles.username}>@username</Text>
 
+                {/* Stats Container */}
                 <View style={styles.statsContainer}>
-                    {/* Friends count */}
+                    {/* Friends Count */}
                     <View style={styles.statItem}>
                         <Text style={styles.statNumber}>0</Text>
                         <Text style={styles.statLabel}>Friends</Text>
                     </View>
-                    {/* Badges count */}
+                    {/* Badges Count */}
                     <View style={styles.statItem}>
                         <Text style={styles.statNumber}>0</Text>
                         <Text style={styles.statLabel}>Badges</Text>
                     </View>
                 </View>
 
-                {/*Space to push down navigator:*/}
+                {/* Spacer */}
                 <View style={{ height: 30 }} />
-                <ProfileScreenNavigation onTabSelect = {handleTabSelect}/>
+
+                {/* Profile Screen Navigation */}
+                <ProfileScreenNavigation onTabSelect={handleTabSelect} />
+
+                {/* Tab Content */}
                 {selectedTab === 'Posts' && <PostsPage />}
                 {selectedTab === 'Friends' && <FriendsPage />}
                 {selectedTab === 'Badges' && <BadgesPage />}
             </ScrollView>
+
+            {/* Modal for Settings */}
+            <Modal
+                animationType="slide"
+                transparent={true}
+                visible={isModalVisible}
+                onRequestClose={toggleModal}>
+                <TouchableOpacity
+                    style={styles.centeredView}
+                    activeOpacity={1}
+                    onPressOut={toggleModal}>
+                    <View style={styles.modalView}>
+                        <TouchableOpacity style={styles.modalButton} onPress={toggleModal}>
+                            <Text style={styles.modalButtonText}>Logout</Text>
+                        </TouchableOpacity>
+                        <TouchableOpacity style={styles.modalButton} onPress={toggleModal}>
+                            <Text style={styles.modalButtonText}>Delete Account</Text>
+                        </TouchableOpacity>
+                    </View>
+                </TouchableOpacity>
+            </Modal>
         </View>
     );
 }
@@ -53,45 +85,45 @@ function ProfileScreen() {
 const styles = StyleSheet.create({
     outerContainer: {
         flex: 1,
-        backgroundColor: 'black', // The background color of the screen
+        backgroundColor: 'black',
     },
     scrollViewContent: {
         flexGrow: 1,
-        justifyContent: 'flex-start', // Align content to the top
-        alignItems: 'center', // Center the children horizontally
+        justifyContent: 'flex-start',
+        alignItems: 'center',
     },
     settingsIcon: {
-        position: 'absolute', // Position the icon absolutely
-        top: 40, // Distance from the top of the screen
-        right: 16, // Distance from the right of the screen
-        zIndex: 10, // Ensure the icon is above other elements
+        position: 'absolute',
+        top: 40,
+        right: 16,
+        zIndex: 10,
     },
     profilePicPlaceholder: {
-        position: 'absolute', // Position the circle absolutely
-        top: 50, // Distance from the top of the screen
-        right: 30, // Distance from the left of the screen
-        width: 150, // Width of the circle
-        height: 150, // Height of the circle
-        borderRadius: 75, // Half the width/height to make it a circle
-        backgroundColor: 'white', // Circle color
-        zIndex: 5, // Ensure the circle is above other elements but below the icon
+        position: 'absolute',
+        top: 50,
+        right: 30,
+        width: 150,
+        height: 150,
+        borderRadius: 75,
+        backgroundColor: 'white',
+        zIndex: 5,
     },
     username: {
-        position: 'absolute', // Position the username absolutely
-        top: 60, // Distance from the top of the screen
-        left: 18, // Distance from the left of the screen
-        color: 'white', // Text color
-        marginLeft: 10, // Left margin
+        position: 'absolute',
+        top: 60,
+        left: 18,
+        color: 'white',
+        marginLeft: 10,
         fontSize: 30,
     },
     statsContainer: {
-        flexDirection: 'row', // Align children horizontally
-        marginTop: 125, // Margin at the top
+        flexDirection: 'row',
+        marginTop: 125,
         left: -94,
     },
     statItem: {
-        alignItems: 'center', // Center items horizontally
-        marginRight: 24, // Margin to the right of each stat
+        alignItems: 'center',
+        marginRight: 24,
     },
     statNumber: {
         color: 'white',
@@ -101,6 +133,45 @@ const styles = StyleSheet.create({
     statLabel: {
         color: 'white',
         fontSize: 16,
+    },
+    centeredView: {
+        flex: 1,
+        justifyContent: 'flex-end',
+        alignItems: 'center',
+        backgroundColor: 'rgba(0, 0, 0, 0.5)',
+    },
+    modalView: {
+        width: '100%',
+        backgroundColor: '#1f2021',
+        padding: 20,
+        alignItems: 'center',
+        justifyContent: 'center',
+        borderTopLeftRadius: 20, // Rounded top left corner
+        borderTopRightRadius: 20, // Rounded top right corner
+        shadowColor: '#000',
+        shadowOffset: {
+            width: 0,
+            height: 2,
+        },
+        shadowOpacity: 0.25,
+        shadowRadius: 4,
+        elevation: 5,
+    },
+    modalButton: {
+        backgroundColor: 'transparent',
+        borderColor: 'red',
+        borderWidth: 1,
+        borderRadius: 20,
+        padding: 10,
+        elevation: 2,
+        width: '80%',
+        marginTop: 7,
+        marginBottom: 7,
+    },
+    modalButtonText: {
+        color: 'red',
+        fontWeight: 'bold',
+        textAlign: 'center',
     },
 });
 
