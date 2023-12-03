@@ -1,12 +1,7 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
+import { StyleSheet, View, TouchableOpacity, Text, Image } from 'react-native';
 import MapView from 'react-native-maps';
-import { StyleSheet, View, Text, Button } from 'react-native';
-
-// access Native module for importing photos
-    // NativeModules is an object provided by React Native that 
-    // serves as a bridge to access any native modules
-import { NativeModules } from 'react-native';
-const { PhotoKitModule } = NativeModules;
+import * as ImagePicker from 'expo-image-picker';
 
 function MapScreen({ navigation }) {
     const [region, setRegion] = useState({
@@ -15,43 +10,88 @@ function MapScreen({ navigation }) {
         latitudeDelta: 0.6,
         longitudeDelta: 0.6,
     });
+    const [imageUri, setImageUri] = useState(null);
 
-    // Function to handle photo import
-    const handleImportPhotos = () => {
-        PhotoKitModule.fetchPhotos().then(photos => {
-            console.log('Imported Photos:', photos);
-        }).catch(error => {
-            console.error('Error importing photos:', error);
+    useEffect(() => {
+        (async () => {
+            const { status } = await ImagePicker.requestMediaLibraryPermissionsAsync();
+            if (status !== 'granted') {
+                alert('Sorry, we need camera roll permissions to make this work!');
+            }
+        })();
+    }, []);
+
+    const uploadImage = async () => {
+        let result = await ImagePicker.launchImageLibraryAsync({
+            mediaTypes: ImagePicker.MediaTypeOptions.Images,
+            allowsEditing: true,
+            aspect: [1, 1],
+            quality: 1,
         });
+    
+        if (!result.canceled && result.assets) {
+            setImageUri(result.assets[0].uri);
+        }
     };
 
     return (
-        <View style={styles.container} >
-
+        <View style={styles.container}>
             <MapView 
                 style={styles.map} 
                 initialRegion={region}
                 provider="google"
             />
-            <Button 
-                title="Import Photos" 
-                onPress={handleImportPhotos} 
-            />
+            <View style={styles.imageContainer}>
+                {imageUri ? (
+                    <Image source={{ uri: imageUri }} style={styles.image} />
+                ) : (
+                    <View style={styles.placeholderImage} />
+                )}
+            </View>
+            <TouchableOpacity style={styles.button} onPress={uploadImage}>
+                <Text style={styles.buttonText}>Select Photos</Text>
+            </TouchableOpacity>
         </View>
     );
 }
 
 const styles = StyleSheet.create({
     container: {
-        //...StyleSheet.absoluteFillObject,
         flex: 1,
         justifyContent: "flex-end",
         alignItems: "center",
     },
     map: {
-        //...StyleSheet.absoluteFillObject,
         width: "100%",
         height: "100%",
+    },
+    button: {
+        backgroundColor: "black",
+        padding: 10,
+        borderRadius: 5,
+        marginBottom: 10,
+    },
+    buttonText: {
+        color: "white",
+        textAlign: "center",
+    },
+    imageContainer: {
+        width: 100,
+        height: 100,
+        justifyContent: 'center',
+        alignItems: 'center',
+        marginTop: 10,
+    },
+    image: {
+        width: 100,
+        height: 100,
+        borderRadius: 10,
+    },
+    placeholderImage: {
+        width: 100,
+        height: 100,
+        backgroundColor: '#e1e1e1',
+        borderRadius: 10,
     },
 });
 
