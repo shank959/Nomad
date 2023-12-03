@@ -5,33 +5,22 @@ import {
   Text,
   TextInput,
   TouchableOpacity,
-  Image,
 } from "react-native";
 
-export default function CreateAccountScreen({ navigation }) {
+export default function ForgotPasswordScreen({ navigation }) {
   const [email, setEmail] = useState("");
-  const [username, setUsername] = useState("");
-  const [password, setPassword] = useState("");
-
-  const handleCreateAccount = () => {
+  const handleResetPassword = () => {
     // Here you will handle the account creation logic
     // Send the username, email, and password to your backend server
-    console.log(username, email, password);
-
+    console.log(email);
+    alert("Recovery password instructions sent to your email");
     // Navigate to login screen or main app screen after account creation
     navigation.navigate("LoginScreen");
   };
 
   return (
     <View style={styles.container}>
-      <Image source={require("../../assets/logo.png")} style={styles.image} />
-      <TextInput
-        style={styles.input}
-        placeholder="Username"
-        value={username}
-        onChangeText={(text) => setUsername(text)}
-        placeholderTextColor="white"
-      />
+      <Text style={styles.title}>Forgot Password</Text>
       <TextInput
         style={styles.input}
         placeholder="Email"
@@ -39,16 +28,8 @@ export default function CreateAccountScreen({ navigation }) {
         onChangeText={(text) => setEmail(text)}
         placeholderTextColor="white"
       />
-      <TextInput
-        style={styles.input}
-        placeholder="Password"
-        secureTextEntry={true}
-        value={password}
-        onChangeText={(text) => setPassword(text)}
-        placeholderTextColor="white"
-      />
-      <TouchableOpacity style={styles.button} onPress={handleCreateAccount}>
-        <Text style={styles.buttonText}>Create Account</Text>
+      <TouchableOpacity style={styles.button} onPress={handleResetPassword}>
+        <Text style={styles.buttonText}>Reset Password</Text>
       </TouchableOpacity>
     </View>
   );
@@ -61,14 +42,14 @@ const styles = StyleSheet.create({
     alignItems: "center",
     backgroundColor: "black",
   },
-  image: {
-    width: 230,
-    height: 230,
-    marginBottom: 10,
+  title: {
+    fontSize: 24,
+    marginBottom: 20,
+    color: "#ffffff",
   },
   input: {
     width: 300,
-    height: 50,
+    height: 40,
     borderColor: "#ffffff",
     borderWidth: 1,
     borderRadius: 10,
@@ -78,9 +59,7 @@ const styles = StyleSheet.create({
     color: "white",
   },
   button: {
-    backgroundColor: "black",
-    borderColor: "white",
-    borderWidth: 1,
+    backgroundColor: "grey", // Adjusted button color to match the style of the "Create Account" button
     width: 200,
     height: 40,
     justifyContent: "center",

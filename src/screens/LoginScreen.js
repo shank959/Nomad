@@ -22,7 +22,7 @@ export default function LoginScreen({ navigation }) {
 
   const handleForgotPassword = () => {
     // Placeholder for forgot password functionality
-    alert("Forgot Password functionality not implemented yet.");
+    navigation.navigate("ForgotPasswordScreen")
   };
 
   return (
