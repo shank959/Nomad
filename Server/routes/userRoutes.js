@@ -1,4 +1,4 @@
-const express = require("express");
+const express = require('express');
 const bcrypt = require('bcrypt');
 const router = express.Router();
 const UsersModel = require('./models/userModel.js');
@@ -44,6 +44,19 @@ router.post('/login_user', async (req, res) => {
         res.status(500).send({ error: 'Error logging in'});
     }
     });
+
+// search query endpoint
+router.post('/search', async (req, res) => {
+    try {
+        // Update the query to match the structure of your UsersModel
+        const users = await UsersModel.find({ 
+            username: { $regex: req.body.query, $options: 'i' } 
+        });
+        res.json({ users });
+    } catch (error) {
+        res.status(500).send(error);
+    }
+});
 
 
 module.exports = router
