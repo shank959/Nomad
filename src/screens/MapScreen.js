@@ -23,6 +23,10 @@ function MapScreen({ navigation }) {
   });
 
   const [selectedMarker, setSelectedMarker] = useState(null);
+  const [grid, setGrid] = useState([]);
+  useEffect(() => {
+    createGrid();
+  }, []);
 
   useEffect(() => {
     let locationSubscription;
@@ -160,31 +164,30 @@ function MapScreen({ navigation }) {
       (southeastCorner.longitude - northwestCorner.longitude) / gridColumns;
 
     // Add the entire grid
-    gridPolygons.push(
-      <Polygon
-        key={`all-grid`}
-        coordinates={[
-          {
-            latitude: northwestCorner.latitude,
-            longitude: northwestCorner.longitude,
-          },
-          {
-            latitude: southeastCorner.latitude,
-            longitude: northwestCorner.longitude,
-          },
-          {
-            latitude: southeastCorner.latitude,
-            longitude: southeastCorner.longitude,
-          },
-          {
-            latitude: northwestCorner.latitude,
-            longitude: southeastCorner.longitude,
-          },
-        ]}
-        strokeColor="transparent"
-        fillColor="transparent"
-      />
-    );
+    gridPolygons.push({
+      key: `all-grid`,
+      coordinates: [
+        {
+          latitude: northwestCorner.latitude,
+          longitude: northwestCorner.longitude,
+        },
+        {
+          latitude: southeastCorner.latitude,
+          longitude: northwestCorner.longitude,
+        },
+        {
+          latitude: southeastCorner.latitude,
+          longitude: southeastCorner.longitude,
+        },
+        {
+          latitude: northwestCorner.latitude,
+          longitude: southeastCorner.longitude,
+        },
+      ],
+      fillColor: "transparent",
+      strokeColor: "transparent"
+      
+    });
 
     for (let i = 0; i < gridRows; i++) {
       for (let j = 0; j < gridColumns; j++) {
@@ -211,19 +214,15 @@ function MapScreen({ navigation }) {
           },
         ];
 
-        if (shouldLightenCell(i, j)) {
-          gridPolygons.push(
-            <Polygon
-              key={`row-${i}-col-${j}`}
-              coordinates={cellCoordinates}
-              strokeColor="black"
-              fillColor="rgba(0, 0, 0, 0.3)"
-            />
-          );
-        }
+        gridPolygons.push({
+          key: `row-${i}-col-${j}`,
+          coordinates: cellCoordinates,
+          fillColor: shouldLightenCell(i, j) ? "rgba(0, 0, 0, 0.3)" : "transparent",
+          strokeColor: "black"
+        });
       } 
     }
-    return gridPolygons;
+    setGrid(gridPolygons);
   };
 
   const markers = [
@@ -391,14 +390,14 @@ function MapScreen({ navigation }) {
         customMapStyle={darkMode}
         showsUserLocation={true}
       >
-        {createGrid()}
-        {markers.map((marker) => (
-          <Marker
-            key={marker.id}
-            coordinate={marker.coordinate}
-            onPress={() => setSelectedMarker(marker)}
-          />
-        ))}
+      {grid.map(cell => (
+        <Polygon 
+          key={cell.key}
+          coordinates={cell.coordinates}
+          fillColor={cell.fillColor}
+          strokeColor={cell.strokeColor}
+        />
+      ))}
       </MapView>
       {selectedMarker && (
         <View style={customCalloutStyles.container}>
