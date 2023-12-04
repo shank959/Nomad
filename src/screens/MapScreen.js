@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from "react";
-import { StyleSheet, View, Text, Image } from "react-native";
+import { StyleSheet, View, Text, Image, TouchableOpacity } from "react-native";
 import MapView, { Polygon, Marker, Callout } from "react-native-maps";
 import * as Location from 'expo-location';
 import CenturyCity from '../../assets/century-city2.png';
@@ -21,6 +21,8 @@ function MapScreen({ navigation }) {
     latitudeDelta: 0.6,
     longitudeDelta: 0.6,
   });
+
+  const [selectedMarker, setSelectedMarker] = useState(null);
 
   useEffect(() => {
     let locationSubscription;
@@ -215,11 +217,11 @@ function MapScreen({ navigation }) {
               key={`row-${i}-col-${j}`}
               coordinates={cellCoordinates}
               strokeColor="black"
-              fillColor="rgba(255, 255, 0, 1)"
+              fillColor="rgba(0, 0, 0, 1)"
             />
           );
         }
-      }
+      } 
     }
     return gridPolygons;
   };
@@ -311,24 +313,67 @@ function MapScreen({ navigation }) {
   }
   const calloutStyles = StyleSheet.create({
     container: {
+      flexDirection: 'row',
       padding: 10,
-      borderRadius: 5,
-      backgroundColor: "#fff",
+      borderRadius: 10,
+      backgroundColor: 'rgba(255, 255, 255, 0.8)',
+      borderColor: 'black',
+      borderWidth: 3,
       elevation: 4,
     },
+    image: {
+      width: 100,
+      height: 100,
+      borderRadius: 5,
+      marginRight: 10,
+    },
+    textContainer: {
+      flex: 1,
+      justifyContent: 'center',
+    },
     title: {
-      fontWeight: "bold",
+      fontWeight: 'bold',
       fontSize: 16,
     },
     description: {
       marginTop: 5,
       fontSize: 14,
-    },  image: {
-        width: 100,
-        height: 100,
-        borderRadius: 5,
     },
   });
+
+  const customCalloutStyles = StyleSheet.create({
+    container: {
+      position: 'absolute',
+      bottom: '20%',
+      left: '5%',
+      right: '5%',
+      backgroundColor: 'rgba(255, 255, 255, 0.8)',
+      borderRadius: 10,
+      borderWidth: 4,
+      borderColor: 'black',
+      flexDirection: 'row',
+      padding: 10,
+    },
+    image: {
+      width: 100,
+      height: 100,
+      borderRadius: 5,
+      marginRight: 10,
+    },
+    textContainer: {
+      flex: 1,
+      justifyContent: 'center',
+    },
+    title: {
+      fontWeight: 'bold',
+      fontSize: 16,
+    },
+    description: {
+      marginTop: 5,
+      fontSize: 14,
+    },
+  });
+
   return (
     <View style={styles.container}>
       <MapView
@@ -336,30 +381,32 @@ function MapScreen({ navigation }) {
         initialRegion={region}
         provider="google"
         customMapStyle={darkMode}
-        showsUserLocation = {true}
+        showsUserLocation={true}
       >
         {createGrid()}
-        {/* Add markers with callouts */}
         {markers.map((marker) => (
           <Marker
             key={marker.id}
             coordinate={marker.coordinate}
-            title={marker.title}
-            description={marker.description}
-          >
-            <Callout style ={{width: 316, backgroundColor: 'white'}}>
-              <View> 
-              <Image
-                source={marker.image} // URL of the image
-                style={calloutStyles.image}
-               />
-                <Text style={calloutStyles.title}> {marker.title}</Text>
-                <Text style={calloutStyles.description}> {marker.description}</Text>
-              </View>
-            </Callout>
-          </Marker>
+            onPress={() => setSelectedMarker(marker)}
+          />
         ))}
       </MapView>
+      {selectedMarker && (
+        <View style={customCalloutStyles.container}>
+          <Image
+            source={selectedMarker.image}
+            style={customCalloutStyles.image}
+          />
+          <View style={customCalloutStyles.textContainer}>
+            <Text style={customCalloutStyles.title}>{selectedMarker.title}</Text>
+            <Text style={customCalloutStyles.description}>{selectedMarker.description}</Text>
+          </View>
+          <TouchableOpacity onPress={() => setSelectedMarker(null)}>
+            <Text>Close</Text>
+          </TouchableOpacity>
+        </View>
+      )}
     </View>
   );
 }
