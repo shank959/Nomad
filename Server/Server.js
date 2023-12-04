@@ -1,28 +1,22 @@
-//Connect to our Cluster
-const UsersModel = require('./userModel.js'); // Adjust the path according to your project structure
+const express = require('express');
+const mongoose = require('mongoose');
+const userRoutes = require('./routes/userRoutes.js')
 
-const { MongoClient, ServerApiVersion } = require('mongodb');
-const uri = "mongodb+srv://Nomad:ExploreLA123@clusternomad.l4pqavm.mongodb.net/?retryWrites=true&w=majority";
+const app = express()
+//middleware pasrsing JSON bodies
+app.use(express.json());
+app.use(cors());
 
-// Create a MongoClient with a MongoClientOptions object to set the Stable API version
-const client = new MongoClient(uri, {
-    serverApi: {
-    version: ServerApiVersion.v1,
-    strict: true,
-    deprecationErrors: true,
-}
-});
 
-async function run() {
-try {
-    // Connect the client to the server	(optional starting in v4.7)
-    await client.connect();
-    // Send a ping to confirm a successful connection
-    await client.db("admin").command({ ping: 1 });
-    console.log("Pinged your deployment. You successfully connected to MongoDB!");
-} finally {
-    // Ensures that the client will close when you finish/error
-    await client.close();
-}
-}
-run().catch(console.dir);
+//Use Mongoose to connect to MongoDB
+mongoose.connect("mongodb://localhost:27017/database")
+.then(() => {
+    console.log("Connected to MongoDB...");
+    //insertUsers()
+})
+.catch(err => console.error("Could not connect to MongoDB...", err));
+
+
+app.use('/user', userRoutes)
+const port = process.env.PORT || 3000;
+app.listen(port, () => {console.log('Server running on port ${port}');});
