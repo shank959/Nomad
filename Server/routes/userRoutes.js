@@ -1,7 +1,7 @@
 const express = require("express");
 const bcrypt = require('bcrypt');
 const router = express.Router();
-const UsersModel = require('./models/userModel.js');
+const UsersModel = require('../models/userModel.js');
 
 
 //Endpoint to create a new user - managing login

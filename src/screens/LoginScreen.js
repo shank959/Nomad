@@ -13,7 +13,7 @@ export default function LoginScreen({ navigation }) {
     };
 
     axios
-      .post("http://localhost:3000/user/", loginData)
+      .post("http://172.20.10.2:3000/test", loginData)
       .then((response) => {
         if(response.data.message === 'Login Successful'){
           navigation.navigate("MainTabScreen", { screen: "MapScreen" });
