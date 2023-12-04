@@ -10,6 +10,7 @@ import {
 } from "react-native";
 import MapView from "react-native-maps";
 import * as ImagePicker from "expo-image-picker";
+import { GooglePlacesAutocomplete } from "react-native-google-places-autocomplete";
 
 function MapScreen({ navigation }) {
   const [region, setRegion] = useState({
@@ -77,7 +78,30 @@ function MapScreen({ navigation }) {
           </View>
           <View style={styles.inputContainer}>
             <TextInput style={styles.input} placeholder="Caption" />
-            <TextInput style={styles.input} placeholder="Location" />
+            <GooglePlacesAutocomplete
+              placeholder="Search"
+              fetchDetails = {true}
+              GooglePlacesSearchQuery={{
+                rankby: "distance",
+              }}
+              onPress={(data, details = null) => {
+                // 'details' is provided when fetchDetails = true
+                console.log(data, details);
+                setRegion({
+                  latitude: details.geometry.location.lat,
+                  longitude: details.geometry.location.lng,
+                  latitudeDelta: 0.6,
+                  longitudeDelta: 0.6,
+                });
+              }}
+              query={{
+                key: "APIKEY",
+                language: "en",
+                components: "country:us",
+                radius: 40000,
+                location: "${region.latitude}, ${region.longitude}"
+              }}
+            />
           </View>
           <TouchableOpacity style={styles.instagramButton}>
             <Text style={styles.instagramButtonText}>Share</Text>
@@ -175,6 +199,7 @@ const styles = StyleSheet.create({
   inputContainer: {
     width: "80%",
     marginBottom: 20,
+    zIndex: 1,
   },
   input: {
     height: 40,
