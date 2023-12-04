@@ -1,5 +1,5 @@
 // Import React and any other necessary modules
-import React from 'react';
+import React, { useState } from 'react';
 import { View, Text, Image, TextInput, StyleSheet } from 'react-native';
 
 // placeholder data for friends (haven't implemented backend to
@@ -9,24 +9,61 @@ const friendsPlaceholders = Array.from({ length: 20 }, (_, index) => `Friend`);
 
 // Define your component
 const FriendsPage = () => {
+    const [searchQuery, setSearchQuery] = useState('');
+    const [searchResults, setSearchResults] = useState([]);
+
+    const handleSearch = async (text) => {
+        setSearchQuery(text);
+        if (text === '') {
+            setSearchResults([]);
+        } else {
+            try {
+                const response = await fetch('http://our-backend-server.com', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                    },
+                    body: JSON.stringify({ query: text }),
+                });
+                const data = await response.json();
+                setSearchResults(data.users);
+            } catch (error) {
+                console.error(error);
+            }
+        }
+    };
+
+
     return (
         <View style={styles.container}>
             <TextInput 
                 placeholder="Add Friends"
                 placeholderTextColor='#D3D3D3'
                 style={styles.searchBar}
+                onChangeText={handleSearch}
+                value={searchQuery}
             />
-            {friendsPlaceholders.map((friendName, index) => (
-                <View key={index} style={styles.friendBox}>
-                    <Image 
-                        source={{ uri: 'https://i.redd.it/zuqwgy86xsa41.jpg' }} // Placeholder image URL
-                        style={styles.profilePic}
-                    />
-                    <Text style={styles.friendItem}>
-                        {friendName} {index + 1}
-                    </Text>
-                </View>
-            ))}
+            {searchQuery.length === 0 
+                ? friendsPlaceholders.map((friendName, index) => (
+                    <View key={index} style={styles.friendBox}>
+                        <Image 
+                            source={{ uri: 'https://i.redd.it/zuqwgy86xsa41.jpg' }} 
+                            style={styles.profilePic}
+                        />
+                        <Text style={styles.friendItem}>
+                            {friendName} {index + 1}
+                        </Text>
+                    </View>
+                ))
+                : searchResults.map((user, index) => (
+                    <View key={index} style={styles.friendBox}>
+                        {/* Display search results */}
+                        <Text style={styles.friendItem}>
+                            {user.username}
+                        </Text>
+                    </View>
+                ))
+            }
         </View>
     );
 };
@@ -65,11 +102,11 @@ const styles = StyleSheet.create({
         backgroundColor: 'black', 
     },
     profilePic: {
-        width: 50, // Set width of the image
-        height: 50, // Set height of the image
-        borderRadius: 25, // Make it circular
+        width: 50, 
+        height: 50, 
+        borderRadius: 25, // make profile picture circular
         marginLeft: -20,
-        marginRight: 20, // Add some margin to the right
+        marginRight: 20, 
     },
     friendItem: {
         color: 'white',
