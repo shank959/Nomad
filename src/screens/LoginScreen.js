@@ -1,20 +1,36 @@
 import React, { useState } from "react";
 import { StyleSheet, View, Text, TextInput, TouchableOpacity, Image } from "react-native";
+import axios from 'axios';
 
 export default function LoginScreen({ navigation }) {
   const [username, setUsername] = useState("");
   const [password, setPassword] = useState("");
 
   const handleLogin = () => {
-    // Add your login logic here
-    if (true) {
-      // Successful login, navigate to the next screen
-      navigation.navigate("MainTabScreen", { screen: "MapScreen" });
-    } else {
-      // Display an error message or handle unsuccessful login
-      alert("Invalid credentials. Please try again.");
-    }
+    const loginData = {
+      username: username,
+      password: password,
+    };
+
+    axios
+      .post("http://localhost:3000/user/", loginData)
+      .then((response) => {
+        if(response.data.message === 'Login Successful'){
+          navigation.navigate("MainTabScreen", { screen: "MapScreen" });
+        } else {
+          // Display an error message or handle unsuccessful login
+          alert("Invalid credentials. Please try again.");
+        }
+        }
+      )
+      .catch((error) => {
+        console.error(error);
+        alert('An error occurred while logging in. Please Try Again.');
+      });
   };
+
+
+
 
   const createAccount = () => {
     navigation.navigate("CreateAccountScreen");
@@ -22,7 +38,7 @@ export default function LoginScreen({ navigation }) {
 
   const handleForgotPassword = () => {
     // Placeholder for forgot password functionality
-    navigation.navigate("ForgotPasswordScreen")
+    alert("Forgot Password functionality not implemented yet.");
   };
 
   return (
