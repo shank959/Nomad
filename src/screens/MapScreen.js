@@ -36,7 +36,7 @@ function MapScreen({ navigation }) {
 
         locationSubscription = await Location.watchPositionAsync({
             accuracy: Location.Accuracy.High,
-            timeInterval: 15000, // Update every 15000 milliseconds (15 seconds)
+            timeInterval: 1500, // Update every 15000 milliseconds (15 seconds)
             distanceInterval: 50 , // Or specify distance in meters
         }, (location) => {
             console.log(location);
@@ -140,7 +140,7 @@ function MapScreen({ navigation }) {
   const shouldLightenCell = (rowIndex, columnIndex) => {
     // Define the condition under which a specific grid cell should be lightened
     return (
-      (columnIndex === 3 && rowIndex === 7) || // Example condition
+      (columnIndex >= 0 && columnIndex >= 0) || // Example condition
       (columnIndex === 6 && rowIndex === 5) // Another example condition
       // Add more conditions as needed
     );
@@ -148,11 +148,11 @@ function MapScreen({ navigation }) {
 
   const createGrid = () => {
     const gridPolygons = [];
-    const gridRows = 10;
-    const gridColumns = 10;
+    const gridRows = 12;
+    const gridColumns = 15;
 
-    const northwestCorner = { latitude: 34.215635, longitude: -118.639871 };
-    const southeastCorner = { latitude: 33.750811, longitude: -118.11257 };
+    const northwestCorner = { latitude: 34.215635, longitude: -118.873252};
+    const southeastCorner = { latitude: 33.701912, longitude: -118.11257 };
 
     const latStep =
       (northwestCorner.latitude - southeastCorner.latitude) / gridRows;
@@ -217,7 +217,7 @@ function MapScreen({ navigation }) {
               key={`row-${i}-col-${j}`}
               coordinates={cellCoordinates}
               strokeColor="black"
-              fillColor="rgba(0, 0, 0, 1)"
+              fillColor="rgba(0, 0, 0, 0.3)"
             />
           );
         }
@@ -309,6 +309,14 @@ function MapScreen({ navigation }) {
 
   function shouldExcludeCell(rowIndex, columnIndex) {
     // Define the logic to exclude cells (if any)
+    if (columnIndex >= 0 && columnIndex <= 3 && rowIndex >= 0 && rowIndex <= 3) return true;
+    if (columnIndex >= 0 && columnIndex <= 6 && rowIndex >= 5 && rowIndex <= 12) return true;
+    if (columnIndex >= 0 && columnIndex <= 6 && rowIndex == 2) return true;
+    if (columnIndex >= 0 && columnIndex <= 5 && rowIndex == 3) return true;
+    if (columnIndex >= 0 && columnIndex <= 7 && rowIndex >= 6 && rowIndex <= 12) return true;
+    if (columnIndex >= 0 && columnIndex <= 8 && rowIndex >= 8 && rowIndex <= 12) return true;
+    if (columnIndex >= 12 && columnIndex <= 15 && rowIndex >= 11 && rowIndex <= 12) return true;
+
     return false; // Include all cells by default
   }
   const calloutStyles = StyleSheet.create({
