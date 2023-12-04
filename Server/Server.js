@@ -1,8 +1,7 @@
 const express = require('express');
 const mongoose = require('mongoose');
 const cors = require('cors');
-const userRoutes = require('./routes/userRoutes.js')
-const router = express.Router();
+
 
 
 const app = express()
@@ -30,17 +29,28 @@ app.post('/test', (req, res) => {
     caption: String,
 });
 
-const Post = new mongoose.model('posts', postSchema);
+const Post = mongoose.model('posts', postSchema);
 
 
-app.post('/posts', async (req, res) => {
-  try {
-    const newPost = new Post(req.body);
-    await newPost.save();
-    res.status(201).json(newPost);
-  } catch (error) {
-    res.status(400).json({ message: error.message });
-  }
+app.post('/posts', (req, res) => {
+    // Validate request body
+    if (!req.body.caption) {
+        return res.status(400).json({ message: 'Caption is required' });
+    }
+
+    // Creating a new post
+    const newPost = new Post({ caption: req.body.caption });
+
+    // Saving the post to the database
+    newPost.save()
+        .then(savedPost => {
+            // Sending response back
+            res.status(201).json(savedPost);
+        })
+        .catch(error => {
+            // Error handling
+            res.status(500).json({ message: error.message });
+        });
 });
 
 
@@ -49,7 +59,7 @@ app.post('/posts', async (req, res) => {
 
 
 
-app.use('/user', userRoutes)
-app.use('/posts', postRoute)
+
+
 const port = process.env.PORT || 3000;
 app.listen(port, () => {console.log(`Server running on port ${port}`);});
