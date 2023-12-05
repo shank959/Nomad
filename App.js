@@ -18,13 +18,13 @@ export default function App() {
   return (
     <NavigationContainer>
       <Stack.Navigator>
+         {/* MainTabScreen is the screen component that renders the bottom tabs */}
+         <Stack.Screen name="MainTabScreen" component={MainTabScreen} options={{ headerShown: false }} />
         {/* The Login screen should not have the bottom tabs, so it's outside the MainTabScreen */}
-        <Stack.Screen name="CreatePostScreen" component={CreatePostScreen} options={{ headerShown: false }} />
         <Stack.Screen name="LoginScreen" component={LoginScreen} options={{ headerShown: false }} />
         <Stack.Screen name="CreateAccountScreen" component={CreateAccountScreen} options={{ headerShown: false }} />
         <Stack.Screen name="ForgotPasswordScreen" component={ForgotPasswordScreen} options={{ headerShown: false }} />
-        {/* MainTabScreen is the screen component that renders the bottom tabs */}
-        <Stack.Screen name="MainTabScreen" component={MainTabScreen} options={{ headerShown: false }} />
+        <Stack.Screen name="CreatePostScreen" component={CreatePostScreen} options={{ headerShown: false }} />
       </Stack.Navigator>
     </NavigationContainer>
   );
