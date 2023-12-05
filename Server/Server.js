@@ -4,7 +4,7 @@ const cors = require('cors');
 
 
 // create express app
-const app = express()
+const app = express();
 //middleware pasrsing JSON bodies
 app.use(cors());
 app.use(express.json());
@@ -14,22 +14,24 @@ app.use(express.json());
 mongoose.connect("mongodb+srv://Nomad:ExploreLA123@clusternomad.l4pqavm.mongodb.net/test")
 .then(() => {
     console.log("Connected to MongoDB...");
-    //insertUsers()
 })
 .catch(err => console.error("Could not connect to MongoDB...", err));
 
 
-
+ 
 // POST MODEL AND ROUTE
 const postSchema = new mongoose.Schema({
     imageUrl: { type: String, required: true },
-    caption: { type: String, default: '' },
+    caption: { type: String, required: true },
     location: { type: String, required: true },
-    coordinates: { type: [Number], required: true },
+    coordinates: {
+        latitude: { type: Number, required: true },
+        longitude: { type: Number, required: true },
+    },
     createdAt: { type: Date, default: Date.now },
-    author: { type: mongoose.Schema.Types.ObjectID, ref: 'User', required: true }, // checkok
+    author: String, //FIXME
+    //author: { type: mongoose.Schema.Types.ObjectID, ref: 'User', required: true }, // CHECKOK
     likes: { type: Number, default: 0 },
-    comments: { type: Number, default: 0 }
 });
 
 const Post = mongoose.model('posts', postSchema);
@@ -59,13 +61,6 @@ app.post('/posts', (req, res) => {
             res.status(500).json({ message: error.message });
         });
 });
-
-
-
-
-
-
-
 
 
 const port = process.env.PORT || 3000;

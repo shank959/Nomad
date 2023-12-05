@@ -9,11 +9,18 @@ import {
   TextInput,
   KeyboardAvoidingView,
   Platform,
+  Alert,
 } from "react-native";
 import * as ImagePicker from "expo-image-picker";
 import { GooglePlacesAutocomplete } from "react-native-google-places-autocomplete";
 import MapView, { Polygon, Marker, Callout } from "react-native-maps";
 import * as Location from "expo-location";
+import axios from 'axios';
+import { storage } from '../../Firebase';
+import { ref, uploadBytes, getDownloadURL } from 'firebase/storage';
+
+
+// import assets
 import CenturyCity from "../../assets/century-city2.png";
 import GriffithObservatory from "../../assets/griffith-observatory2.jpeg";
 import BruinBear from "../../assets/bruin-bear.jpg";
@@ -33,7 +40,7 @@ function MapScreen({ navigation }) {
     latitudeDelta: 0.6,
     longitudeDelta: 0.6,
   });
-  const [imageUri, setImageUri] = useState(null);
+  const [imageUrl, setImageUrl] = useState(null);
   const [isModalVisible, setModalVisible] = useState(false);
 
   //image upload external helper functions
@@ -47,6 +54,23 @@ function MapScreen({ navigation }) {
     })();
   }, []);
 
+   // Function to upload image to firebase
+   const uploadImageToFirebase = async (uri) => {
+    try {
+      const response = await fetch(uri);
+      const blob = await response.blob();
+      const fileRef = ref(storage, `images/${Date.now()}`); // Create a reference to 'images/fileName'
+      await uploadBytes(fileRef, blob);
+  
+      // Get the download URL
+      const downloadUrl = await getDownloadURL(fileRef);
+      return downloadUrl;
+    } catch (error) {
+      console.error('Error uploading image:', error);
+      throw error;
+    }
+  };
+
   const uploadImage = async () => {
     let result = await ImagePicker.launchImageLibraryAsync({
       mediaTypes: ImagePicker.MediaTypeOptions.Images,
@@ -56,24 +80,34 @@ function MapScreen({ navigation }) {
     });
 
     if (!result.canceled && result.assets) {
-      setImageUri(result.assets[0].uri);
-      toggleModal();
+      try {
+        const downloadUrl = await uploadImageToFirebase(result.assets[0].uri);
+        setImageUrl(downloadUrl); // Save the URL of the uploaded image
+        toggleModal();
+      } catch (error) {
+        alert('Error uploading image: ' + error.message);
+      }
     }
   };
-  //backend helper functions for create post
-  const [imageUrl, setImageUrl] = useState(null);
+
+
+
+  // CREATE POST SCREEN LOGIC
+  // state declarations for create post
   const [caption, setCaption] = useState(null);
   const [location, setLocation] = useState(null);
 
   const onPostSubmit = () => {
     // function to get image url from uplaoded image
-    // setImageUrl(uploadImageToStorage());
-
-    // function to get coordinated from location string
-    // const coordinates = getCoord(location);
 
     // function to retrieve id of user
     // const author = getUserID();
+    const author = "abc123";  // FIXME CHANGE TO GET USER ID FROM MONGODB
+
+    const coordinates = { 
+      latitude: region.latitude, 
+      longitude: region.longitude, 
+    };
 
     const postContent = {
       imageUrl,
@@ -89,13 +123,12 @@ function MapScreen({ navigation }) {
   const createPost = async (postContent) => {
     try {
       const response = await axios.post(
-        "http://172.20.10.10:3000/posts",
+        "http://172.20.10.6:3000/posts",       // PUT LOCAL NETWORK IP ADDRESS HERE
         postContent
       );
 
       Alert.alert("Success", "Post created successfully");
       setCaption(""); // Reset caption input after successful post
-      // Handle additional tasks after successful post creation
     } catch (error) {
       // Handle the error case
       console.error(
@@ -535,7 +568,8 @@ function MapScreen({ navigation }) {
       )}
       <TouchableOpacity style={styles.button} onPress={uploadImage}>
         <Text style={styles.buttonText}>+</Text>
-      </TouchableOpacity>
+      </TouchableOpacity> 
+      {/* MODAL FOR CREATE A POST SCREEN */}
       <Modal
         animationType="slide"
         visible={isModalVisible}
@@ -558,7 +592,7 @@ function MapScreen({ navigation }) {
               }}
               onPress={(data, details = null) => {
                 // 'details' is provided when fetchDetails = true
-                console.log(data, details);
+                setLocation(data.description);
                 setRegion({
                   latitude: details.geometry.location.lat,
                   longitude: details.geometry.location.lng,
@@ -590,8 +624,8 @@ function MapScreen({ navigation }) {
           </View>
 
           <View style={styles.imageContainer}>
-            {imageUri ? (
-              <Image source={{ uri: imageUri }} style={styles.image} />
+            {imageUrl ? (
+              <Image source={{ uri: imageUrl }} style={styles.image} />
             ) : (
               <View style={styles.placeholderImage} />
             )}
@@ -603,9 +637,13 @@ function MapScreen({ navigation }) {
             <TextInput
               style={[styles.input, styles.captionInput]}
               placeholder="Caption"
+              value={caption}
+              onChangeText={setCaption}
             />
           </KeyboardAvoidingView>
-          <TouchableOpacity style={styles.instagramButton}>
+          <TouchableOpacity 
+          style={styles.instagramButton}
+          onPress={onPostSubmit}>
             <Text style={styles.instagramButtonText}>Share</Text>
           </TouchableOpacity>
         </View>
