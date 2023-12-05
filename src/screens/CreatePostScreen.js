@@ -3,16 +3,39 @@ import { View, TextInput, Button, StyleSheet, Alert } from 'react-native';
 import axios from 'axios';
 
 const CreatePostScreen = () => {
-  const [caption, setCaption] = useState('');
 
-  const testData = {
-    caption: 'test test'
-  }
+  // Configuring States
+  const [imageUrl, setImageUrl] = useState(null);
+  const [caption, setCaption] = useState(null);
+  const [location, setLocation] = useState(null);
 
-  const createPost = async () => {
+
+  const onPostSubmit = () => {
+
+    // function to get image url from uplaoded image
+    // setImageUrl(uploadImageToStorage());
+
+    // function to get coordinated from location string
+    // const coordinates = getCoord(location);
+
+    // function to retrieve id of user
+    // const author = getUserID();
+
+    const postContent = {
+      imageUrl,
+      caption,
+      location,
+      coordinates,
+      author
+    };
+
+    createPost(postContent)
+  };
+
+
+  const createPost = async (postContent) => {
     try {
-        const postData = { caption };
-        const response = await axios.post('http://172.20.10.2:3000/posts', testData);
+        const response = await axios.post('http://172.20.10.10:3000/posts', postContent);
       
         Alert.alert('Success', 'Post created successfully');
         setCaption(''); // Reset caption input after successful post

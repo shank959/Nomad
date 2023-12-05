@@ -3,7 +3,7 @@ const mongoose = require('mongoose');
 const cors = require('cors');
 
 
-
+// create express app
 const app = express()
 //middleware pasrsing JSON bodies
 app.use(cors());
@@ -18,37 +18,44 @@ mongoose.connect("mongodb+srv://Nomad:ExploreLA123@clusternomad.l4pqavm.mongodb.
 })
 .catch(err => console.error("Could not connect to MongoDB...", err));
 
-app.post('/test', (req, res) => {
-    res.send('POST request to /test');
-  });
 
 
-
-
-  const postSchema = new mongoose.Schema({
-    caption: String,
+// POST MODEL AND ROUTE
+const postSchema = new mongoose.Schema({
+    imageUrl: { type: String, required: true },
+    caption: { type: String, default: '' },
+    location: { type: String, required: true },
+    coordinates: { type: [Number], required: true },
+    createdAt: { type: Date, default: Date.now },
+    author: { type: mongoose.Schema.Types.ObjectID, ref: 'User', required: true }, // checkok
+    likes: { type: Number, default: 0 },
+    comments: { type: Number, default: 0 }
 });
 
 const Post = mongoose.model('posts', postSchema);
 
-
 app.post('/posts', (req, res) => {
-    // Validate request body
-    if (!req.body.caption) {
-        return res.status(400).json({ message: 'Caption is required' });
+    const { imageUrl, caption, location, coordinates, author } = req.body;
+    // Basic validation for required fields
+    if (!imageUrl || !location || !coordinates) {
+        return res.status(400).json({ message: 'Image, location, and coordinates are required' });
     }
-
-    // Creating a new post
-    const newPost = new Post({ caption: req.body.caption });
-
+    // Creating a new post with all fields
+    const newPost = new Post({
+        imageUrl,
+        caption,
+        location,
+        coordinates,
+        author  // need to code the functionality of taking the users id as the author
+    });
     // Saving the post to the database
     newPost.save()
         .then(savedPost => {
-            // Sending response back
+            // Sending response back with the saved post
             res.status(201).json(savedPost);
         })
         .catch(error => {
-            // Error handling
+            // Error handling for database save errors
             res.status(500).json({ message: error.message });
         });
 });
