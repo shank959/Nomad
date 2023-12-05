@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from "react";
+import React, { useState, useEffect, useCallback } from "react";
 import {StyleSheet, View, TouchableOpacity, Text, Image, Modal, TextInput,} from "react-native";
 import * as ImagePicker from "expo-image-picker";
 import { GooglePlacesAutocomplete } from "react-native-google-places-autocomplete";
@@ -195,31 +195,31 @@ function MapScreen({ navigation }) {
     const lngStep =
       (southeastCorner.longitude - northwestCorner.longitude) / gridColumns;
 
-    // Add the entire grid
-    gridPolygons.push({
-      key: `all-grid`,
-      coordinates: [
-        {
-          latitude: northwestCorner.latitude,
-          longitude: northwestCorner.longitude,
-        },
-        {
-          latitude: southeastCorner.latitude,
-          longitude: northwestCorner.longitude,
-        },
-        {
-          latitude: southeastCorner.latitude,
-          longitude: southeastCorner.longitude,
-        },
-        {
-          latitude: northwestCorner.latitude,
-          longitude: southeastCorner.longitude,
-        },
-      ],
-      fillColor: "transparent",
-      strokeColor: "transparent"
-      
-    });
+    // // Add the entire grid
+    // gridPolygons.push({
+    //   key: `all-grid`,
+    //   coordinates: [
+    //     {
+    //       latitude: northwestCorner.latitude,
+    //       longitude: northwestCorner.longitude,
+    //     },
+    //     {
+    //       latitude: southeastCorner.latitude,
+    //       longitude: northwestCorner.longitude,
+    //     },
+    //     {
+    //       latitude: southeastCorner.latitude,
+    //       longitude: southeastCorner.longitude,
+    //     },
+    //     {
+    //       latitude: northwestCorner.latitude,
+    //       longitude: southeastCorner.longitude,
+    //     },
+    //   ],
+    //   fillColor: "transparent",
+    //   strokeColor: "transparent",
+    //   strokeWidth: 0,
+    // });
 
     for (let i = 0; i < gridRows; i++) {
       for (let j = 0; j < gridColumns; j++) {
@@ -248,9 +248,12 @@ function MapScreen({ navigation }) {
 
         gridPolygons.push({
           key: `row-${i}-col-${j}`,
+          rowIndex: i,
+          columnIndex: j,
           coordinates: cellCoordinates,
           fillColor: shouldLightenCell(i, j) ? "rgba(0, 0, 0, 0.3)" : "transparent",
-          strokeColor: "black"
+          strokeColor: "black",
+          strokeWidth: 1
         });
       } 
     }
@@ -350,6 +353,22 @@ function MapScreen({ navigation }) {
 
     return false; // Include all cells by default
   }
+
+  const updateGridCell = (rowIndex, columnIndex, newProperties) => {
+    setGrid(currentGrid => currentGrid.map(cell => {
+      if (cell.rowIndex === rowIndex && cell.columnIndex === columnIndex) {
+        return { ...cell, ...newProperties };
+      }
+      return cell;
+    }));
+  };
+
+  const handlePress = useCallback((rowIndex, columnIndex) => {
+    updateGridCell(rowIndex, columnIndex, { fillColor: "red" });
+    console.log(`clicked ${rowIndex} ${columnIndex}`)
+  }, [updateGridCell]);
+
+
   const calloutStyles = StyleSheet.create({
     container: {
       flexDirection: 'row',
@@ -427,7 +446,9 @@ function MapScreen({ navigation }) {
             key={cell.key}
             coordinates={cell.coordinates}
             fillColor={cell.fillColor}
-            strokeColor={cell.strokeColor}
+            strokeWidth={cell.strokeWidth}
+            tappable={true}
+            onPress={() => handlePress(cell.rowIndex, cell.columnIndex)}
           />
         ))}
         {markers.map((marker) => (
