@@ -2,7 +2,6 @@ import React, { useState, useEffect } from "react";
 import {StyleSheet, View, TouchableOpacity, Text, Image, Modal, TextInput,} from "react-native";
 import * as ImagePicker from "expo-image-picker";
 import { GooglePlacesAutocomplete } from "react-native-google-places-autocomplete";
-import React, { useState, useEffect } from "react";
 import MapView, { Polygon, Marker, Callout } from "react-native-maps";
 import * as Location from 'expo-location';
 import CenturyCity from '../../assets/century-city2.png';
@@ -423,14 +422,21 @@ function MapScreen({ navigation }) {
         customMapStyle={darkMode}
         showsUserLocation={true}
       >
-      {grid.map(cell => (
-        <Polygon 
-          key={cell.key}
-          coordinates={cell.coordinates}
-          fillColor={cell.fillColor}
-          strokeColor={cell.strokeColor}
-        />
-      ))}
+        {grid.map((cell) => (
+          <Polygon
+            key={cell.key}
+            coordinates={cell.coordinates}
+            fillColor={cell.fillColor}
+            strokeColor={cell.strokeColor}
+          />
+        ))}
+        {markers.map((marker) => (
+          <Marker
+            key={marker.id}
+            coordinate={marker.coordinate}
+            onPress={() => setSelectedMarker(marker)}
+          />
+        ))}
       </MapView>
       {selectedMarker && (
         <View style={customCalloutStyles.container}>
@@ -439,14 +445,72 @@ function MapScreen({ navigation }) {
             style={customCalloutStyles.image}
           />
           <View style={customCalloutStyles.textContainer}>
-            <Text style={customCalloutStyles.title}>{selectedMarker.title}</Text>
-            <Text style={customCalloutStyles.description}>{selectedMarker.description}</Text>
+            <Text style={customCalloutStyles.title}>
+              {selectedMarker.title}
+            </Text>
+            <Text style={customCalloutStyles.description}>
+              {selectedMarker.description}
+            </Text>
           </View>
           <TouchableOpacity onPress={() => setSelectedMarker(null)}>
             <Text>Close</Text>
           </TouchableOpacity>
         </View>
       )}
+      <TouchableOpacity style={styles.button} onPress={uploadImage}>
+        <Text style={styles.buttonText}>+</Text>
+      </TouchableOpacity>
+      <Modal
+        animationType="slide"
+        visible={isModalVisible}
+        onRequestClose={toggleModal}
+      >
+        <View style={styles.modalContainer}>
+          <View style={styles.modalHeader}>
+            <Text style={styles.headerText}>New Post</Text>
+          </View>
+          <TouchableOpacity onPress={toggleModal} style={styles.closeButton}>
+            <Text style={styles.closeButtonText}>X</Text>
+          </TouchableOpacity>
+          <View style={styles.imageContainer}>
+            {imageUri ? (
+              <Image source={{ uri: imageUri }} style={styles.image} />
+            ) : (
+              <View style={styles.placeholderImage} />
+            )}
+          </View>
+          <View style={styles.inputContainer}>
+            <TextInput style={styles.input} placeholder="Caption" />
+            <GooglePlacesAutocomplete
+              placeholder="Search"
+              fetchDetails={true}
+              GooglePlacesSearchQuery={{
+                rankby: "distance",
+              }}
+              onPress={(data, details = null) => {
+                // 'details' is provided when fetchDetails = true
+                console.log(data, details);
+                setRegion({
+                  latitude: details.geometry.location.lat,
+                  longitude: details.geometry.location.lng,
+                  latitudeDelta: 0.6,
+                  longitudeDelta: 0.6,
+                });
+              }}
+              query={{
+                key: "APIKEY",
+                language: "en",
+                components: "country:us",
+                radius: 40000,
+                location: "${region.latitude}, ${region.longitude}",
+              }}
+            />
+          </View>
+          <TouchableOpacity style={styles.instagramButton}>
+            <Text style={styles.instagramButtonText}>Share</Text>
+          </TouchableOpacity>
+        </View>
+      </Modal>
     </View>
   );
 }
