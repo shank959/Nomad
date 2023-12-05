@@ -1,20 +1,30 @@
 import React, { useState, useEffect } from "react";
-import {StyleSheet, View, TouchableOpacity, Text, Image, Modal, TextInput,} from "react-native";
+import {
+  StyleSheet,
+  View,
+  TouchableOpacity,
+  Text,
+  Image,
+  Modal,
+  TextInput,
+  KeyboardAvoidingView,
+  Platform,
+} from "react-native";
 import * as ImagePicker from "expo-image-picker";
 import { GooglePlacesAutocomplete } from "react-native-google-places-autocomplete";
 import MapView, { Polygon, Marker, Callout } from "react-native-maps";
-import * as Location from 'expo-location';
-import CenturyCity from '../../assets/century-city2.png';
-import GriffithObservatory from '../../assets/griffith-observatory2.jpeg';
-import BruinBear from '../../assets/bruin-bear.jpg';
-import CryptoArena from '../../assets/crypto-arena2.jpeg';
-import DodgersStadium from '../../assets/dodgers-stadium.jpeg';
-import GrandCentralMarket from '../../assets/grand-central-market.jpeg';
-import HollywoodSign from '../../assets/hollywood-sign2.jpeg';
-import RoccosTavern from '../../assets/roccos-tavern2.jpeg';
-import SantaMonicaPier from '../../assets/santa-monica-pier2.jpeg';
-import UniversalStudios from '../../assets/universal-studios.jpeg';
-import WalkOfFame from '../../assets/walk-of-fame2.jpeg';
+import * as Location from "expo-location";
+import CenturyCity from "../../assets/century-city2.png";
+import GriffithObservatory from "../../assets/griffith-observatory2.jpeg";
+import BruinBear from "../../assets/bruin-bear.jpg";
+import CryptoArena from "../../assets/crypto-arena2.jpeg";
+import DodgersStadium from "../../assets/dodgers-stadium.jpeg";
+import GrandCentralMarket from "../../assets/grand-central-market.jpeg";
+import HollywoodSign from "../../assets/hollywood-sign2.jpeg";
+import RoccosTavern from "../../assets/roccos-tavern2.jpeg";
+import SantaMonicaPier from "../../assets/santa-monica-pier2.jpeg";
+import UniversalStudios from "../../assets/universal-studios.jpeg";
+import WalkOfFame from "../../assets/walk-of-fame2.jpeg";
 
 function MapScreen({ navigation }) {
   const [region, setRegion] = useState({
@@ -26,6 +36,7 @@ function MapScreen({ navigation }) {
   const [imageUri, setImageUri] = useState(null);
   const [isModalVisible, setModalVisible] = useState(false);
 
+  //image upload external helper functions
   useEffect(() => {
     (async () => {
       const { status } =
@@ -49,6 +60,55 @@ function MapScreen({ navigation }) {
       toggleModal();
     }
   };
+  //backend helper functions for create post
+  const [imageUrl, setImageUrl] = useState(null);
+  const [caption, setCaption] = useState(null);
+  const [location, setLocation] = useState(null);
+
+  const onPostSubmit = () => {
+    // function to get image url from uplaoded image
+    // setImageUrl(uploadImageToStorage());
+
+    // function to get coordinated from location string
+    // const coordinates = getCoord(location);
+
+    // function to retrieve id of user
+    // const author = getUserID();
+
+    const postContent = {
+      imageUrl,
+      caption,
+      location,
+      coordinates,
+      author,
+    };
+
+    createPost(postContent);
+  };
+
+  const createPost = async (postContent) => {
+    try {
+      const response = await axios.post(
+        "http://172.20.10.10:3000/posts",
+        postContent
+      );
+
+      Alert.alert("Success", "Post created successfully");
+      setCaption(""); // Reset caption input after successful post
+      // Handle additional tasks after successful post creation
+    } catch (error) {
+      // Handle the error case
+      console.error(
+        "Error creating post:",
+        error.response ? error.response.data : error
+      );
+      Alert.alert(
+        "Error",
+        "Failed to create post: " +
+          (error.response ? error.response.data : error.message)
+      );
+    }
+  };
 
   const toggleModal = () => {
     setModalVisible(!isModalVisible);
@@ -64,30 +124,33 @@ function MapScreen({ navigation }) {
     let locationSubscription;
 
     const subscribeToLocationUpdates = async () => {
-        let { status } = await Location.requestForegroundPermissionsAsync();
-        if (status !== 'granted') {
-            console.error('Permission to access location was denied');
-            return;
-        }
+      let { status } = await Location.requestForegroundPermissionsAsync();
+      if (status !== "granted") {
+        console.error("Permission to access location was denied");
+        return;
+      }
 
-        locationSubscription = await Location.watchPositionAsync({
-            accuracy: Location.Accuracy.High,
-            timeInterval: 1500, // Update every 15000 milliseconds (15 seconds)
-            distanceInterval: 50 , // Or specify distance in meters
-        }, (location) => {
-            console.log(location);
-            // Do something with the updated location...
-        });
+      locationSubscription = await Location.watchPositionAsync(
+        {
+          accuracy: Location.Accuracy.High,
+          timeInterval: 1500, // Update every 15000 milliseconds (15 seconds)
+          distanceInterval: 50, // Or specify distance in meters
+        },
+        (location) => {
+          console.log(location);
+          // Do something with the updated location...
+        }
+      );
     };
 
     subscribeToLocationUpdates();
 
     return () => {
-        if (locationSubscription) {
-            locationSubscription.remove();
-        }
+      if (locationSubscription) {
+        locationSubscription.remove();
+      }
     };
-}, []);
+  }, []);
 
   const darkMode = [
     // Define your dark map style here (as mentioned in the previous example)
@@ -187,7 +250,7 @@ function MapScreen({ navigation }) {
     const gridRows = 12;
     const gridColumns = 15;
 
-    const northwestCorner = { latitude: 34.215635, longitude: -118.873252};
+    const northwestCorner = { latitude: 34.215635, longitude: -118.873252 };
     const southeastCorner = { latitude: 33.701912, longitude: -118.11257 };
 
     const latStep =
@@ -217,8 +280,7 @@ function MapScreen({ navigation }) {
         },
       ],
       fillColor: "transparent",
-      strokeColor: "transparent"
-      
+      strokeColor: "transparent",
     });
 
     for (let i = 0; i < gridRows; i++) {
@@ -249,10 +311,12 @@ function MapScreen({ navigation }) {
         gridPolygons.push({
           key: `row-${i}-col-${j}`,
           coordinates: cellCoordinates,
-          fillColor: shouldLightenCell(i, j) ? "rgba(0, 0, 0, 0.3)" : "transparent",
-          strokeColor: "black"
+          fillColor: shouldLightenCell(i, j)
+            ? "rgba(0, 0, 0, 0.3)"
+            : "transparent",
+          strokeColor: "black",
         });
-      } 
+      }
     }
     setGrid(gridPolygons);
   };
@@ -269,7 +333,8 @@ function MapScreen({ navigation }) {
       id: 2,
       coordinate: { latitude: 34.0089, longitude: -118.4974 }, // Santa Monica Pier
       title: "Santa Monica Pier",
-      description: "Santa Monica Beach's famous pier that includes an amusement park.",
+      description:
+        "Santa Monica Beach's famous pier that includes an amusement park.",
       image: SantaMonicaPier,
     },
     {
@@ -312,7 +377,7 @@ function MapScreen({ navigation }) {
       coordinate: { latitude: 34.0736, longitude: -118.24 }, // Dodgers Stadium
       title: "Dodgers Stadium",
       description: "The home stadium of the Los Angeles Dodgers.",
-      image: DodgersStadium
+      image: DodgersStadium,
     },
     {
       id: 9,
@@ -325,38 +390,49 @@ function MapScreen({ navigation }) {
       id: 10,
       coordinate: { latitude: 34.0586, longitude: -118.4175 }, // Century City
       title: "Century City Mall",
-      description: "120,000 square meter three-level shopping mall in Century City.",
+      description:
+        "120,000 square meter three-level shopping mall in Century City.",
       image: CenturyCity,
     },
     {
       id: 11,
       coordinate: { latitude: 34.061909, longitude: -118.447647 }, // Rocco's Tavern
       title: "Rocco's Tavern",
-      description: "A popular sports bar and restaurant that UCLA students frequent.",
+      description:
+        "A popular sports bar and restaurant that UCLA students frequent.",
       image: RoccosTavern,
     },
   ];
 
-
   function shouldExcludeCell(rowIndex, columnIndex) {
     // Define the logic to exclude cells (if any)
-    if (columnIndex >= 0 && columnIndex <= 3 && rowIndex >= 0 && rowIndex <= 3) return true;
-    if (columnIndex >= 0 && columnIndex <= 6 && rowIndex >= 5 && rowIndex <= 12) return true;
+    if (columnIndex >= 0 && columnIndex <= 3 && rowIndex >= 0 && rowIndex <= 3)
+      return true;
+    if (columnIndex >= 0 && columnIndex <= 6 && rowIndex >= 5 && rowIndex <= 12)
+      return true;
     if (columnIndex >= 0 && columnIndex <= 6 && rowIndex == 2) return true;
     if (columnIndex >= 0 && columnIndex <= 5 && rowIndex == 3) return true;
-    if (columnIndex >= 0 && columnIndex <= 7 && rowIndex >= 6 && rowIndex <= 12) return true;
-    if (columnIndex >= 0 && columnIndex <= 8 && rowIndex >= 8 && rowIndex <= 12) return true;
-    if (columnIndex >= 12 && columnIndex <= 15 && rowIndex >= 11 && rowIndex <= 12) return true;
+    if (columnIndex >= 0 && columnIndex <= 7 && rowIndex >= 6 && rowIndex <= 12)
+      return true;
+    if (columnIndex >= 0 && columnIndex <= 8 && rowIndex >= 8 && rowIndex <= 12)
+      return true;
+    if (
+      columnIndex >= 12 &&
+      columnIndex <= 15 &&
+      rowIndex >= 11 &&
+      rowIndex <= 12
+    )
+      return true;
 
     return false; // Include all cells by default
   }
   const calloutStyles = StyleSheet.create({
     container: {
-      flexDirection: 'row',
+      flexDirection: "row",
       padding: 10,
       borderRadius: 10,
-      backgroundColor: 'rgba(255, 255, 255, 0.8)',
-      borderColor: 'black',
+      backgroundColor: "rgba(255, 255, 255, 0.8)",
+      borderColor: "black",
       borderWidth: 3,
       elevation: 4,
     },
@@ -368,10 +444,10 @@ function MapScreen({ navigation }) {
     },
     textContainer: {
       flex: 1,
-      justifyContent: 'center',
+      justifyContent: "center",
     },
     title: {
-      fontWeight: 'bold',
+      fontWeight: "bold",
       fontSize: 16,
     },
     description: {
@@ -382,15 +458,15 @@ function MapScreen({ navigation }) {
 
   const customCalloutStyles = StyleSheet.create({
     container: {
-      position: 'absolute',
-      bottom: '20%',
-      left: '5%',
-      right: '5%',
-      backgroundColor: 'rgba(255, 255, 255, 0.8)',
+      position: "absolute",
+      bottom: "20%",
+      left: "5%",
+      right: "5%",
+      backgroundColor: "rgba(255, 255, 255, 0.8)",
       borderRadius: 10,
       borderWidth: 4,
-      borderColor: 'black',
-      flexDirection: 'row',
+      borderColor: "black",
+      flexDirection: "row",
       padding: 10,
     },
     image: {
@@ -401,10 +477,10 @@ function MapScreen({ navigation }) {
     },
     textContainer: {
       flex: 1,
-      justifyContent: 'center',
+      justifyContent: "center",
     },
     title: {
-      fontWeight: 'bold',
+      fontWeight: "bold",
       fontSize: 16,
     },
     description: {
@@ -472,17 +548,10 @@ function MapScreen({ navigation }) {
           <TouchableOpacity onPress={toggleModal} style={styles.closeButton}>
             <Text style={styles.closeButtonText}>X</Text>
           </TouchableOpacity>
-          <View style={styles.imageContainer}>
-            {imageUri ? (
-              <Image source={{ uri: imageUri }} style={styles.image} />
-            ) : (
-              <View style={styles.placeholderImage} />
-            )}
-          </View>
           <View style={styles.inputContainer}>
-            <TextInput style={styles.input} placeholder="Caption" />
             <GooglePlacesAutocomplete
-              placeholder="Search"
+              placeholder="Location"
+              placeHolderTextColor="black"
               fetchDetails={true}
               GooglePlacesSearchQuery={{
                 rankby: "distance",
@@ -498,14 +567,44 @@ function MapScreen({ navigation }) {
                 });
               }}
               query={{
-                key: "APIKEY",
+                key: "AIzaSyCU1a09dgTwm85Of0P9WoYlkO-OqpwgGh0",
                 language: "en",
                 components: "country:us",
                 radius: 40000,
                 location: "${region.latitude}, ${region.longitude}",
               }}
+              styles={{
+                container: {
+                  position: "absolute",
+                  top: 0,
+                  left: 0,
+                  right: 0,
+                  zIndex: 1, // Ensure the Autocomplete is above the map
+                  marginTop: 5,
+                },
+                textInput: {
+                  color: "black",
+                },
+              }}
             />
           </View>
+
+          <View style={styles.imageContainer}>
+            {imageUri ? (
+              <Image source={{ uri: imageUri }} style={styles.image} />
+            ) : (
+              <View style={styles.placeholderImage} />
+            )}
+          </View>
+          <KeyboardAvoidingView
+            behavior={Platform.OS === "ios" ? "padding" : "height"}
+            style={styles.inputContainer}
+          >
+            <TextInput
+              style={[styles.input, styles.captionInput]}
+              placeholder="Caption"
+            />
+          </KeyboardAvoidingView>
           <TouchableOpacity style={styles.instagramButton}>
             <Text style={styles.instagramButtonText}>Share</Text>
           </TouchableOpacity>
@@ -549,7 +648,7 @@ const styles = StyleSheet.create({
     height: 400,
     justifyContent: "center",
     alignItems: "center",
-    marginTop: 20,
+    marginTop: 35,
   },
   image: {
     width: "100%",
@@ -601,7 +700,8 @@ const styles = StyleSheet.create({
   },
   inputContainer: {
     width: "80%",
-    marginBottom: 20,
+    marginTop: 15,
+    marginBottom: 40,
     zIndex: 1,
   },
   input: {
@@ -626,6 +726,9 @@ const styles = StyleSheet.create({
     color: "white",
     fontSize: 16,
     fontWeight: "bold",
+  },
+  captionInput: {
+    width: "100%", // Make the input take the full width of the parent container
   },
 });
 
