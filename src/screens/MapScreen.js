@@ -537,7 +537,7 @@ function MapScreen({ navigation }) {
 
   const sendDataToServer = async () => {
     try {
-      const response = await axios.post('http://localhost:3000/test', {
+      const response = await axios.post('http://172.20.10.2:3000/test', {
         // Your data here
         key: 'value'
       });
