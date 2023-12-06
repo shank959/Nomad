@@ -6,7 +6,7 @@ import MapView, { Polygon, Marker, Callout } from "react-native-maps";
 import * as Location from "expo-location";
 import axios from 'axios';
 import { storage } from '../../Firebase';
-import * as turf from '@turf/turf';
+// import * as turf from '@turf/turf';
 import { ref, uploadBytes, getDownloadURL } from 'firebase/storage';
 import { useUser } from "../../UserContext";
 

@@ -1,11 +1,13 @@
 import React, { useState } from "react";
 import { StyleSheet, View, Text, TextInput, TouchableOpacity, Image } from "react-native";
+import { useUser } from "../../UserContext";
 import axios from 'axios';
 
 export default function LoginScreen({ navigation }) {
   const [username, setUsername] = useState("");
   const [password, setPassword] = useState("");
   const [error, setError] = useState('');
+  const { setUserId } = useUser();
 
   const handleLogin = async () => {
     console.log("button clicked")
@@ -15,6 +17,9 @@ export default function LoginScreen({ navigation }) {
         password
       });
       // Handle response, e.g., navigate to another screen, store the token, etc.
+      if (response.data.userId) {
+        setUserId(response.data.userId);
+      }
       console.log(response.data);
       navigation.navigate("MainTabScreen", { screen: "MapScreen" });
     } catch (err) {
@@ -22,8 +27,6 @@ export default function LoginScreen({ navigation }) {
       console.log(`${error}`)
     }
   };
-
-
 
 
   const createAccount = () => {

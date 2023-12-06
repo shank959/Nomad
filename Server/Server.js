@@ -32,13 +32,13 @@ const UsersModel = mongoose.model('Users', UsersSchema);
 app.post('/create_user', async (req, res) => {
     try {
         const { email, username, password } = req.body;
-
+        
         // Check if user exists
         let existingUser = await UsersModel.findOne({ email });
         if (existingUser){
             return res.status(400).send({ error: 'Username or email already exists'})
         }
-
+        
         // Hash the password
         const hashedPassword = await bcrypt.hash(password, saltRounds);
 
@@ -49,7 +49,7 @@ app.post('/create_user', async (req, res) => {
             password: hashedPassword // Store the hashed password
         });
         await user.save();
-        res.status(201).send({ message: 'User successfully created!' });
+        res.status(201).send({ message: 'User successfully created!', userId: user._id });
     } catch(error) {
         console.error(error);
         res.status(500).send({ error: 'Error creating user' });
@@ -68,7 +68,7 @@ app.post('/login_user', async (req, res) => {
             return res.status(400).send({ error: 'Invalid username or password.'});
         }
         //successful
-        res.send({ message: 'Login successful' });
+        res.send({ message: 'Login successful', userId: user._id });
     } catch(error) {
         res.status(500).send({ error: 'Error logging in'});
     }
