@@ -5,7 +5,7 @@ const cors = require('cors');
 
 // create express app
 const app = express();
-//middleware pasrsing JSON bodies
+//middleware parsing JSON bodies
 app.use(cors());
 app.use(express.json());
 
@@ -117,6 +117,19 @@ app.post('/posts', (req, res) => {
             // Error handling for database save errors
             res.status(500).json({ message: error.message });
         });
+});
+
+// search query endpoint
+app.post('/search', async (req, res) => {
+    try {
+        // Update the query to match the structure of your UsersModel
+        const users = await UsersModel.find({ 
+            username: { $regex: req.body.query, $options: 'i' } 
+        });
+        res.json({ users });
+    } catch (error) {
+        res.status(500).send(error);
+    }
 });
 
 
