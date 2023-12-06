@@ -8,7 +8,8 @@ const app = express();
 //middleware parsing JSON bodies
 app.use(cors());
 app.use(express.json());
-
+const bcrypt = require('bcrypt');
+const saltRounds = 10;
 
 //Use Mongoose to connect to MongoDB
 mongoose.connect("mongodb+srv://Nomad:ExploreLA123@clusternomad.l4pqavm.mongodb.net/test")
@@ -31,22 +32,27 @@ const UsersModel = mongoose.model('Users', UsersSchema);
 app.post('/create_user', async (req, res) => {
     try {
         const { email, username, password } = req.body;
-        //check if exists
-        let existingUser = await UsersModel.findOne({ email: req.body.email });
+
+        // Check if user exists
+        let existingUser = await UsersModel.findOne({ email });
         if (existingUser){
             return res.status(400).send({ error: 'Username or email already exists'})
         }
-        //else we want to create a new user document into our database"
-        let user = new UsersModel({ email: req.body.email,
-                                    username: req.body.username,
-                                    password: req.body.password });
-        await user.save()
-        res.status(201).send({ message: 'User successfully created!'});
-    }
 
-    catch(error){
+        // Hash the password
+        const hashedPassword = await bcrypt.hash(password, saltRounds);
+
+        // Create a new user document in the database
+        let user = new UsersModel({ 
+            email,
+            username,
+            password: hashedPassword // Store the hashed password
+        });
+        await user.save();
+        res.status(201).send({ message: 'User successfully created!' });
+    } catch(error) {
         console.error(error);
-        res.status(500).send({ error: 'Error creating user'});
+        res.status(500).send({ error: 'Error creating user' });
     }
 });
 
@@ -119,6 +125,7 @@ app.post('/posts', (req, res) => {
         });
 });
 
+
 // search query endpoint
 app.post('/search', async (req, res) => {
     try {
@@ -132,6 +139,51 @@ app.post('/search', async (req, res) => {
     }
 });
 
+app.get('/posts', async (req, res) => { // server get for posts
+    try {
+        const posts = await Post.find({});
+        res.status(200).json(posts); // Changed status code to 200 for successful GET
+    } catch (error) {
+        res.status(500).json({ message: error.message }); // Changed status code to 500 for server error
+    }
+});
+
+app.get('/posts', async (req, res) => { // server get for posts
+    try {
+        const posts = await Post.find({});
+        res.status(200).json(posts); // Changed status code to 200 for successful GET
+    } catch (error) {
+        res.status(500).json({ message: error.message }); // Changed status code to 500 for server error
+    }
+});
+
+
+
+
+
+app.post('/test', (req, res) => {
+    console.log('Received data:', req.body);
+    res.status(200).json({ message: 'Data received successfully!' });
+  });
+
+  app.post('/login', async (req, res) => {
+    try {
+        const { username, password } = req.body;
+        const user = await UsersModel.findOne({ username: req.body.username });
+
+        if (user && await bcrypt.compare(password, user.password)) {
+            // Passwords match
+            // Proceed with login logic (e.g., generating a token)
+            res.status(201).send({ message: 'User successfully created!' });
+        } else {
+            // Passwords do not match or user does not exist
+            res.status(401).send({ error: 'Invalid credentials' });
+        }
+    } catch (error) {
+        console.error(error);
+        res.status(500).send({ error: 'Error logging in' });
+    }
+});
 
 const port = process.env.PORT || 3000;
 app.listen(port, () => {console.log(`Server running on port ${port}`);});

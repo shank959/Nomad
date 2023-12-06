@@ -5,28 +5,22 @@ import axios from 'axios';
 export default function LoginScreen({ navigation }) {
   const [username, setUsername] = useState("");
   const [password, setPassword] = useState("");
+  const [error, setError] = useState('');
 
-  const handleLogin = () => {
-    const loginData = {
-      username: username,
-      password: password,
-    };
-
-    axios
-      .post("http://172.20.10.2:3000/Users", loginData)
-      .then((response) => {
-        if(response.data.message === 'Login Successful'){
-          navigation.navigate("MainTabScreen", { screen: "MapScreen" });
-        } else {
-          // Display an error message or handle unsuccessful login
-          alert("Invalid credentials. Please try again.");
-        }
-        }
-      )
-      .catch((error) => {
-        console.error(error);
-        alert('An error occurred while logging in. Please Try Again.');
+  const handleLogin = async () => {
+    console.log("button clicked")
+    try {
+      const response = await axios.post('http://localhost:3000/login', {
+        username,
+        password
       });
+      // Handle response, e.g., navigate to another screen, store the token, etc.
+      console.log(response.data);
+      navigation.navigate("MainTabScreen", { screen: "MapScreen" });
+    } catch (err) {
+      setError(err.response?.data?.error || 'Error logging in');
+      console.log(`${error}`)
+    }
   };
 
 
