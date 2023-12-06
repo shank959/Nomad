@@ -2,9 +2,15 @@ import React from 'react';
 import { View, Text, Image, StyleSheet, TouchableOpacity } from 'react-native';
 import { Ionicons, AntDesign, FontAwesome, FontAwesome5, Feather } from '@expo/vector-icons';
 
-const PostRowView = () => {
+const PostRowView = ({post}) => {
   // Arrow Functions to handle button presses defined here
-
+  const {
+    imageUrl,
+    caption,
+    location,
+    coordinates,
+    author,
+  } = post;
   return (
     <View style={styles.container}>
       <View style={styles.header}>
@@ -14,21 +20,20 @@ const PostRowView = () => {
         />
         <View style={styles.profileDetails}>
           <View style={styles.nameRow}>
-            <Text style={styles.boldText}>Shan Kunzru</Text>
-            <Text style={styles.grayText}>@shankunzru</Text>
+            <Text style={styles.boldText}>@{post.author}</Text>
             <Text style={styles.grayText}>16h</Text>
           </View>
           <TouchableOpacity onPress={() => {/* view location button action */}}>
             <View style={styles.locationRow}>
               <Ionicons name="location-sharp" size={16} color="black" />
-              <Text style={{marginLeft: 3}}>San Andreas Hospital, California</Text>
+              <Text style={{marginLeft: 3}}>{post.location}</Text>
             </View>
           </TouchableOpacity>
         </View>
       </View>
 
       <Image
-        source={require('../../assets/post-photo.jpg')}
+        source={{uri: post.imageUrl}}
         style={styles.postImage}
       />
 

@@ -20,16 +20,9 @@ const FeedScreen = () => {
     fetchPosts();
   }, []); // ensures effect runs once, after initial render
 
-  // Create an array of dummy data to represent the posts
-  // const postData = Array.from({ length: 20 }, (_, index) => index + 1);
-
   // Render each PostRowView in a FlatList
   const renderItem = ({ item }) => ( // rudimentary render for now
-    <Image
-      source={{ uri: item.imageUrl }}
-      style={styles.image}
-      key={item.imageUrl}
-    />
+    <PostRowView post={item} />
   );
 
   return (
@@ -37,7 +30,7 @@ const FeedScreen = () => {
         <FlatList
           data={postData}
           renderItem={renderItem}
-          keyExtractor={(item) => item.toString()}
+          keyExtractor={(item) => item._id.toString()}
       // Adding extra props for performance optimization
       // Remove comments below for better performance in large lists
       // initialNumToRender={10} // Adjust the number to render only a few items on initial mount

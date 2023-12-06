@@ -110,7 +110,7 @@ function MapScreen({ navigation }) {
   const createPost = async (postContent) => {
     try {
       const response = await axios.post(
-        "http://localhost:3000/posts",       // PUT LOCAL NETWORK IP ADDRESS HERE
+        "http://172.20.10.2:3000/posts", // PUT LOCAL NETWORK IP ADDRESS HERE
         postContent
       );
 
@@ -610,7 +610,12 @@ function MapScreen({ navigation }) {
             <Text style={styles.headerText}>New Post</Text>
           </View>
           <TouchableOpacity onPress={toggleModal} style={styles.closeButton}>
-            <AntDesign name="close" size={24} color="white" style={styles.closeIcon}/>
+            <AntDesign
+              name="close"
+              size={24}
+              color="white"
+              style={styles.closeIcon}
+            />
           </TouchableOpacity>
           <View style={styles.inputContainer}>
             <FontAwesome5
@@ -640,7 +645,7 @@ function MapScreen({ navigation }) {
                 });
               }}
               query={{
-                key: "AIzaSyCU1a09dgTwm85Of0P9WoYlkO-OqpwgGh0",
+                key: "AIzaSyD58-uL1gyPimM8hn1lu6pb_Sw_ZDgYVno",
                 language: "en",
                 components: "country:us",
                 radius: 40000,

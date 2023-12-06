@@ -18,7 +18,7 @@ const FriendsPage = () => {
             setSearchResults([]);
         } else {
             try {
-                const response = await fetch('http://172.20.10.3:3000/search', {
+                const response = await fetch('http://172.20.10.2:3000/search', {
                     method: 'POST',
                     headers: {
                         'Content-Type': 'application/json',
