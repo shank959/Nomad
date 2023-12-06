@@ -15,9 +15,13 @@ export default function CreateAccountScreen({ navigation }) {
   const [password, setPassword] = useState("");
   const [message, setMessage] = useState(""); // Add a state for the message
 
+  const navigateToHome = () => {
+    navigation.navigate("LoginScreen");
+  };
+
   const handleCreateAccount = async () => { // Make this function async
     try {
-      const response = await axios.post('http://localhost:3000/create_user', {
+      const response = await axios.post('http://172.20.10.2:3000/create_user', {
         email,
         username,
         password
@@ -29,6 +33,9 @@ export default function CreateAccountScreen({ navigation }) {
       console.error('Error creating user:', error.response?.data?.error || error.message);
       setMessage(error.response?.data?.error || 'Error creating user');
     }
+
+
+
   };
 
 
@@ -59,6 +66,9 @@ export default function CreateAccountScreen({ navigation }) {
       />
       <TouchableOpacity style={styles.button} onPress={handleCreateAccount}>
         <Text style={styles.buttonText}>Create Account</Text>
+      </TouchableOpacity>
+      <TouchableOpacity style={styles.button} onPress={navigateToHome}>
+        <Text style={styles.buttonText}>Homepage</Text>
       </TouchableOpacity>
     </View>
   );

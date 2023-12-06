@@ -7,7 +7,6 @@ import * as Location from "expo-location";
 import axios from 'axios';
 import { storage } from '../../Firebase';
 import * as turf from '@turf/turf';
-import axios from 'axios';
 import { ref, uploadBytes, getDownloadURL } from 'firebase/storage';
 
 
@@ -114,7 +113,7 @@ function MapScreen({ navigation }) {
   const createPost = async (postContent) => {
     try {
       const response = await axios.post(
-        "http://172.20.10.10:3000/posts",       // PUT LOCAL NETWORK IP ADDRESS HERE
+        "http://172.20.10.2:3000/posts",       // PUT LOCAL NETWORK IP ADDRESS HERE
         postContent
       );
 

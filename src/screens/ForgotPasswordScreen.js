@@ -6,15 +6,26 @@ import {
   TextInput,
   TouchableOpacity,
 } from "react-native";
+import axios from 'axios';
+
 
 export default function ForgotPasswordScreen({ navigation }) {
   const [email, setEmail] = useState("");
-  const handleResetPassword = () => {
-    // Here you will handle the account creation logic
-    // Send the username, email, and password to your backend server
-    console.log(email);
-    alert("Recovery password instructions sent to your email");
-    // Navigate to login screen or main app screen after account creation
+  const handleResetPassword = async () => {}
+  //   try {
+  //     const response = await axios.post('http://172.20.10.2:3000/reset', {
+  //       email
+  //     });
+
+  //   setMessage(response.data.message);
+  //   alert("Recovery password instructions sent to your email");
+  //   navigation.navigate("LoginScreen");
+  //   } catch (error) {
+  //     console.error('Error sending Email:');
+  //     alert("Failed to send valid email")
+  //   }
+  // };
+  const navigateToHome = () => {
     navigation.navigate("LoginScreen");
   };
 
@@ -29,7 +40,10 @@ export default function ForgotPasswordScreen({ navigation }) {
         placeholderTextColor="white"
       />
       <TouchableOpacity style={styles.button} onPress={handleResetPassword}>
-        <Text style={styles.buttonText}>Reset Password</Text>
+        <Text style={styles.buttonText}>Send Email</Text>
+      </TouchableOpacity>
+      <TouchableOpacity style={styles.button} onPress={navigateToHome}>
+        <Text style={styles.buttonText}>Homepage</Text>
       </TouchableOpacity>
     </View>
   );

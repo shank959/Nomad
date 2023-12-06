@@ -1,8 +1,8 @@
 const express = require('express');
 const mongoose = require('mongoose');
 const cors = require('cors');
-
-
+const crypto = require('crypto')
+const nodemailer = require('nodemailer')
 // create express app
 const app = express();
 //middleware pasrsing JSON bodies
@@ -24,7 +24,9 @@ const UsersSchema = new mongoose.Schema({
     email: { type: String, required: true, unique: true },
     username: { type: String, required: true, unique: true },
     password: { type: String, required: true },
-    friends: [{ type: mongoose.Schema.Types.ObjectId, ref: 'Users'}]
+    friends: [{ type: mongoose.Schema.Types.ObjectId, ref: 'Users'}],
+    resetPasswordToken: String,
+    resetPasswordExpires: Date,
 });
 
 const UsersModel = mongoose.model('Users', UsersSchema);
