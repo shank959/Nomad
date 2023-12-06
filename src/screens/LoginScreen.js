@@ -34,8 +34,7 @@ export default function LoginScreen({ navigation }) {
   };
 
   const handleForgotPassword = () => {
-    // Placeholder for forgot password functionality
-    alert("Forgot Password functionality not implemented yet.");
+    navigation.navigate("ForgotPasswordScreen");
   };
 
   return (
@@ -46,7 +45,7 @@ export default function LoginScreen({ navigation }) {
         placeholder="Username"
         value={username}
         onChangeText={(text) => setUsername(text)}
-        placeholderTextColor="white"
+        placeholderTextColor="grey"
       />
       <TextInput
         style={styles.input}
@@ -54,16 +53,16 @@ export default function LoginScreen({ navigation }) {
         secureTextEntry={true}
         value={password}
         onChangeText={(text) => setPassword(text)}
-        placeholderTextColor="white"
+        placeholderTextColor="grey"
       />
       <TouchableOpacity style={[styles.button, styles.loginButton]} onPress={handleLogin}>
         <Text style={styles.buttonText}>Login</Text>
       </TouchableOpacity>
-      <TouchableOpacity style={styles.button} onPress={createAccount}>
-        <Text style={styles.buttonText}>Create Account</Text>
+      <TouchableOpacity style={[styles.button, styles.CreateAccountButton]} onPress={createAccount}>
+        <Text style={styles.CreateAccountButtonText}>- Create Account -</Text>
       </TouchableOpacity>
       <TouchableOpacity style={[styles.button, styles.forgotPasswordButton]} onPress={handleForgotPassword}>
-        <Text style={styles.forgotPasswordButtonText}>Forgot Password?</Text>
+        <Text style={styles.forgotPasswordButtonText}>- Forgot Password? -</Text>
       </TouchableOpacity>
     </View>
   );
@@ -91,6 +90,7 @@ const styles = StyleSheet.create({
     padding: 10,  
     fontSize: 18,
     color: 'white',
+    fontWeight: 'bold'
   },
   button: {
     backgroundColor: "black",
@@ -109,15 +109,27 @@ const styles = StyleSheet.create({
   forgotPasswordButton: {
     width: 130, // Smaller width for the forgot password button
     height: 25,
+    borderColor: "black",
   },
   forgotPasswordButtonText: {
     color: "white",
     fontSize: 12, // Smaller font size for the forgot password button text
-    fontWeight: 400,
+    fontWeight: "bold",
   },
   buttonText: {
     color: "white",
     fontSize: 18,
-    fontWeight: 400,
+    fontWeight: "bold",
   },
+  CreateAccountButton:{
+    width: 130,
+    height: 25,
+    borderColor: "black",
+  },
+  CreateAccountButtonText:{
+    color: "white",
+    fontSize: 12,
+    fontWeight: "bold",
+  }
+
 });

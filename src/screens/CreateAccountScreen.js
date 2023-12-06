@@ -16,6 +16,10 @@ export default function CreateAccountScreen({ navigation }) {
   const [password, setPassword] = useState("");
   const [message, setMessage] = useState(""); // Add a state for the message
   const { setUserId } = useUser();
+
+  const navigateToHome = () => {
+    navigation.navigate("LoginScreen");
+  };
   backend_URL = "http://localhost:3000";
 
   const handleCreateAccount = async () => { // Make this function async
@@ -34,6 +38,9 @@ export default function CreateAccountScreen({ navigation }) {
       console.error('Error creating user:', error.response?.data?.error || error.message);
       setMessage(error.response?.data?.error || 'Error creating user');
     }
+
+
+
   };
 
 
@@ -45,14 +52,14 @@ export default function CreateAccountScreen({ navigation }) {
         placeholder="Username"
         value={username}
         onChangeText={(text) => setUsername(text)}
-        placeholderTextColor="white"
+        placeholderTextColor="gray"
       />
       <TextInput
         style={styles.input}
         placeholder="Email"
         value={email}
         onChangeText={(text) => setEmail(text)}
-        placeholderTextColor="white"
+        placeholderTextColor="grey"
       />
       <TextInput
         style={styles.input}
@@ -60,10 +67,13 @@ export default function CreateAccountScreen({ navigation }) {
         secureTextEntry={true}
         value={password}
         onChangeText={(text) => setPassword(text)}
-        placeholderTextColor="white"
+        placeholderTextColor="gray"
       />
       <TouchableOpacity style={styles.button} onPress={handleCreateAccount}>
         <Text style={styles.buttonText}>Create Account</Text>
+      </TouchableOpacity>
+      <TouchableOpacity style={styles.HomeButton} onPress={navigateToHome}>
+        <Text style={styles.HomeButton}>- Homepage -</Text>
       </TouchableOpacity>
     </View>
   );
@@ -91,21 +101,28 @@ const styles = StyleSheet.create({
     padding: 10,
     fontSize: 18,
     color: "white",
+    fontWeight: "bold"
   },
   button: {
     backgroundColor: "black",
     borderColor: "white",
     borderWidth: 1,
     width: 200,
-    height: 40,
+    height: 50,
     justifyContent: "center",
     alignItems: "center",
     borderRadius: 15,
-    marginVertical: 10,
+    marginVertical: 20,
   },
   buttonText: {
     color: "white",
     fontSize: 18,
-    fontWeight: 400,
+    fontWeight: "bold",
   },
+  HomeButton: {
+    color: "white",
+    borderColor: "black",
+    fontSize: 12,
+    fontWeight: "bold"
+  }
 });
