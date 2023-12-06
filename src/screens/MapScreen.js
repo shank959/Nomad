@@ -123,7 +123,7 @@ function MapScreen({ navigation }) {
   const createPost = async (postContent) => {
     try {
       const response = await axios.post(
-        "http://172.20.10.6:3000/posts",       // PUT LOCAL NETWORK IP ADDRESS HERE
+        "http://172.20.10.10:3000/posts",       // PUT LOCAL NETWORK IP ADDRESS HERE
         postContent
       );
 
