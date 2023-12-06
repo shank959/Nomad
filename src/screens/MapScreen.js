@@ -37,6 +37,9 @@ function MapScreen({ navigation }) {
   const [isModalVisible, setModalVisible] = useState(false);
   const { userId } = useUser();
 
+  backend_URL = "http://localhost:3000";
+
+
   //image upload external helper functions
   useEffect(() => {
     (async () => {
@@ -90,11 +93,13 @@ function MapScreen({ navigation }) {
   const [location, setLocation] = useState(null);
 
   const onPostSubmit = () => {
+    console.log("i am here")
     const author = userId;
     const coordinates = { 
       latitude: region.latitude, 
       longitude: region.longitude,
     };
+
 
     const postContent = {
       imageUrl,
@@ -104,13 +109,16 @@ function MapScreen({ navigation }) {
       author,
     };
 
+    console.log(postContent);
+
     createPost(postContent);
   };
 
   const createPost = async (postContent) => {
     try {
+      console.log(backend_URL + "/posts");
       const response = await axios.post(
-        "http://localhost:3000/posts",       // PUT LOCAL NETWORK IP ADDRESS HERE
+        backend_URL + "/posts",       // PUT LOCAL NETWORK IP ADDRESS HERE
         postContent
       );
 
@@ -537,7 +545,7 @@ function MapScreen({ navigation }) {
 
   const sendDataToServer = async () => {
     try {
-      const response = await axios.post('http://localhost:3000/test', {
+      const response = await axios.post(backend_URL + "/test", {
         // Your data here
         key: 'value'
       });
@@ -640,7 +648,7 @@ function MapScreen({ navigation }) {
                 });
               }}
               query={{
-                key: "AIzaSyCU1a09dgTwm85Of0P9WoYlkO-OqpwgGh0",
+                key: "AIzaSyD58-uL1gyPimM8hn1lu6pb_Sw_ZDgYVno",
                 language: "en",
                 components: "country:us",
                 radius: 40000,

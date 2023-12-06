@@ -6,11 +6,13 @@ import axios from 'axios';
 const FeedScreen = () => {
   // State to store fetched posts after initialr edenrings
   const [postData, setPostData] = useState([]);
+  backend_URL = "http://localhost:3000";
+
 
   useEffect(() => {
     const fetchPosts = async () => {
       try {
-        const response = await axios.get('http://localhost:3000/posts');
+        const response = await axios.get(backend_URL + "/posts");
         setPostData(response.data); // updates state with fetched shit
       } catch (error) {
         console.error('Error fetching posts:', error); 

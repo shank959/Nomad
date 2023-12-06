@@ -16,10 +16,11 @@ export default function CreateAccountScreen({ navigation }) {
   const [password, setPassword] = useState("");
   const [message, setMessage] = useState(""); // Add a state for the message
   const { setUserId } = useUser();
+  backend_URL = "http://localhost:3000";
 
   const handleCreateAccount = async () => { // Make this function async
     try {
-      const response = await axios.post('http://localhost:3000/create_user', {
+      const response = await axios.post(backend_URL + "/create_user", {
         email,
         username,
         password
