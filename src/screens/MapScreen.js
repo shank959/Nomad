@@ -8,6 +8,7 @@ import axios from 'axios';
 import { storage } from '../../Firebase';
 import * as turf from '@turf/turf';
 import { ref, uploadBytes, getDownloadURL } from 'firebase/storage';
+import { useUser } from "../../UserContext";
 
 // import assets for markers
 import CenturyCity from "../../assets/century-city2.png";
@@ -34,6 +35,7 @@ function MapScreen({ navigation }) {
   });
   const [imageUrl, setImageUrl] = useState(null);
   const [isModalVisible, setModalVisible] = useState(false);
+  const { userId } = useUser();
 
   //image upload external helper functions
   useEffect(() => {
@@ -88,15 +90,9 @@ function MapScreen({ navigation }) {
   const [location, setLocation] = useState(null);
 
   const onPostSubmit = () => {
-
-    // function to get image url from uplaoded image
-
-    // function to retrieve id of user
-    // const author = getUserID();
-    const author = "abc123"; // FIXME CHANGE TO GET USER ID FROM MONGODB
-
-    const coordinates = {
-      latitude: region.latitude,
+    const author = userId;
+    const coordinates = { 
+      latitude: region.latitude, 
       longitude: region.longitude,
     };
 
@@ -114,7 +110,7 @@ function MapScreen({ navigation }) {
   const createPost = async (postContent) => {
     try {
       const response = await axios.post(
-        "http://172.20.10.10:3000/posts", // PUT LOCAL NETWORK IP ADDRESS HERE
+        "http://localhost:3000/posts",       // PUT LOCAL NETWORK IP ADDRESS HERE
         postContent
       );
 
