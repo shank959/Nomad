@@ -137,11 +137,12 @@ app.post('/test', (req, res) => {
   app.post('/login', async (req, res) => {
     try {
         const { username, password } = req.body;
-        const user = await UsersModel.findOne({ username });
+        const user = await UsersModel.findOne({ username: req.body.username });
 
         if (user && await bcrypt.compare(password, user.password)) {
             // Passwords match
             // Proceed with login logic (e.g., generating a token)
+            res.status(201).send({ message: 'User successfully created!' });
         } else {
             // Passwords do not match or user does not exist
             res.status(401).send({ error: 'Invalid credentials' });
