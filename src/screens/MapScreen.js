@@ -1,5 +1,5 @@
 import React, { useState, useEffect, useCallback } from "react";
-import {StyleSheet, View, TouchableOpacity, Text, Image, Modal, TextInput,} from "react-native";
+import {StyleSheet, View, TouchableOpacity, Text, Image, Modal, TextInput, KeyboardAvoidingView, Platform, Alert} from "react-native";
 import * as ImagePicker from "expo-image-picker";
 import { GooglePlacesAutocomplete } from "react-native-google-places-autocomplete";
 import MapView, { Polygon, Marker, Callout } from "react-native-maps";
@@ -7,7 +7,6 @@ import * as Location from "expo-location";
 import axios from 'axios';
 import { storage } from '../../Firebase';
 import * as turf from '@turf/turf';
-import axios from 'axios';
 import { ref, uploadBytes, getDownloadURL } from 'firebase/storage';
 
 // import assets for markers
@@ -601,7 +600,7 @@ function MapScreen({ navigation }) {
           </TouchableOpacity>
         </View>
       )}
-      <TouchableOpacity style={styles.button} onPress={sendDataToServer}>
+      <TouchableOpacity style={styles.button} onPress={uploadImage}>
         <Text style={styles.buttonText}>+</Text>
       </TouchableOpacity>
       {/* MODAL FOR CREATE A POST SCREEN */}
