@@ -9,23 +9,26 @@
     "web": "expo start --web"
   },
   "dependencies": {
+    "@expo/cli": "^0.10.16",
     "@expo/ngrok": "^4.1.0",
     "@expo/webpack-config": "^19.0.0",
     "@react-navigation/bottom-tabs": "^6.5.11",
     "@react-navigation/native": "^6.1.9",
     "@react-navigation/native-stack": "^6.9.16",
+    "@turf/turf": "^6.5.0",
+    "array-union": "^3.0.1",
     "bcrypt": "^5.1.1",
     "cors": "^2.8.5",
     "expo": "^49.0.21",
     "expo-constants": "~14.4.2",
     "expo-device": "~5.4.0",
     "expo-image-picker": "~14.3.2",
-    "expo-location": "^16.3.0",
+    "expo-location": "~16.1.0",
     "expo-media-library": "~15.4.1",
     "expo-notifications": "~0.20.1",
     "expo-sharing": "~11.5.0",
     "expo-status-bar": "~1.6.0",
-    "firebase": "^10.7.0",
+    "lru-cache": "^10.1.0",
     "mongodb": "^6.3.0",
     "mongoose": "^8.0.2",
     "native-notify": "^3.2.4",
@@ -40,7 +43,8 @@
     "react-native-safe-area-context": "4.6.3",
     "react-native-screens": "~3.22.0",
     "react-native-vector-icons": "^10.0.2",
-    "react-native-web": "~0.19.6"
+    "react-native-web": "~0.19.6",
+    "yarn": "^1.22.21"
   },
   "devDependencies": {
     "@babel/core": "^7.20.0"

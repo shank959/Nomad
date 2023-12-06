@@ -1,4 +1,5 @@
 import React, { useState } from "react";
+import axios from 'axios';
 import {
   StyleSheet,
   View,
@@ -12,15 +13,24 @@ export default function CreateAccountScreen({ navigation }) {
   const [email, setEmail] = useState("");
   const [username, setUsername] = useState("");
   const [password, setPassword] = useState("");
+  const [message, setMessage] = useState(""); // Add a state for the message
 
-  const handleCreateAccount = () => {
-    // Here you will handle the account creation logic
-    // Send the username, email, and password to your backend server
-    console.log(username, email, password);
-
-    // Navigate to login screen or main app screen after account creation
-    navigation.navigate("LoginScreen");
+  const handleCreateAccount = async () => { // Make this function async
+    try {
+      const response = await axios.post('http://localhost:3000/create_user', {
+        email,
+        username,
+        password
+      });
+      setMessage(response.data.message);
+      // Uncomment the next line if you want to navigate after success
+      // navigation.navigate("LoginScreen");
+    } catch (error) {
+      console.error('Error creating user:', error.response?.data?.error || error.message);
+      setMessage(error.response?.data?.error || 'Error creating user');
+    }
   };
+
 
   return (
     <View style={styles.container}>

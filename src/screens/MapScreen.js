@@ -1,23 +1,14 @@
-import React, { useState, useEffect } from "react";
-import {
-  StyleSheet,
-  View,
-  TouchableOpacity,
-  Text,
-  Image,
-  Modal,
-  TextInput,
-  KeyboardAvoidingView,
-  Platform,
-  Alert,
-} from "react-native";
+import React, { useState, useEffect, useCallback } from "react";
+import {StyleSheet, View, TouchableOpacity, Text, Image, Modal, TextInput,} from "react-native";
 import * as ImagePicker from "expo-image-picker";
 import { GooglePlacesAutocomplete } from "react-native-google-places-autocomplete";
 import MapView, { Polygon, Marker, Callout } from "react-native-maps";
 import * as Location from "expo-location";
-import axios from "axios";
-import { storage } from "../../Firebase";
-import { ref, uploadBytes, getDownloadURL } from "firebase/storage";
+import axios from 'axios';
+import { storage } from '../../Firebase';
+import * as turf from '@turf/turf';
+import axios from 'axios';
+import { ref, uploadBytes, getDownloadURL } from 'firebase/storage';
 
 // import assets for markers
 import CenturyCity from "../../assets/century-city2.png";
@@ -165,17 +156,22 @@ function MapScreen({ navigation }) {
         return;
       }
 
-      locationSubscription = await Location.watchPositionAsync(
-        {
-          accuracy: Location.Accuracy.High,
-          timeInterval: 1500, // Update every 15000 milliseconds (15 seconds)
-          distanceInterval: 50, // Or specify distance in meters
-        },
-        (location) => {
-          console.log(location);
-          // Do something with the updated location...
-        }
-      );
+        locationSubscription = await Location.watchPositionAsync({
+            accuracy: Location.Accuracy.High,
+            // timeInterval: 1500, // Update every 15000 milliseconds (15 seconds)
+            distanceInterval: 1000 , // Or specify distance in meters
+        }, (location) => {
+            console.log(location);
+          //   const point = turf.point([longitude, latitude]);
+          //   const polygon = turf.polygon([[
+          //     [-118.4, 34.1],
+          //     [-118.5, 34.1],
+          //     [-118.5, 34.2],
+          //     [-118.4, 34.2],
+          //     [-118.4, 34.1] // Polygon should be closed
+          // ]]);
+            // Do something with the updated location...
+        });
     };
 
     subscribeToLocationUpdates();
@@ -293,30 +289,31 @@ function MapScreen({ navigation }) {
     const lngStep =
       (southeastCorner.longitude - northwestCorner.longitude) / gridColumns;
 
-    // Add the entire grid
-    gridPolygons.push({
-      key: `all-grid`,
-      coordinates: [
-        {
-          latitude: northwestCorner.latitude,
-          longitude: northwestCorner.longitude,
-        },
-        {
-          latitude: southeastCorner.latitude,
-          longitude: northwestCorner.longitude,
-        },
-        {
-          latitude: southeastCorner.latitude,
-          longitude: southeastCorner.longitude,
-        },
-        {
-          latitude: northwestCorner.latitude,
-          longitude: southeastCorner.longitude,
-        },
-      ],
-      fillColor: "transparent",
-      strokeColor: "transparent",
-    });
+    // // Add the entire grid
+    // gridPolygons.push({
+    //   key: `all-grid`,
+    //   coordinates: [
+    //     {
+    //       latitude: northwestCorner.latitude,
+    //       longitude: northwestCorner.longitude,
+    //     },
+    //     {
+    //       latitude: southeastCorner.latitude,
+    //       longitude: northwestCorner.longitude,
+    //     },
+    //     {
+    //       latitude: southeastCorner.latitude,
+    //       longitude: southeastCorner.longitude,
+    //     },
+    //     {
+    //       latitude: northwestCorner.latitude,
+    //       longitude: southeastCorner.longitude,
+    //     },
+    //   ],
+    //   fillColor: "transparent",
+    //   strokeColor: "transparent",
+    //   strokeWidth: 0,
+    // });
 
     for (let i = 0; i < gridRows; i++) {
       for (let j = 0; j < gridColumns; j++) {
@@ -345,11 +342,12 @@ function MapScreen({ navigation }) {
 
         gridPolygons.push({
           key: `row-${i}-col-${j}`,
+          rowIndex: i,
+          columnIndex: j,
           coordinates: cellCoordinates,
-          fillColor: shouldLightenCell(i, j)
-            ? "rgba(0, 0, 0, 0.3)"
-            : "transparent",
+          fillColor: shouldLightenCell(i, j) ? "rgba(0, 0, 0, 0.3)" : "transparent",
           strokeColor: "black",
+          strokeWidth: 1
         });
       }
     }
@@ -461,6 +459,22 @@ function MapScreen({ navigation }) {
 
     return false; // Include all cells by default
   }
+
+  const updateGridCell = (rowIndex, columnIndex, newProperties) => {
+    setGrid(currentGrid => currentGrid.map(cell => {
+      if (cell.rowIndex === rowIndex && cell.columnIndex === columnIndex) {
+        return { ...cell, ...newProperties };
+      }
+      return cell;
+    }));
+  };
+
+  const handlePress = useCallback((rowIndex, columnIndex) => {
+    updateGridCell(rowIndex, columnIndex, { fillColor: "red" });
+    console.log(`clicked ${rowIndex} ${columnIndex}`)
+  }, [updateGridCell]);
+
+
   const calloutStyles = StyleSheet.create({
     container: {
       flexDirection: "row",
@@ -524,6 +538,23 @@ function MapScreen({ navigation }) {
     },
   });
 
+  const [responseMessage, setResponseMessage] = useState('');
+
+  const sendDataToServer = async () => {
+    try {
+      const response = await axios.post('http://localhost:3000/test', {
+        // Your data here
+        key: 'value'
+      });
+
+      setResponseMessage(response.data.message);
+    } catch (error) {
+      console.error('Error sending data to server:', error);
+      setResponseMessage('Failed to send data');
+    }
+  };
+
+
   return (
     <View style={styles.container}>
       <MapView
@@ -538,7 +569,9 @@ function MapScreen({ navigation }) {
             key={cell.key}
             coordinates={cell.coordinates}
             fillColor={cell.fillColor}
-            strokeColor={cell.strokeColor}
+            strokeWidth={cell.strokeWidth}
+            tappable={true}
+            onPress={() => handlePress(cell.rowIndex, cell.columnIndex)}
           />
         ))}
         {markers.map((marker) => (
@@ -568,7 +601,7 @@ function MapScreen({ navigation }) {
           </TouchableOpacity>
         </View>
       )}
-      <TouchableOpacity style={styles.button} onPress={uploadImage}>
+      <TouchableOpacity style={styles.button} onPress={sendDataToServer}>
         <Text style={styles.buttonText}>+</Text>
       </TouchableOpacity>
       {/* MODAL FOR CREATE A POST SCREEN */}
