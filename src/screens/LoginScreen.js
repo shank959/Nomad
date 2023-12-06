@@ -90,6 +90,7 @@ const styles = StyleSheet.create({
     padding: 10,  
     fontSize: 18,
     color: 'white',
+    fontWeight: 'bold'
   },
   button: {
     backgroundColor: "black",
@@ -113,12 +114,12 @@ const styles = StyleSheet.create({
   forgotPasswordButtonText: {
     color: "white",
     fontSize: 12, // Smaller font size for the forgot password button text
-    fontWeight: 400,
+    fontWeight: "bold",
   },
   buttonText: {
     color: "white",
     fontSize: 18,
-    fontWeight: 400,
+    fontWeight: "bold",
   },
   CreateAccountButton:{
     width: 130,
@@ -128,7 +129,7 @@ const styles = StyleSheet.create({
   CreateAccountButtonText:{
     color: "white",
     fontSize: 12,
-    fontWeight: 400,
+    fontWeight: "bold",
   }
 
 });

@@ -37,13 +37,13 @@ export default function ForgotPasswordScreen({ navigation }) {
         placeholder="Email"
         value={email}
         onChangeText={(text) => setEmail(text)}
-        placeholderTextColor="white"
+        placeholderTextColor="grey"
       />
       <TouchableOpacity style={styles.button} onPress={handleResetPassword}>
         <Text style={styles.buttonText}>Send Email</Text>
       </TouchableOpacity>
       <TouchableOpacity style={styles.button} onPress={navigateToHome}>
-        <Text style={styles.buttonText}>Homepage</Text>
+        <Text style={styles.HomeButton}>- Homepage -</Text>
       </TouchableOpacity>
     </View>
   );
@@ -71,19 +71,27 @@ const styles = StyleSheet.create({
     padding: 10,
     fontSize: 18,
     color: "white",
+    fontWeight: "bold"
   },
   button: {
-    backgroundColor: "grey", // Adjusted button color to match the style of the "Create Account" button
+    backgroundColor: "black", // Adjusted button color to match the style of the "Create Account" button
     width: 200,
     height: 40,
     justifyContent: "center",
     alignItems: "center",
     borderRadius: 15,
     marginVertical: 10,
+    FontWeight: "bold"
   },
   buttonText: {
     color: "white",
     fontSize: 18,
-    fontWeight: 400,
+    fontWeight: "bold",
   },
+  HomeButton: {
+    color: "white",
+    borderColor: "black",
+    fontSize: 12,
+    fontWeight: "bold"
+  }
 });
