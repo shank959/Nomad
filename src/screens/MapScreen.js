@@ -4,6 +4,8 @@ import * as ImagePicker from "expo-image-picker";
 import { GooglePlacesAutocomplete } from "react-native-google-places-autocomplete";
 import MapView, { Polygon, Marker, Callout } from "react-native-maps";
 import * as Location from 'expo-location';
+import * as turf from '@turf/turf';
+import axios from 'axios';
 import CenturyCity from '../../assets/century-city2.png';
 import GriffithObservatory from '../../assets/griffith-observatory2.jpeg';
 import BruinBear from '../../assets/bruin-bear.jpg';
@@ -72,10 +74,18 @@ function MapScreen({ navigation }) {
 
         locationSubscription = await Location.watchPositionAsync({
             accuracy: Location.Accuracy.High,
-            timeInterval: 1500, // Update every 15000 milliseconds (15 seconds)
-            distanceInterval: 50 , // Or specify distance in meters
+            // timeInterval: 1500, // Update every 15000 milliseconds (15 seconds)
+            distanceInterval: 1000 , // Or specify distance in meters
         }, (location) => {
             console.log(location);
+          //   const point = turf.point([longitude, latitude]);
+          //   const polygon = turf.polygon([[
+          //     [-118.4, 34.1],
+          //     [-118.5, 34.1],
+          //     [-118.5, 34.2],
+          //     [-118.4, 34.2],
+          //     [-118.4, 34.1] // Polygon should be closed
+          // ]]);
             // Do something with the updated location...
         });
     };
@@ -432,6 +442,23 @@ function MapScreen({ navigation }) {
     },
   });
 
+  const [responseMessage, setResponseMessage] = useState('');
+
+  const sendDataToServer = async () => {
+    try {
+      const response = await axios.post('http://localhost:3000/test', {
+        // Your data here
+        key: 'value'
+      });
+
+      setResponseMessage(response.data.message);
+    } catch (error) {
+      console.error('Error sending data to server:', error);
+      setResponseMessage('Failed to send data');
+    }
+  };
+
+
   return (
     <View style={styles.container}>
       <MapView
@@ -478,7 +505,7 @@ function MapScreen({ navigation }) {
           </TouchableOpacity>
         </View>
       )}
-      <TouchableOpacity style={styles.button} onPress={uploadImage}>
+      <TouchableOpacity style={styles.button} onPress={sendDataToServer}>
         <Text style={styles.buttonText}>+</Text>
       </TouchableOpacity>
       <Modal

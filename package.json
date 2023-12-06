@@ -9,11 +9,14 @@
     "web": "expo start --web"
   },
   "dependencies": {
+    "@expo/cli": "^0.10.16",
     "@expo/ngrok": "^4.1.0",
     "@expo/webpack-config": "^19.0.0",
     "@react-navigation/bottom-tabs": "^6.5.11",
     "@react-navigation/native": "^6.1.9",
     "@react-navigation/native-stack": "^6.9.16",
+    "@turf/turf": "^6.5.0",
+    "array-union": "^3.0.1",
     "bcrypt": "^5.1.1",
     "cors": "^2.8.5",
     "expo": "^49.0.21",
@@ -25,6 +28,7 @@
     "expo-notifications": "~0.20.1",
     "expo-sharing": "~11.5.0",
     "expo-status-bar": "~1.6.0",
+    "lru-cache": "^10.1.0",
     "mongodb": "^6.3.0",
     "mongoose": "^8.0.2",
     "native-notify": "^3.2.4",
