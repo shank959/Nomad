@@ -15,12 +15,11 @@ import * as ImagePicker from "expo-image-picker";
 import { GooglePlacesAutocomplete } from "react-native-google-places-autocomplete";
 import MapView, { Polygon, Marker, Callout } from "react-native-maps";
 import * as Location from "expo-location";
-import axios from 'axios';
-import { storage } from '../../Firebase';
-import { ref, uploadBytes, getDownloadURL } from 'firebase/storage';
+import axios from "axios";
+import { storage } from "../../Firebase";
+import { ref, uploadBytes, getDownloadURL } from "firebase/storage";
 
-
-// import assets
+// import assets for markers
 import CenturyCity from "../../assets/century-city2.png";
 import GriffithObservatory from "../../assets/griffith-observatory2.jpeg";
 import BruinBear from "../../assets/bruin-bear.jpg";
@@ -32,6 +31,9 @@ import RoccosTavern from "../../assets/roccos-tavern2.jpeg";
 import SantaMonicaPier from "../../assets/santa-monica-pier2.jpeg";
 import UniversalStudios from "../../assets/universal-studios.jpeg";
 import WalkOfFame from "../../assets/walk-of-fame2.jpeg";
+
+import { FontAwesome5 } from "@expo/vector-icons";
+import { AntDesign } from "@expo/vector-icons";
 
 function MapScreen({ navigation }) {
   const [region, setRegion] = useState({
@@ -54,19 +56,19 @@ function MapScreen({ navigation }) {
     })();
   }, []);
 
-   // Function to upload image to firebase
-   const uploadImageToFirebase = async (uri) => {
+  // Function to upload image to firebase
+  const uploadImageToFirebase = async (uri) => {
     try {
       const response = await fetch(uri);
       const blob = await response.blob();
       const fileRef = ref(storage, `images/${Date.now()}`); // Create a reference to 'images/fileName'
       await uploadBytes(fileRef, blob);
-  
+
       // Get the download URL
       const downloadUrl = await getDownloadURL(fileRef);
       return downloadUrl;
     } catch (error) {
-      console.error('Error uploading image:', error);
+      console.error("Error uploading image:", error);
       throw error;
     }
   };
@@ -85,12 +87,10 @@ function MapScreen({ navigation }) {
         setImageUrl(downloadUrl); // Save the URL of the uploaded image
         toggleModal();
       } catch (error) {
-        alert('Error uploading image: ' + error.message);
+        alert("Error uploading image: " + error.message);
       }
     }
   };
-
-
 
   // CREATE POST SCREEN LOGIC
   // state declarations for create post
@@ -98,15 +98,16 @@ function MapScreen({ navigation }) {
   const [location, setLocation] = useState(null);
 
   const onPostSubmit = () => {
+
     // function to get image url from uplaoded image
 
     // function to retrieve id of user
     // const author = getUserID();
-    const author = "abc123";  // FIXME CHANGE TO GET USER ID FROM MONGODB
+    const author = "abc123"; // FIXME CHANGE TO GET USER ID FROM MONGODB
 
-    const coordinates = { 
-      latitude: region.latitude, 
-      longitude: region.longitude, 
+    const coordinates = {
+      latitude: region.latitude,
+      longitude: region.longitude,
     };
 
     const postContent = {
@@ -123,12 +124,13 @@ function MapScreen({ navigation }) {
   const createPost = async (postContent) => {
     try {
       const response = await axios.post(
-        "http://172.20.10.10:3000/posts",       // PUT LOCAL NETWORK IP ADDRESS HERE
+        "http://172.20.10.10:3000/posts", // PUT LOCAL NETWORK IP ADDRESS HERE
         postContent
       );
 
       Alert.alert("Success", "Post created successfully");
       setCaption(""); // Reset caption input after successful post
+      toggleModal();
     } catch (error) {
       // Handle the error case
       console.error(
@@ -568,7 +570,7 @@ function MapScreen({ navigation }) {
       )}
       <TouchableOpacity style={styles.button} onPress={uploadImage}>
         <Text style={styles.buttonText}>+</Text>
-      </TouchableOpacity> 
+      </TouchableOpacity>
       {/* MODAL FOR CREATE A POST SCREEN */}
       <Modal
         animationType="slide"
@@ -580,12 +582,21 @@ function MapScreen({ navigation }) {
             <Text style={styles.headerText}>New Post</Text>
           </View>
           <TouchableOpacity onPress={toggleModal} style={styles.closeButton}>
-            <Text style={styles.closeButtonText}>X</Text>
+            <AntDesign name="close" size={24} color="white" style={styles.closeIcon}/>
           </TouchableOpacity>
           <View style={styles.inputContainer}>
+            <FontAwesome5
+              name="search-location"
+              size={24}
+              color="black"
+              style={styles.searchIcon}
+            />
             <GooglePlacesAutocomplete
               placeholder="Location"
-              placeHolderTextColor="black"
+              textInputProps={{
+                placeholderTextColor: "black",
+                fontWeight: "bold",
+              }}
               fetchDetails={true}
               GooglePlacesSearchQuery={{
                 rankby: "distance",
@@ -632,7 +643,7 @@ function MapScreen({ navigation }) {
           </View>
           <KeyboardAvoidingView
             behavior={Platform.OS === "ios" ? "padding" : "height"}
-            style={styles.inputContainer}
+            style={styles.keyboardAvoidingContainer}
           >
             <TextInput
               style={[styles.input, styles.captionInput]}
@@ -641,9 +652,10 @@ function MapScreen({ navigation }) {
               onChangeText={setCaption}
             />
           </KeyboardAvoidingView>
-          <TouchableOpacity 
-          style={styles.instagramButton}
-          onPress={onPostSubmit}>
+          <TouchableOpacity
+            style={styles.instagramButton}
+            onPress={onPostSubmit}
+          >
             <Text style={styles.instagramButtonText}>Share</Text>
           </TouchableOpacity>
         </View>
@@ -758,7 +770,7 @@ const styles = StyleSheet.create({
     borderRadius: 10,
     width: "80%",
     alignItems: "center",
-    marginTop: 180,
+    marginTop: 80,
   },
   instagramButtonText: {
     color: "white",
@@ -767,6 +779,23 @@ const styles = StyleSheet.create({
   },
   captionInput: {
     width: "100%", // Make the input take the full width of the parent container
+  },
+  searchIcon: {
+    position: "absolute",
+    top: 15,
+    left: 280,
+    zIndex: 2,
+    backgroundColor: "transparent", // Make the icon background transparent
+  },
+  keyboardAvoidingContainer: {
+    width: "80%",
+    marginTop: 15,
+    marginBottom: 40,
+    zIndex: 1,
+  },
+  closeIcon: {
+    position: "absolute",
+    top: 15,
   },
 });
 
