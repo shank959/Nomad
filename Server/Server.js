@@ -24,9 +24,7 @@ const UsersSchema = new mongoose.Schema({
     email: { type: String, required: true, unique: true },
     username: { type: String, required: true, unique: true },
     password: { type: String, required: true },
-    friends: [{ type: mongoose.Schema.Types.ObjectId, ref: 'Users'}],
-    resetPasswordToken: String,
-    resetPasswordExpires: Date,
+    friends: [{ type: mongoose.Schema.Types.ObjectId, ref: 'UsersModel'}]
 });
 
 const UsersModel = mongoose.model('Users', UsersSchema);
@@ -34,13 +32,13 @@ const UsersModel = mongoose.model('Users', UsersSchema);
 app.post('/create_user', async (req, res) => {
     try {
         const { email, username, password } = req.body;
-
+        
         // Check if user exists
         let existingUser = await UsersModel.findOne({ email });
         if (existingUser){
             return res.status(400).send({ error: 'Username or email already exists'})
         }
-
+        
         // Hash the password
         const hashedPassword = await bcrypt.hash(password, saltRounds);
 
@@ -51,7 +49,7 @@ app.post('/create_user', async (req, res) => {
             password: hashedPassword // Store the hashed password
         });
         await user.save();
-        res.status(201).send({ message: 'User successfully created!' });
+        res.status(201).send({ message: 'User successfully created!', userId: user._id });
     } catch(error) {
         console.error(error);
         res.status(500).send({ error: 'Error creating user' });
@@ -70,7 +68,7 @@ app.post('/login_user', async (req, res) => {
             return res.status(400).send({ error: 'Invalid username or password.'});
         }
         //successful
-        res.send({ message: 'Login successful' });
+        res.send({ message: 'Login successful', userId: user._id });
     } catch(error) {
         res.status(500).send({ error: 'Error logging in'});
     }
@@ -94,8 +92,7 @@ const postSchema = new mongoose.Schema({
         longitude: { type: Number, required: true },
     },
     createdAt: { type: Date, default: Date.now },
-    author: String, //FIXME
-    //author: { type: mongoose.Schema.Types.ObjectID, ref: 'User', required: true }, // CHECKOK
+    author: { type: mongoose.Schema.Types.ObjectID, ref: 'UsersModel', required: true },
     likes: { type: Number, default: 0 },
 });
 
@@ -127,8 +124,27 @@ app.post('/posts', (req, res) => {
         });
 });
 
+// search query endpoint
+app.post('/search', async (req, res) => {
+    try {
+        // Update the query to match the structure of your UsersModel
+        const users = await UsersModel.find({ 
+            username: { $regex: req.body.query, $options: 'i' } 
+        });
+        res.json({ users });
+    } catch (error) {
+        res.status(500).send(error);
+    }
+});
 
-
+app.get('/posts', async (req, res) => { // server get for posts
+    try {
+        const posts = await Post.find({});
+        res.status(200).json(posts); // Changed status code to 200 for successful GET
+    } catch (error) {
+        res.status(500).json({ message: error.message }); // Changed status code to 500 for server error
+    }
+});
 
 
 app.post('/test', (req, res) => {
