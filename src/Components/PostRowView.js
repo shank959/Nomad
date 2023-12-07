@@ -59,29 +59,19 @@ const PostRowView = ({post}) => {
         source={{uri: post.imageUrl}}
         style={styles.postImage}
       />
+      <View style={styles.captionContainer}>
+      <Text style={styles.boldText}>{post.authorUsername} </Text>
+      <Text style={styles.caption}>{post.caption}</Text>
+      <View style={{ flex: 1 }} />
 
       <View style={styles.actionsRow}>
         <TouchableOpacity style={styles.actionRowButton} onPress={() => {/* like button action */}}>
           <AntDesign name="hearto" size={24} color="black" />
         </TouchableOpacity>
-        <TouchableOpacity style={styles.actionRowButton} onPress={() => {/* comment button action */}}>
-          <FontAwesome name="comment-o" size={24} color="black" />
-        </TouchableOpacity>
-        <TouchableOpacity style={styles.actionRowButton} onPress={() => {/* share button action */}}>
-          <Feather name="share" size={24} color="black" />
-        </TouchableOpacity>
-        <View style={{ flex: 1 }} />
-        <TouchableOpacity style={styles.actionRowButton} onPress={() => {/* see location button action */}}>
-          <Ionicons name="location-sharp" size={30} color="black" />
-        </TouchableOpacity>
         <TouchableOpacity style={styles.actionRowButton} onPress={() => {/* toGo button action */}}>
-          <FontAwesome5 name="clipboard-list" size={28} color="black" />
+          <Ionicons name="clipboard-outline" size={26} color="black" />
         </TouchableOpacity>
       </View>
-
-      <View style={styles.captionContainer}>
-        <Text style={styles.boldText}>{post.authorUsername} </Text>
-        <Text style={styles.caption}>{post.caption}</Text>
       </View>
 
       <View style={styles.divider} />
@@ -142,7 +132,7 @@ const styles = StyleSheet.create({
   captionContainer: {
     flexDirection: 'row',
     padding: 7,
-    marginLeft: 15,
+    marginLeft: 6,
     alignItems: 'center',
   },
   caption: {
