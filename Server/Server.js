@@ -226,7 +226,8 @@ app.get('/posts', async (req, res) => {
             const user = await UsersModel.findById(post.author);
             return {
                 ...post._doc,  // Spread the post document
-                authorUsername: user ? user.username : 'Unknown'
+                authorUsername: user ? user.username : 'Unknown',
+                authorPFPURL: user ? user.pfpURL : null
             };
         }));
 

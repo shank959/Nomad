@@ -687,7 +687,7 @@ function MapScreen({ navigation }) {
                 language: "en",
                 components: "country:us",
                 radius: 40000,
-                location: "${region.latitude}, ${region.longitude}",
+                location: '${region.latitude}, ${region.longitude}',
               }}
               styles={{
                 container: {

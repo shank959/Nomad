@@ -9,7 +9,6 @@ const FeedScreen = () => {
   const [postData, setPostData] = useState([]);
   const { backendURL } = useUser();
 
-
   useEffect(() => {
     const fetchPosts = async () => {
       try {

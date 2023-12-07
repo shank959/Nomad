@@ -38,7 +38,7 @@ const PostRowView = ({post}) => {
     <View style={styles.container}>
       <View style={styles.header}>
         <Image
-          source={require('../../assets/icon.png')}
+          source={post.authorPFPURL ? { uri: post.authorPFPURL } : require('../../assets/icon.png')}
           style={styles.profilePic}
         />
         <View style={styles.profileDetails}>
