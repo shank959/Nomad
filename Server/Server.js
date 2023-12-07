@@ -295,6 +295,24 @@ app.post('/user/grid', async (req, res) => {
     }
 });
 
+app.post('/user/achievements', async (req, res) => {
+    try {
+        const { userId } = req.body;
+        
+        // Find the user by ID and retrieve achievements
+        const user = await UsersModel.findById(userId);
+        if (!user) {
+            return res.status(404).send({ error: 'User not found' });
+        }
+
+        // Send the user's achievements
+        res.json({ achievements: user.achievements });
+    } catch (error) {
+        console.error('Error fetching achievements:', error);
+        res.status(500).send('Error fetching achievements');
+    }
+});
+
 // POST ROUTE FOR POSTSPAGE
 app.post('/users', async (req, res) => {
     try {
