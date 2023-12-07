@@ -1,9 +1,30 @@
 import React from 'react';
 import { View, Text, Image, StyleSheet, TouchableOpacity } from 'react-native';
 import { Ionicons, AntDesign, FontAwesome, FontAwesome5, Feather } from '@expo/vector-icons';
+import { UserInterfaceIdiom } from 'expo-constants';
 
 const PostRowView = ({post}) => {
   // Arrow Functions to handle button presses defined here
+  const timeSince = (date) => {
+    const postDate = new Date(date);
+    const now = new Date();
+    const difference = now - postDate;
+
+    const minutes = Math.floor(difference / 60000);
+    const hours = Math.floor(minutes / 60);
+    const days = Math.floor(hours / 24);
+
+    if (days > 0) {
+      return `${days}d`;
+    } else if (hours > 0) {
+      return `${hours}h`;
+    } else if (minutes > 0) {
+      return `${minutes}m`;
+    } else {
+      return 'Just now';
+    }
+  };
+
   const {
     imageUrl,
     caption,
@@ -11,6 +32,9 @@ const PostRowView = ({post}) => {
     coordinates,
     author,
   } = post;
+
+
+
   return (
     <View style={styles.container}>
       <View style={styles.header}>
@@ -21,7 +45,7 @@ const PostRowView = ({post}) => {
         <View style={styles.profileDetails}>
           <View style={styles.nameRow}>
             <Text style={styles.boldText}>@{post.author}</Text>
-            <Text style={styles.grayText}>16h</Text>
+            <Text style={styles.grayText}>{timeSince(post.createdAt)}</Text>
           </View>
           <TouchableOpacity onPress={() => {/* view location button action */}}>
             <View style={styles.locationRow}>
@@ -55,6 +79,8 @@ const PostRowView = ({post}) => {
           <FontAwesome5 name="clipboard-list" size={28} color="black" />
         </TouchableOpacity>
       </View>
+
+      <Text style={styles.caption}>{post.caption}</Text>
 
       <View style={styles.divider} />
     </View>
@@ -110,6 +136,12 @@ const styles = StyleSheet.create({
   },
   actionRowButton: {
     marginHorizontal: 10,
+  },
+  caption: {
+    padding: 3,
+    marginLeft: 20,
+    fontSize: 16,
+    color: 'black',
   },
   divider: {
     height: 1,

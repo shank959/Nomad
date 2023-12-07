@@ -1,8 +1,8 @@
 const express = require('express');
 const mongoose = require('mongoose');
 const cors = require('cors');
-const crypto = require('crypto')
-const nodemailer = require('nodemailer')
+
+
 // create express app
 const app = express();
 //middleware pasrsing JSON bodies

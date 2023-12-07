@@ -23,7 +23,7 @@ export default function CreateAccountScreen({ navigation }) {
 
   const handleCreateAccount = async () => { // Make this function async
     try {
-      const response = await axios.post('http://172.20.10.2:3000/create_user', {
+      const response = await axios.post('http://localhost:3000/create_user', {
         email,
         username,
         password
