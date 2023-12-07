@@ -118,7 +118,7 @@ function ProfileScreen({ navigation }) {
         {/* Profile Picture Placeholder */}
         <View style={styles.profilePicPlaceholder}>
           <Image
-            source={{ uri: imageUrl || defaultPFP }}
+            source={{ uri: imageUrl}}
             style={styles.image}
           />
         </View>
