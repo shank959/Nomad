@@ -1,21 +1,25 @@
 import React, { useState } from "react";
 import { StyleSheet, View, Text, TextInput, TouchableOpacity, Image } from "react-native";
+import { useUser } from "../../UserContext";
 import axios from 'axios';
 
 export default function LoginScreen({ navigation }) {
   const [username, setUsername] = useState("");
   const [password, setPassword] = useState("");
   const [error, setError] = useState('');
+  const { setUserId, backendURL } = useUser();
 
   const handleLogin = async () => {
-    console.log("button clicked")
     try {
-      const response = await axios.post('http://localhost:3000/login', {
+      const response = await axios.post(backendURL + "/login", {
         username,
         password
       });
       // Handle response, e.g., navigate to another screen, store the token, etc.
-      console.log(response.data);
+      console.log(response.data)
+      if (response.data.userId) {
+        setUserId(response.data.userId);
+      }
       navigation.navigate("MainTabScreen", { screen: "MapScreen" });
     } catch (err) {
       setError(err.response?.data?.error || 'Error logging in');
@@ -24,15 +28,12 @@ export default function LoginScreen({ navigation }) {
   };
 
 
-
-
   const createAccount = () => {
     navigation.navigate("CreateAccountScreen");
   };
 
   const handleForgotPassword = () => {
-    // Placeholder for forgot password functionality
-    alert("Forgot Password functionality not implemented yet.");
+    navigation.navigate("ForgotPasswordScreen");
   };
 
   return (
@@ -43,7 +44,7 @@ export default function LoginScreen({ navigation }) {
         placeholder="Username"
         value={username}
         onChangeText={(text) => setUsername(text)}
-        placeholderTextColor="white"
+        placeholderTextColor="grey"
       />
       <TextInput
         style={styles.input}
@@ -51,16 +52,16 @@ export default function LoginScreen({ navigation }) {
         secureTextEntry={true}
         value={password}
         onChangeText={(text) => setPassword(text)}
-        placeholderTextColor="white"
+        placeholderTextColor="grey"
       />
       <TouchableOpacity style={[styles.button, styles.loginButton]} onPress={handleLogin}>
         <Text style={styles.buttonText}>Login</Text>
       </TouchableOpacity>
-      <TouchableOpacity style={styles.button} onPress={createAccount}>
-        <Text style={styles.buttonText}>Create Account</Text>
+      <TouchableOpacity style={[styles.button, styles.CreateAccountButton]} onPress={createAccount}>
+        <Text style={styles.CreateAccountButtonText}>- Create Account -</Text>
       </TouchableOpacity>
       <TouchableOpacity style={[styles.button, styles.forgotPasswordButton]} onPress={handleForgotPassword}>
-        <Text style={styles.forgotPasswordButtonText}>Forgot Password?</Text>
+        <Text style={styles.forgotPasswordButtonText}>- Forgot Password? -</Text>
       </TouchableOpacity>
     </View>
   );
@@ -88,6 +89,7 @@ const styles = StyleSheet.create({
     padding: 10,  
     fontSize: 18,
     color: 'white',
+    fontWeight: 'bold'
   },
   button: {
     backgroundColor: "black",
@@ -106,15 +108,27 @@ const styles = StyleSheet.create({
   forgotPasswordButton: {
     width: 130, // Smaller width for the forgot password button
     height: 25,
+    borderColor: "black",
   },
   forgotPasswordButtonText: {
     color: "white",
     fontSize: 12, // Smaller font size for the forgot password button text
-    fontWeight: 400,
+    fontWeight: "bold",
   },
   buttonText: {
     color: "white",
     fontSize: 18,
-    fontWeight: 400,
+    fontWeight: "bold",
   },
+  CreateAccountButton:{
+    width: 130,
+    height: 25,
+    borderColor: "black",
+  },
+  CreateAccountButtonText:{
+    color: "white",
+    fontSize: 12,
+    fontWeight: "bold",
+  }
+
 });
