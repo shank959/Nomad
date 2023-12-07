@@ -7,21 +7,20 @@ export default function LoginScreen({ navigation }) {
   const [username, setUsername] = useState("");
   const [password, setPassword] = useState("");
   const [error, setError] = useState('');
-  const { userId, setUserId } = useUser();
+  const { setUserId, backendURL } = useUser();
 
   const handleLogin = async () => {
-    console.log("button clicked")
     try {
-      const response = await axios.post('http://localhost:3000/login', {
+      const response = await axios.post(backendURL + "/login", {
         username,
         password
       });
       // Handle response, e.g., navigate to another screen, store the token, etc.
+      console.log(response.data)
       if (response.data.userId) {
         setUserId(response.data.userId);
         console.log(userId);
       }
-      console.log(response.data);
       navigation.navigate("MainTabScreen", { screen: "MapScreen" });
     } catch (err) {
       setError(err.response?.data?.error || 'Error logging in');

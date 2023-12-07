@@ -15,7 +15,7 @@ export default function CreateAccountScreen({ navigation }) {
   const [username, setUsername] = useState("");
   const [password, setPassword] = useState("");
   const [message, setMessage] = useState(""); // Add a state for the message
-  const { setUserId } = useUser();
+  const { setUserId, backendURL } = useUser();
 
   const navigateToHome = () => {
     navigation.navigate("LoginScreen");
@@ -23,7 +23,7 @@ export default function CreateAccountScreen({ navigation }) {
 
   const handleCreateAccount = async () => { // Make this function async
     try {
-      const response = await axios.post('http://localhost:3000/create_user', {
+      const response = await axios.post(backendURL + "/create_user", {
         email,
         username,
         password

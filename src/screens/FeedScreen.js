@@ -2,10 +2,13 @@ import React, { useState, useEffect } from 'react';
 import { FlatList, View, SafeAreaView, Image, StyleSheet} from 'react-native';
 import PostRowView from '../Components/PostRowView';
 import axios from 'axios';
+import { useUser } from "../../UserContext"
 
 const FeedScreen = () => {
   // State to store fetched posts after initialr edenrings
   const [postData, setPostData] = useState([]);
+  const { backendURL } = useUser();
+
 
   useEffect(() => {
     const fetchPosts = async () => {

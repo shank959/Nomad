@@ -57,22 +57,24 @@ app.post('/create_user', async (req, res) => {
 });
 
 //user login endpoint
-app.post('/login_user', async (req, res) => {
+app.post('/login', async (req, res) => {
     try {
+        const { username, password } = req.body;
         const user = await UsersModel.findOne({ username: req.body.username });
-        if (!user){
-            return res.status(404).send ({error: 'Invalid username or password.'});
+
+        if (user && await bcrypt.compare(password, user.password)) {
+            // Passwords match
+            // Proceed with login logic (e.g., generating a token)
+            res.status(201).send({ message: 'User successfully logged in!', userId: user._id });
+        } else {
+            // Passwords do not match or user does not exist
+            res.status(401).send({ error: 'Invalid credentials' });
         }
-        const Matching = await bcrypt.compare(req.body.password, user.password);
-        if(!Matching){
-            return res.status(400).send({ error: 'Invalid username or password.'});
-        }
-        //successful
-        res.send({ message: 'Login successful', userId: user._id });
-    } catch(error) {
-        res.status(500).send({ error: 'Error logging in'});
+    } catch (error) {
+        console.error(error);
+        res.status(500).send({ error: 'Error logging in' });
     }
-    });
+});
 // Hash password before saving
 UsersSchema.pre('save', async function(next) {
     if (this.isModified('password')) {
@@ -110,7 +112,7 @@ app.post('/posts', (req, res) => {
         caption,
         location,
         coordinates,
-        author  // need to code the functionality of taking the users id as the author
+        author
     });
     // Saving the post to the database
     newPost.save()
@@ -171,24 +173,6 @@ app.post('/test', (req, res) => {
     res.status(200).json({ message: 'Data received successfully!' });
   });
 
-  app.post('/login', async (req, res) => {
-    try {
-        const { username, password } = req.body;
-        const user = await UsersModel.findOne({ username: req.body.username });
-
-        if (user && await bcrypt.compare(password, user.password)) {
-            // Passwords match
-            // Proceed with login logic (e.g., generating a token)
-            res.status(201).send({ message: 'User successfully created!' });
-        } else {
-            // Passwords do not match or user does not exist
-            res.status(401).send({ error: 'Invalid credentials' });
-        }
-    } catch (error) {
-        console.error(error);
-        res.status(500).send({ error: 'Error logging in' });
-    }
-});
 
 const port = process.env.PORT || 3000;
 app.listen(port, () => {console.log(`Server running on port ${port}`);});
