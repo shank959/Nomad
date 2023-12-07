@@ -23,7 +23,7 @@ export default function LoginScreen({ navigation }) {
       navigation.navigate("MainTabScreen", { screen: "MapScreen" });
     } catch (err) {
       setError(err.response?.data?.error || 'Error logging in');
-      console.log(`${error}`)
+      console.log('${error}')
     }
   };
 
