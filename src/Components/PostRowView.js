@@ -4,6 +4,7 @@ import { Ionicons, AntDesign, FontAwesome, FontAwesome5, Feather } from '@expo/v
 
 const PostRowView = ({post}) => {
   // Arrow Functions to handle button presses defined here
+  console.log(post);
   const timeSince = (date) => {
     const postDate = new Date(date);
     const now = new Date();
@@ -32,13 +33,11 @@ const PostRowView = ({post}) => {
     author,
   } = post;
 
-
-
   return (
     <View style={styles.container}>
       <View style={styles.header}>
         <Image
-          source={require('../../assets/icon.png')}
+          source={post.authorPFPURL ? { uri: post.authorPFPURL } : require('../../assets/icon.png')}
           style={styles.profilePic}
         />
         <View style={styles.profileDetails}>
