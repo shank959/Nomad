@@ -301,9 +301,11 @@ app.post('/user/grid', async (req, res) => {
 });
 
 // POST ROUTE FOR POSTSPAGE
-app.post('/users', async (req, res) => {
+app.post('/get_user_data', async (req, res) => {
     try {
         const { userId } = req.body;
+        console.log("VOXI")
+        console.log(userId)
         const user = await UsersModel.findById(userId);
 
         if (!user) {
@@ -316,6 +318,30 @@ app.post('/users', async (req, res) => {
         res.status(500).send({ message: 'Error fetching user data' });
     }
 });
+
+// app.get('/user/:id', async (req, res) => {
+//     try {
+//         const userId = req.params.id;
+//         if (!mongoose.Types.ObjectId.isValid(userId)) {
+//             return res.status(400).send({ error: 'Invalid user ID' });
+//         }
+
+//         const user = await UsersModel.findById(userId);
+//         if (!user) {
+//             return res.status(404).send({ error: 'User not found' });
+//         }
+
+//         // Return the user data
+//         res.status(200).json({ user });
+//     } catch (error) {
+//         console.error('Error fetching user data:', error);
+//         res.status(500).send({ error: 'Error fetching user data' });
+//     }
+// });
+
+
+
+
 
 app.post('/get_user_posts', async (req, res) => {
     try {

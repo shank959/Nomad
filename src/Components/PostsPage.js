@@ -14,10 +14,9 @@ const PostsPage = () => {
     useEffect(() => {
         const fetchUserData = async () => {
             try {
-                const response = await axios.post(`${backendURL}/users`, { userId });
-                const postIds = response.data.posts;
-                console.log(postIds)
-                fetchUserPosts(postIds);
+                const response = await axios.post(`${backendURL}/get_user_data`, { userId });
+                const userData = response.data.user;
+                fetchUserPosts(userData.posts);
             } catch (error) {
                 // Something happened in setting up the request that triggered an Error
                 console.error('Error message:', error.message);

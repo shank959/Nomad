@@ -16,7 +16,7 @@ import BadgesPage from "../Components/BadgesPage";
 import * as ImagePicker from "expo-image-picker";
 import { ref, uploadBytes, getDownloadURL } from "firebase/storage";
 import { useUser } from "../../UserContext";
-import { axios } from 'axios';
+import axios from 'axios';
 import { storage } from "../../Firebase";
 
 function ProfileScreen({ navigation }) {
@@ -31,15 +31,14 @@ function ProfileScreen({ navigation }) {
    useEffect(() => {
      const fetchUserData = async () => {
        try {
-         const response = await axios.post(backendURL + "/users", { userId });
-         const userData = response.data
-         console.log(userData);
-         setUsername(userData.username);
+         const response = await axios.post(`${backendURL}/get_user_data`, { userId });
+         const userData = response.data.user;
+         setUsername(`@${userData.username}`);
          setImageUrl(userData.pfpURL);
          const friendList = userData.friends;
-         setFriendCount(friendList.length);
+         if (friendList) { setFriendCount(friendList.length); }
          const achList = userData.achievements;
-         setAchCount(achList.length);
+         if (achList) { setAchCount(achList.length); }
 
        } catch (error) {
          console.error("Error fetching user data:", error);
