@@ -24,7 +24,8 @@ const UsersSchema = new mongoose.Schema({
     email: { type: String, required: true, unique: true },
     username: { type: String, required: true, unique: true },
     password: { type: String, required: true },
-    friends: [{ type: mongoose.Schema.Types.ObjectId, ref: 'UsersModel'}]
+    friends: [{ type: mongoose.Schema.Types.ObjectId, ref: 'UsersModel'}],
+    posts: [{ type: mongoose.Schema.Types.ObjectId, ref: 'Post'}]
 });
 
 const UsersModel = mongoose.model('Users', UsersSchema);
@@ -100,31 +101,34 @@ const postSchema = new mongoose.Schema({
 
 const Post = mongoose.model('posts', postSchema);
 
-app.post('/posts', (req, res) => {
+app.post('/posts', async (req, res) => {
     const { imageUrl, caption, location, coordinates, author } = req.body;
+
     // Basic validation for required fields
     if (!imageUrl || !location || !coordinates) {
         return res.status(400).json({ message: 'Image, location, and coordinates are required' });
     }
-    // Creating a new post with all fields
-    const newPost = new Post({
-        imageUrl,
-        caption,
-        location,
-        coordinates,
-        author
-    });
-    // Saving the post to the database
-    newPost.save()
-        .then(savedPost => {
-            // Sending response back with the saved post
-            res.status(201).json(savedPost);
-        })
-        .catch(error => {
-            // Error handling for database save errors
-            res.status(500).json({ message: error.message });
+
+    try {
+        // Creating a new post with all fields
+        const newPost = new Post({ imageUrl, caption, location, coordinates, author });
+
+        // Saving the post to the database
+        const savedPost = await newPost.save();
+
+        // Updating the user document with the new post's ID
+        await UsersModel.findByIdAndUpdate(author, {
+            $push: { posts: savedPost._id }
         });
+
+        // Sending response back with the saved post
+        res.status(201).json(savedPost);
+    } catch (error) {
+        // Error handling for database operations
+        res.status(500).json({ message: error.message });
+    }
 });
+
 
 // search query endpoint
 app.post('/search', async (req, res) => {
@@ -152,7 +156,25 @@ app.get('/posts', async (req, res) => { // server get for posts
 app.post('/test', (req, res) => {
     console.log('Received data:', req.body);
     res.status(200).json({ message: 'Data received successfully!' });
-  });
+});
+
+
+// POST ROUTE FOR POSTSPAGE
+app.post('/users', async (req, res) => {
+    try {
+        const { userId } = req.body;
+        const user = await UsersModel.findById(userId);
+
+        if (!user) {
+            return res.status(404).send({ message: 'User not found' });
+        }
+        const userData = { posts: user.posts };
+        res.status(200).json(userData);
+    } catch (error) {
+        console.error(error);
+        res.status(500).send({ message: 'Error fetching user data' });
+    }
+});
 
 
 const port = process.env.PORT || 3000;

@@ -28,7 +28,7 @@ function ProfileScreen({navigation}) {
     }
     return (
         <View style={styles.outerContainer}>
-            <ScrollView contentContainerStyle={styles.scrollViewContent}>
+            <ScrollView contentContainerStyle={styles.scrollViewContent}>  
                 {/* Profile Picture Placeholder */}
                 <View style={styles.profilePicPlaceholder} />
 

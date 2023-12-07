@@ -2,8 +2,37 @@ import React from 'react';
 import { View, Text, Image, StyleSheet, TouchableOpacity } from 'react-native';
 import { Ionicons, AntDesign, FontAwesome, FontAwesome5, Feather } from '@expo/vector-icons';
 
-const PostRowView = () => {
+const PostRowView = ({post}) => {
   // Arrow Functions to handle button presses defined here
+  const timeSince = (date) => {
+    const postDate = new Date(date);
+    const now = new Date();
+    const difference = now - postDate;
+
+    const minutes = Math.floor(difference / 60000);
+    const hours = Math.floor(minutes / 60);
+    const days = Math.floor(hours / 24);
+
+    if (days > 0) {
+      return `${days}d`;
+    } else if (hours > 0) {
+      return `${hours}h`;
+    } else if (minutes > 0) {
+      return `${minutes}m`;
+    } else {
+      return 'Just now';
+    }
+  };
+
+  const {
+    imageUrl,
+    caption,
+    location,
+    coordinates,
+    author,
+  } = post;
+
+
 
   return (
     <View style={styles.container}>
@@ -14,21 +43,20 @@ const PostRowView = () => {
         />
         <View style={styles.profileDetails}>
           <View style={styles.nameRow}>
-            <Text style={styles.boldText}>Shan Kunzru</Text>
-            <Text style={styles.grayText}>@shankunzru</Text>
-            <Text style={styles.grayText}>16h</Text>
+            <Text style={styles.boldText}>@{post.author}</Text>
+            <Text style={styles.grayText}>{timeSince(post.createdAt)}</Text>
           </View>
           <TouchableOpacity onPress={() => {/* view location button action */}}>
             <View style={styles.locationRow}>
               <Ionicons name="location-sharp" size={16} color="black" />
-              <Text style={{marginLeft: 3}}>San Andreas Hospital, California</Text>
+              <Text style={{marginLeft: 3}}>{post.location}</Text>
             </View>
           </TouchableOpacity>
         </View>
       </View>
 
       <Image
-        source={require('../../assets/post-photo.jpg')}
+        source={{uri: post.imageUrl}}
         style={styles.postImage}
       />
 
@@ -50,6 +78,8 @@ const PostRowView = () => {
           <FontAwesome5 name="clipboard-list" size={28} color="black" />
         </TouchableOpacity>
       </View>
+
+      <Text style={styles.caption}>{post.caption}</Text>
 
       <View style={styles.divider} />
     </View>
@@ -105,6 +135,12 @@ const styles = StyleSheet.create({
   },
   actionRowButton: {
     marginHorizontal: 10,
+  },
+  caption: {
+    padding: 3,
+    marginLeft: 20,
+    fontSize: 16,
+    color: 'black',
   },
   divider: {
     height: 1,
