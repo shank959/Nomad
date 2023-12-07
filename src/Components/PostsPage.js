@@ -34,7 +34,7 @@ const PostsPage = () => {
             const postsResponses = await Promise.all(
                 postIds.map(id => axios.post(`${backendURL}/get_user_posts`, { postId: id }))
             );
-            const posts = postsResponses.map(response => response.data);
+            const posts = postsResponses.map(response => response.data || []);
             setUserPosts(posts);
         } catch (error) {
             if (error.response) {
@@ -53,7 +53,7 @@ const PostsPage = () => {
 
     return (
         <SafeAreaView style={styles.container}>
-            {userPosts.map(post => (
+            {userPosts && userPosts.map(post => (
                 <PostRowView key={post._id.toString()} post={post} />
             ))}
         </SafeAreaView>

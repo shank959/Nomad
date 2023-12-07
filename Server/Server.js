@@ -45,7 +45,7 @@ const UsersSchema = new mongoose.Schema({
     posts: [{ type: mongoose.Schema.Types.ObjectId, ref: 'Post'}],
     grid: [gridCellSchema], // Array of grid cells
     achievements: [{ type: String }], // Array of strings,
-    pfpURL: {type: String, default:""},
+    pfpURL: {type: String, default:"https://firebasestorage.googleapis.com/v0/b/nomad-bb690.appspot.com/o/images%2Fdefault_profile_picture.jpeg?alt=media&token=6c040cad-fb03-431e-9c32-31f28ddddc3f"},
 });
 
 const UsersModel = mongoose.model("Users", UsersSchema);
@@ -309,7 +309,7 @@ app.post('/users', async (req, res) => {
             return res.status(404).send({ message: 'User not found' });
         }
         //const userData = { posts: user.posts };
-        res.status(200).json(user);
+        res.status(200).json({ user });
     } catch (error) {
         console.error(error);
         res.status(500).send({ message: 'Error fetching user data' });

@@ -16,24 +16,37 @@ import BadgesPage from "../Components/BadgesPage";
 import * as ImagePicker from "expo-image-picker";
 import { ref, uploadBytes, getDownloadURL } from "firebase/storage";
 import { useUser } from "../../UserContext";
+import { axios } from 'axios';
+import { storage } from "../../Firebase";
 
 function ProfileScreen({ navigation }) {
   const [selectedTab, setSelectedTab] = useState("Posts");
   const [isModalVisible, setIsModalVisible] = useState(false);
-  const [imageUrl, setImageUrl] = useState(null);
+  const [imageUrl, setImageUrl] = useState("https://firebasestorage.googleapis.com/v0/b/nomad-bb690.appspot.com/o/images%2Fdefault_profile_picture.jpeg?alt=media&token=6c040cad-fb03-431e-9c32-31f28ddddc3f");
+  const [username, setUsername] = useState("@");
+  const [friendCount, setFriendCount] = useState(0);
+  const [achCount, setAchCount] = useState(0);
   const { userId, backendURL } = useUser();
 
    useEffect(() => {
-     const fetchProfilePicture = async () => {
+     const fetchUserData = async () => {
        try {
          const response = await axios.post(backendURL + "/users", { userId });
-         setImageUrl(response.data.pfpURL);
+         const userData = response.data
+         console.log(userData);
+         setUsername(userData.username);
+         setImageUrl(userData.pfpURL);
+         const friendList = userData.friends;
+         setFriendCount(friendList.length);
+         const achList = userData.achievements;
+         setAchCount(achList.length);
+
        } catch (error) {
-         console.error("Error fetching profile picture:", error);
+         console.error("Error fetching user data:", error);
        }
      };
 
-     fetchProfilePicture();
+     fetchUserData();
    }, [userId, backendURL]);
    
   const handleTabSelect = (tabName) => {
@@ -118,7 +131,7 @@ function ProfileScreen({ navigation }) {
         {/* Profile Picture Placeholder */}
         <View style={styles.profilePicPlaceholder}>
           <Image
-            source={{ uri: imageUrl || defaultPFP }}
+            source={{ uri: imageUrl }}
             style={styles.image}
           />
         </View>
@@ -128,18 +141,18 @@ function ProfileScreen({ navigation }) {
         </TouchableOpacity>
 
         {/* Username */}
-        <Text style={styles.username}>@username</Text>
+        <Text style={styles.username}>{username}</Text>
 
         {/* Stats Container */}
         <View style={styles.statsContainer}>
           {/* Friends Count */}
           <View style={styles.statItem}>
-            <Text style={styles.statNumber}>0</Text>
+            <Text style={styles.statNumber}>{friendCount}</Text>
             <Text style={styles.statLabel}>Friends</Text>
           </View>
           {/* Badges Count */}
           <View style={styles.statItem}>
-            <Text style={styles.statNumber}>0</Text>
+            <Text style={styles.statNumber}>{achCount}</Text>
             <Text style={styles.statLabel}>Badges</Text>
           </View>
         </View>
