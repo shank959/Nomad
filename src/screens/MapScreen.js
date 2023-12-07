@@ -140,8 +140,8 @@ function MapScreen({ navigation }) {
   const [selectedMarker, setSelectedMarker] = useState(null);
   const [grid, setGrid] = useState([]);
   useEffect(() => {
-    createGrid()
-  }, [location]);
+    createGrid();
+  }, []);
 
   useEffect(() => {
     let locationSubscription;
@@ -153,36 +153,16 @@ function MapScreen({ navigation }) {
         return;
       }
 
-        locationSubscription = await Location.watchPositionAsync({
-            accuracy: Location.Accuracy.High,
-            timeInterval: 1500, // Update every 15000 milliseconds (15 seconds)
-            distanceInterval: 1000 , // Or specify distance in meters
-        }, (location) => {
-            // console.log(location);
-            const point = turf.point([location.coords.longitude, location.coords.latitude]);
-            // console.log(gri
-            grid.forEach((cell) => {
-              const polygon = turf.polygon([[
-                [cell.coordinates[0].longitude, cell.coordinates[0].latitude],
-                [cell.coordinates[1].longitude, cell.coordinates[1].latitude],
-                [cell.coordinates[2].longitude, cell.coordinates[2].latitude],
-                [cell.coordinates[3].longitude, cell.coordinates[3].latitude],
-                [cell.coordinates[0].longitude, cell.coordinates[0].latitude]
-              ]]);
-            
-              if (turf.booleanPointInPolygon(point, polygon)) {
-                console.log(location)
-                let rowIndex = cell.rowIndex;
-                let columnIndex = cell.columnIndex;
-                updateGridCell(rowIndex, columnIndex, { fillColor: "transparent", explored: true});
-                // updateGridCell(rowIndex, columnIndex, { explored: "explored"})
-
-              }
-              // Other operations with polygon...
-            });
-            
-            // Do something with the updated location..
-        });
+      locationSubscription = await Location.watchPositionAsync(
+        {
+          accuracy: Location.Accuracy.High,
+          timeInterval: 1500,
+          distanceInterval: 1000,
+        },
+        (newLocation) => {
+          setLocation(newLocation); // Set the location state
+        }
+      );
     };
 
     subscribeToLocationUpdates();
@@ -193,6 +173,34 @@ function MapScreen({ navigation }) {
       }
     };
   }, []);
+
+  useEffect(() => {
+    if (location && grid.length > 0) {
+      const point = turf.point([location.coords.longitude, location.coords.latitude]);
+  
+      let gridUpdated = false;
+      const newGrid = grid.map((cell) => {
+        const polygon = turf.polygon([[
+          [cell.coordinates[0].longitude, cell.coordinates[0].latitude],
+          [cell.coordinates[1].longitude, cell.coordinates[1].latitude],
+          [cell.coordinates[2].longitude, cell.coordinates[2].latitude],
+          [cell.coordinates[3].longitude, cell.coordinates[3].latitude],
+          [cell.coordinates[0].longitude, cell.coordinates[0].latitude]
+          // ... other coordinates
+        ]]);
+  
+        if (turf.booleanPointInPolygon(point, polygon) && !cell.explored) {
+          gridUpdated = true; // Indicate that grid needs an update
+          return { ...cell, fillColor: "transparent", explored: true };
+        }
+        return cell;
+      });
+  
+      if (gridUpdated) {
+        setGrid(newGrid); // Update grid only if there are changes
+      }
+    }
+  }, [location, grid]);
 
   const darkMode = [
     // Define your dark map style here (as mentioned in the previous example)
