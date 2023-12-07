@@ -72,7 +72,7 @@ export default function CreateAccountScreen({ navigation }) {
         <Text style={styles.buttonText}>Create Account</Text>
       </TouchableOpacity>
       <TouchableOpacity style={styles.HomeButton} onPress={navigateToHome}>
-        <Text style={styles.HomeButton}>- Homepage -</Text>
+        <Text style={styles.HomeButton}> Homepage </Text>
       </TouchableOpacity>
     </View>
   );
@@ -103,15 +103,16 @@ const styles = StyleSheet.create({
     fontWeight: "bold"
   },
   button: {
-    backgroundColor: "black",
-    borderColor: "white",
-    borderWidth: 1,
-    width: 200,
-    height: 50,
+    backgroundColor: "black", // Adjusted button color to match the style of the "Create Account" button
+    borderBottomWidth: 0.5,
+    borderBottomColor: 'grey',
+    width: 150,
+    height: 30,
     justifyContent: "center",
     alignItems: "center",
     borderRadius: 15,
     marginVertical: 20,
+    FontWeight: "bold"
   },
   buttonText: {
     color: "white",
@@ -121,7 +122,9 @@ const styles = StyleSheet.create({
   HomeButton: {
     color: "white",
     borderColor: "black",
-    fontSize: 12,
+    borderBottomWidth: 0.5,
+    borderBottomColor: 'grey',
+    fontSize: 18,
     fontWeight: "bold"
   }
 });
