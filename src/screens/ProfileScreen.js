@@ -15,11 +15,13 @@ import FriendsPage from "../Components/FriendsPage";
 import BadgesPage from "../Components/BadgesPage";
 import * as ImagePicker from "expo-image-picker";
 import { ref, uploadBytes, getDownloadURL } from "firebase/storage";
+import { useUser } from "../../UserContext";
 
 function ProfileScreen({ navigation }) {
   const [selectedTab, setSelectedTab] = useState("Posts");
   const [isModalVisible, setIsModalVisible] = useState(false);
   const [imageUrl, setImageUrl] = useState(null);
+  const { userId, backendURL } = useUser();
 
   const handleTabSelect = (tabName) => {
     setSelectedTab(tabName);
@@ -65,10 +67,35 @@ function ProfileScreen({ navigation }) {
       try {
         const downloadUrl = await uploadImageToFirebase(result.assets[0].uri);
         setImageUrl(downloadUrl); // Save the URL of the uploaded image
+        uploadProfile(downloadUrl);
         toggleModal();
       } catch (error) {
         alert("Error uploading image: " + error.message);
       }
+    }
+  };
+  const uploadProfile = async (profileUrl) => {
+    try {
+      // Send a request to update the user's profile picture URL
+      const response = await axios.put(
+        backendURL + "/update_profile", // Update the endpoint to match your server code
+        { pfpURL: profileUrl }
+      );
+
+      // Handle the response accordingly
+      console.log("Profile picture updated successfully:", response.data);
+      toggleModal(); // Close the modal or perform other actions as needed
+    } catch (error) {
+      // Handle the error case
+      console.error(
+        "Error updating profile picture:",
+        error.response ? error.response.data : error.message
+      );
+      Alert.alert(
+        "Error",
+        "Failed to update profile picture: " +
+          (error.response ? error.response.data : error.message)
+      );
     }
   };
   return (
@@ -76,7 +103,7 @@ function ProfileScreen({ navigation }) {
       <ScrollView contentContainerStyle={styles.scrollViewContent}>
         {/* Profile Picture Placeholder */}
         <View style={styles.profilePicPlaceholder}>
-          <Image source={{ uri: imageUrl }} style={styles.image}/>
+          <Image source={{ uri: imageUrl }} style={styles.image} />
         </View>
         {/* Settings Button */}
         <TouchableOpacity style={styles.settingsIcon} onPress={toggleModal}>
