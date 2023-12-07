@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import {
   View,
   Text,
@@ -16,7 +16,9 @@ import BadgesPage from "../Components/BadgesPage";
 import * as ImagePicker from "expo-image-picker";
 import { ref, uploadBytes, getDownloadURL } from "firebase/storage";
 import { useUser } from "../../UserContext";
-
+import axios from "axios";
+import defaultPFP from "../../assets/defaultPFP.jpg"
+import { storage } from "../../Firebase";
 function ProfileScreen({ navigation }) {
   const [selectedTab, setSelectedTab] = useState("Posts");
   const [isModalVisible, setIsModalVisible] = useState(false);
@@ -26,10 +28,8 @@ function ProfileScreen({ navigation }) {
    useEffect(() => {
      const fetchProfilePicture = async () => {
        try {
-         const response = await axios.get(backendURL + "/get_profile_picture", {
-           params: { userId },
-         });
-         setImageUrl(response.data.profileUrl);
+         const response = await axios.post(backendURL + "/users", { userId });
+         setImageUrl(response.data.pfpURL);
        } catch (error) {
          console.error("Error fetching profile picture:", error);
        }
@@ -119,7 +119,10 @@ function ProfileScreen({ navigation }) {
       <ScrollView contentContainerStyle={styles.scrollViewContent}>
         {/* Profile Picture Placeholder */}
         <View style={styles.profilePicPlaceholder}>
-          <Image source={{ uri: imageUrl }} style={styles.image} />
+          <Image
+            source={{ uri: imageUrl || defaultPFP }}
+            style={styles.image}
+          />
         </View>
         {/* Settings Button */}
         <TouchableOpacity style={styles.settingsIcon} onPress={toggleModal}>
@@ -174,12 +177,6 @@ function ProfileScreen({ navigation }) {
             <TouchableOpacity style={styles.modalButton} onPress={Logout}>
               <Text style={styles.modalButtonText}>Logout</Text>
             </TouchableOpacity>
-            <TouchableOpacity
-              style={styles.modalButton}
-              onPress={deleteAccount}
-            >
-              <Text style={styles.modalButtonText}>Delete Account</Text>
-            </TouchableOpacity>
           </View>
         </TouchableOpacity>
       </Modal>
@@ -202,16 +199,6 @@ const styles = StyleSheet.create({
     top: 40,
     right: 16,
     zIndex: 10,
-  },
-  profilePicPlaceholder: {
-    position: "absolute",
-    top: 50,
-    right: 30,
-    width: 150,
-    height: 150,
-    borderRadius: 75,
-    backgroundColor: "white",
-    zIndex: 5,
   },
   username: {
     position: "absolute",
@@ -277,6 +264,22 @@ const styles = StyleSheet.create({
     color: "red",
     fontWeight: "bold",
     textAlign: "center",
+  },
+  profilePicPlaceholder: {
+    position: "absolute",
+    top: 50,
+    right: 30,
+    width: 150,
+    height: 150,
+    borderRadius: 75,
+    backgroundColor: "transparent",
+    zIndex: 5,
+    overflow: "hidden", // Ensure the border radius is applied to the image
+  },
+  image: {
+    width: "100%",
+    height: "100%",
+    borderRadius: 75,
   },
 });
 
