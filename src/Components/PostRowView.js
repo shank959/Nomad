@@ -68,9 +68,7 @@ const PostRowView = ({post}) => {
         <TouchableOpacity style={styles.actionRowButton} onPress={() => {/* like button action */}}>
           <AntDesign name="hearto" size={24} color="black" />
         </TouchableOpacity>
-        <TouchableOpacity style={styles.actionRowButton} onPress={() => {/* toGo button action */}}>
-          <Ionicons name="clipboard-outline" size={26} color="black" />
-        </TouchableOpacity>
+        
       </View>
       </View>
 
@@ -132,7 +130,7 @@ const styles = StyleSheet.create({
   captionContainer: {
     flexDirection: 'row',
     padding: 7,
-    marginLeft: 6,
+    marginLeft: 8,
     alignItems: 'center',
   },
   caption: {

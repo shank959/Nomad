@@ -45,7 +45,7 @@ const UsersSchema = new mongoose.Schema({
     posts: [{ type: mongoose.Schema.Types.ObjectId, ref: 'Post'}],
     grid: [gridCellSchema], // Array of grid cells
     achievements: [{ type: String }], // Array of strings,
-    pfpURL: String,
+    pfpURL: {type: String, default:""},
 });
 
 const UsersModel = mongoose.model("Users", UsersSchema);
@@ -245,7 +245,11 @@ app.put('/update_profile', async (req, res) => {
     try {
         // Update the user's profile picture URL
         const { identity, profileUrl } = req.body;
-        const updatedUser = await UsersModel.findByIdAndUpdate(identity, profileUrl, { new: true });
+        const updatedUser = await UsersModel.findByIdAndUpdate(
+          identity,
+          { pfpURL: profileUrl },
+          { new: true }
+        );
 
         // Respond with the updated user data or a success message
         res.status(200).json(updatedUser);
