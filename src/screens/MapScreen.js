@@ -142,7 +142,6 @@ function MapScreen({ navigation }) {
   const fetchGridData = async () => {
     try {
       const response = await axios.post(`http://localhost:3000/user/grid`, { userId });
-      console.log(response.data)
       correctedGrid = response.data.filter((cell) => {
         return !shouldExcludeCell(cell.rowIndex, cell.columnIndex);
       })
@@ -503,6 +502,11 @@ function MapScreen({ navigation }) {
     }));
   };
 
+  const handlePress = useCallback((rowIndex, columnIndex) => {
+    updateGridCell(rowIndex, columnIndex, { fillColor: "red" });
+    console.log(`clicked ${rowIndex} ${columnIndex}`)
+  }, [updateGridCell]);
+
 
   const calloutStyles = StyleSheet.create({
     container: {
@@ -600,7 +604,6 @@ function MapScreen({ navigation }) {
             coordinates={cell.coordinates}
             fillColor={cell.fillColor}
             strokeWidth={cell.strokeWidth}
-            tappable={true}
           />
           
         ))}
@@ -645,7 +648,12 @@ function MapScreen({ navigation }) {
             <Text style={styles.headerText}>New Post</Text>
           </View>
           <TouchableOpacity onPress={toggleModal} style={styles.closeButton}>
-            <AntDesign name="close" size={24} color="white" style={styles.closeIcon}/>
+            <AntDesign
+              name="close"
+              size={24}
+              color="white"
+              style={styles.closeIcon}
+            />
           </TouchableOpacity>
           <View style={styles.inputContainer}>
             <FontAwesome5
@@ -704,9 +712,9 @@ function MapScreen({ navigation }) {
               <View style={styles.placeholderImage} />
             )}
           </View>
-           <KeyboardAvoidingView
+          <KeyboardAvoidingView
             behavior={Platform.OS === "ios" ? "padding" : "height"}
-            style={styles.keyboardAvoidingContainer}
+            style={styles.captionContainer}
           >
             <TextInput
               style={[styles.input, styles.captionInput]}
@@ -757,11 +765,11 @@ const styles = StyleSheet.create({
     width: "100%",
   },
   imageContainer: {
-    width: "100%",
-    height: 400,
+    width: "80%",
+    height: 300,
     justifyContent: "center",
     alignItems: "center",
-    marginTop: 35,
+    marginTop: 100,
   },
   image: {
     width: "100%",
@@ -819,12 +827,12 @@ const styles = StyleSheet.create({
   },
   input: {
     height: 40,
-    borderColor: "gray",
+    borderColor: "white",
     borderWidth: 1,
     borderRadius: 5,
     paddingLeft: 10,
     marginBottom: 0,
-    marginTop: 30,
+    marginTop: 10,
     color: "white",
   },
   instagramButton: {
@@ -833,7 +841,7 @@ const styles = StyleSheet.create({
     borderRadius: 10,
     width: "80%",
     alignItems: "center",
-    marginTop: 80,
+    marginTop: -60,
   },
   instagramButtonText: {
     color: "white",
@@ -850,10 +858,10 @@ const styles = StyleSheet.create({
     zIndex: 2,
     backgroundColor: "transparent", // Make the icon background transparent
   },
-  keyboardAvoidingContainer: {
+  captionContainer: {
     width: "80%",
-    marginTop: 15,
-    marginBottom: 40,
+    marginTop: -380,
+    marginBottom: 440,
     zIndex: 1,
   },
   closeIcon: {

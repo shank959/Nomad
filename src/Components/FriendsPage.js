@@ -1,6 +1,7 @@
 // Import React and any other necessary modules
 import React, { useState } from 'react';
 import { View, Text, Image, TextInput, StyleSheet } from 'react-native';
+import { useUser } from '../../UserContext'
 
 // placeholder data for friends (haven't implemented backend to
 // fetch actual friend data yet)
@@ -11,6 +12,7 @@ const friendsPlaceholders = Array.from({ length: 20 }, (_, index) => `Friend`);
 const FriendsPage = () => {
     const [searchQuery, setSearchQuery] = useState('');
     const [searchResults, setSearchResults] = useState([]);
+    const { backendURL } = useUser();
 
     const handleSearch = async (text) => {
         setSearchQuery(text);
@@ -18,7 +20,7 @@ const FriendsPage = () => {
             setSearchResults([]);
         } else {
             try {
-                const response = await fetch('http://172.20.10.3:3000/search', {
+                const response = await fetch(backendURL + "/search", {
                     method: 'POST',
                     headers: {
                         'Content-Type': 'application/json',

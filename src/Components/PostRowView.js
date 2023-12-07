@@ -2,8 +2,37 @@ import React from 'react';
 import { View, Text, Image, StyleSheet, TouchableOpacity } from 'react-native';
 import { Ionicons, AntDesign, FontAwesome, FontAwesome5, Feather } from '@expo/vector-icons';
 
-const PostRowView = () => {
+const PostRowView = ({post}) => {
   // Arrow Functions to handle button presses defined here
+  const timeSince = (date) => {
+    const postDate = new Date(date);
+    const now = new Date();
+    const difference = now - postDate;
+
+    const minutes = Math.floor(difference / 60000);
+    const hours = Math.floor(minutes / 60);
+    const days = Math.floor(hours / 24);
+
+    if (days > 0) {
+      return `${days}d`;
+    } else if (hours > 0) {
+      return `${hours}h`;
+    } else if (minutes > 0) {
+      return `${minutes}m`;
+    } else {
+      return 'Just now';
+    }
+  };
+
+  const {
+    imageUrl,
+    caption,
+    location,
+    coordinates,
+    author,
+  } = post;
+
+
 
   return (
     <View style={styles.container}>
@@ -14,41 +43,35 @@ const PostRowView = () => {
         />
         <View style={styles.profileDetails}>
           <View style={styles.nameRow}>
-            <Text style={styles.boldText}>Shan Kunzru</Text>
-            <Text style={styles.grayText}>@shankunzru</Text>
-            <Text style={styles.grayText}>16h</Text>
+            <Text style={styles.boldText}>{post.authorUsername}</Text>
+            <Text style={styles.grayText}>{timeSince(post.createdAt)}</Text>
           </View>
           <TouchableOpacity onPress={() => {/* view location button action */}}>
             <View style={styles.locationRow}>
               <Ionicons name="location-sharp" size={16} color="black" />
-              <Text style={{marginLeft: 3}}>San Andreas Hospital, California</Text>
+              <Text style={{marginLeft: 3}}>{post.location}</Text>
             </View>
           </TouchableOpacity>
         </View>
       </View>
 
       <Image
-        source={require('../../assets/post-photo.jpg')}
+        source={{uri: post.imageUrl}}
         style={styles.postImage}
       />
+      <View style={styles.captionContainer}>
+      <Text style={styles.boldText}>{post.authorUsername} </Text>
+      <Text style={styles.caption}>{post.caption}</Text>
+      <View style={{ flex: 1 }} />
 
       <View style={styles.actionsRow}>
         <TouchableOpacity style={styles.actionRowButton} onPress={() => {/* like button action */}}>
           <AntDesign name="hearto" size={24} color="black" />
         </TouchableOpacity>
-        <TouchableOpacity style={styles.actionRowButton} onPress={() => {/* comment button action */}}>
-          <FontAwesome name="comment-o" size={24} color="black" />
-        </TouchableOpacity>
-        <TouchableOpacity style={styles.actionRowButton} onPress={() => {/* share button action */}}>
-          <Feather name="share" size={24} color="black" />
-        </TouchableOpacity>
-        <View style={{ flex: 1 }} />
-        <TouchableOpacity style={styles.actionRowButton} onPress={() => {/* see location button action */}}>
-          <Ionicons name="location-sharp" size={30} color="black" />
-        </TouchableOpacity>
         <TouchableOpacity style={styles.actionRowButton} onPress={() => {/* toGo button action */}}>
-          <FontAwesome5 name="clipboard-list" size={28} color="black" />
+          <Ionicons name="clipboard-outline" size={26} color="black" />
         </TouchableOpacity>
+      </View>
       </View>
 
       <View style={styles.divider} />
@@ -105,6 +128,21 @@ const styles = StyleSheet.create({
   },
   actionRowButton: {
     marginHorizontal: 10,
+  },
+  captionContainer: {
+    flexDirection: 'row',
+    padding: 7,
+    marginLeft: 6,
+    alignItems: 'center',
+  },
+  caption: {
+    fontSize: 16,
+    color: 'black',
+    flexShrink: 1,
+  },
+  boldText: {
+    fontWeight: 'bold',
+    fontSize: 16,
   },
   divider: {
     height: 1,
