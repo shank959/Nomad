@@ -4,6 +4,7 @@ import { Ionicons, AntDesign, FontAwesome, FontAwesome5, Feather } from '@expo/v
 
 const PostRowView = ({post}) => {
   // Arrow Functions to handle button presses defined here
+  console.log(post);
   const timeSince = (date) => {
     const postDate = new Date(date);
     const now = new Date();
@@ -31,8 +32,6 @@ const PostRowView = ({post}) => {
     coordinates,
     author,
   } = post;
-
-
 
   return (
     <View style={styles.container}>

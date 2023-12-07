@@ -227,7 +227,7 @@ app.get('/posts', async (req, res) => {
             return {
                 ...post._doc,  // Spread the post document
                 authorUsername: user ? user.username : 'Unknown',
-                authorPFPURL: user ? user.pfpURL : null
+                authorPFPURL: user ? user.pfpURL : null,
             };
         }));
 
