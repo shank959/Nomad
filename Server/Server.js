@@ -137,12 +137,31 @@ app.post('/search', async (req, res) => {
     }
 });
 
-app.get('/posts', async (req, res) => { // server get for posts
+/* app.get('/posts', async (req, res) => { // server get for posts
     try {
         const posts = await Post.find({});
         res.status(200).json(posts); // Changed status code to 200 for successful GET
     } catch (error) {
         res.status(500).json({ message: error.message }); // Changed status code to 500 for server error
+    }
+}); */
+
+app.get('/posts', async (req, res) => {
+    try {
+        let posts = await Post.find({});
+
+        // Fetch the usernames for each post's author
+        posts = await Promise.all(posts.map(async (post) => {
+            const user = await UsersModel.findById(post.author);
+            return {
+                ...post._doc,  // Spread the post document
+                authorUsername: user ? user.username : 'Unknown'
+            };
+        }));
+
+        res.status(200).json(posts);
+    } catch (error) {
+        res.status(500).json({ message: error.message });
     }
 });
 

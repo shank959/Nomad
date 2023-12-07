@@ -1,7 +1,6 @@
 import React from 'react';
 import { View, Text, Image, StyleSheet, TouchableOpacity } from 'react-native';
 import { Ionicons, AntDesign, FontAwesome, FontAwesome5, Feather } from '@expo/vector-icons';
-import { UserInterfaceIdiom } from 'expo-constants';
 
 const PostRowView = ({post}) => {
   // Arrow Functions to handle button presses defined here
@@ -44,7 +43,7 @@ const PostRowView = ({post}) => {
         />
         <View style={styles.profileDetails}>
           <View style={styles.nameRow}>
-            <Text style={styles.boldText}>@{post.author}</Text>
+            <Text style={styles.boldText}>{post.authorUsername}</Text>
             <Text style={styles.grayText}>{timeSince(post.createdAt)}</Text>
           </View>
           <TouchableOpacity onPress={() => {/* view location button action */}}>
@@ -80,7 +79,10 @@ const PostRowView = ({post}) => {
         </TouchableOpacity>
       </View>
 
-      <Text style={styles.caption}>{post.caption}</Text>
+      <View style={styles.captionContainer}>
+        <Text style={styles.boldText}>{post.authorUsername} </Text>
+        <Text style={styles.caption}>{post.caption}</Text>
+      </View>
 
       <View style={styles.divider} />
     </View>
@@ -137,11 +139,20 @@ const styles = StyleSheet.create({
   actionRowButton: {
     marginHorizontal: 10,
   },
+  captionContainer: {
+    flexDirection: 'row',
+    padding: 7,
+    marginLeft: 15,
+    alignItems: 'center',
+  },
   caption: {
-    padding: 3,
-    marginLeft: 20,
     fontSize: 16,
     color: 'black',
+    flexShrink: 1,
+  },
+  boldText: {
+    fontWeight: 'bold',
+    fontSize: 16,
   },
   divider: {
     height: 1,
