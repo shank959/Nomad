@@ -304,13 +304,29 @@ app.post('/users', async (req, res) => {
         if (!user) {
             return res.status(404).send({ message: 'User not found' });
         }
-        const userData = { posts: user.posts };
-        res.status(200).json(userData);
+        //const userData = { posts: user.posts };
+        res.status(200).json(user);
     } catch (error) {
         console.error(error);
         res.status(500).send({ message: 'Error fetching user data' });
     }
 });
+
+app.post('/get_user_posts', async (req, res) => {
+    try {
+        const { postId } = req.body;
+        const post = await PostModel.findById(postId);
+
+        if (!post) {
+            return res.status(404).send({ message: 'Post not found' });
+        }
+        res.json(post);
+    } catch (error) {
+        console.error(error);
+        res.status(500).send({ message: 'Error fetching post' });
+    }
+});
+
 
 const port = process.env.PORT || 3000;
 app.listen(port, () => {

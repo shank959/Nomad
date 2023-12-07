@@ -14,41 +14,48 @@ const PostsPage = () => {
     useEffect(() => {
         const fetchUserData = async () => {
             try {
-                const response = await axios.post(backendURL + "/users", { userId });
+                const response = await axios.post(`${backendURL}/users`, { userId });
                 const postIds = response.data.posts;
                 console.log(postIds)
-                //fetchUserPosts(postIds);
+                fetchUserPosts(postIds);
             } catch (error) {
                 // Something happened in setting up the request that triggered an Error
                 console.error('Error message:', error.message);
                 }
             };
     
-        if (userId) {
+        if (userId) {   // initializes this effect when the user logs in
             fetchUserData();
         }
     }, [userId]);
 
     const fetchUserPosts = async (postIds) => {
         try {
-            const posts = await Promise.all(postIds.map(id => axios.get(`/posts/${id}`)));
-            setUserPosts(posts.map(response => response.data));
+            const postsResponses = await Promise.all(
+                postIds.map(id => axios.post(`${backendURL}/get_user_posts`, { postId: id }))
+            );
+            const posts = postsResponses.map(response => response.data);
+            setUserPosts(posts);
         } catch (error) {
-            console.error('Error fetching posts:', error);
+            if (error.response) {
+                // The request was made and the server responded with a status code that falls out of the range of 2xx
+                console.error('Error response:', error.response.data);
+                console.error('Error status:', error.response.status);
+            } else if (error.request) {
+                // The request was made but no response was received
+                console.error('Error request:', error.request);
+            } else {
+                // Something happened in setting up the request that triggered an Error
+                console.error('Error message:', error.message);
+            }
         }
     };
 
-    const renderItem = ({ item }) => (
-        <PostRowView post={item} />
-    );
-
     return (
-        <SafeAreaView>
-            <FlatList
-              data={userPosts}
-              renderItem={renderItem}
-              keyExtractor={(item) => item._id.toString()}
-            />
+        <SafeAreaView style={styles.container}>
+            {userPosts.map(post => (
+                <PostRowView key={post._id.toString()} post={post} />
+            ))}
         </SafeAreaView>
     );
 };

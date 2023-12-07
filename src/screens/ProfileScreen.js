@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import {
   View,
   Text,
@@ -16,6 +16,7 @@ import BadgesPage from "../Components/BadgesPage";
 import * as ImagePicker from "expo-image-picker";
 import { ref, uploadBytes, getDownloadURL } from "firebase/storage";
 import { useUser } from "../../UserContext";
+import { axios } from 'axios';
 
 function ProfileScreen({ navigation }) {
   const [selectedTab, setSelectedTab] = useState("Posts");
