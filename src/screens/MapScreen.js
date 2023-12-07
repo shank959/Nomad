@@ -138,8 +138,23 @@ function MapScreen({ navigation }) {
 
   const [selectedMarker, setSelectedMarker] = useState(null);
   const [grid, setGrid] = useState([]);
+
+  const fetchGridData = async () => {
+    try {
+      const response = await axios.post(`http://localhost:3000/user/grid`, { userId });
+      console.log(response.data)
+      correctedGrid = response.data.filter((cell) => {
+        return !shouldExcludeCell(cell.rowIndex, cell.columnIndex);
+      })
+      setGrid(correctedGrid); // Assuming the backend sends the grid in this format
+    } catch (error) {
+      console.error("Error fetching grid data:", error);
+      // Handle error (e.g., show an alert or a message)
+    }
+};
+
   useEffect(() => {
-    createGrid();
+    fetchGridData();
   }, []);
 
   useEffect(() => {
@@ -294,84 +309,84 @@ function MapScreen({ navigation }) {
     );
   };
 
-  const createGrid = () => {
-    const gridPolygons = [];
-    const gridRows = 12;
-    const gridColumns = 15;
+  // const createGrid = () => {
+  //   const gridPolygons = [];
+  //   const gridRows = 12;
+  //   const gridColumns = 15;
 
-    const northwestCorner = { latitude: 34.215635, longitude: -118.873252 };
-    const southeastCorner = { latitude: 33.701912, longitude: -118.11257 };
+  //   const northwestCorner = { latitude: 34.215635, longitude: -118.873252 };
+  //   const southeastCorner = { latitude: 33.701912, longitude: -118.11257 };
 
-    const latStep =
-      (northwestCorner.latitude - southeastCorner.latitude) / gridRows;
-    const lngStep =
-      (southeastCorner.longitude - northwestCorner.longitude) / gridColumns;
+  //   const latStep =
+  //     (northwestCorner.latitude - southeastCorner.latitude) / gridRows;
+  //   const lngStep =
+  //     (southeastCorner.longitude - northwestCorner.longitude) / gridColumns;
 
-    // // Add the entire grid
-    // gridPolygons.push({
-    //   key: `all-grid`,
-    //   coordinates: [
-    //     {
-    //       latitude: northwestCorner.latitude,
-    //       longitude: northwestCorner.longitude,
-    //     },
-    //     {
-    //       latitude: southeastCorner.latitude,
-    //       longitude: northwestCorner.longitude,
-    //     },
-    //     {
-    //       latitude: southeastCorner.latitude,
-    //       longitude: southeastCorner.longitude,
-    //     },
-    //     {
-    //       latitude: northwestCorner.latitude,
-    //       longitude: southeastCorner.longitude,
-    //     },
-    //   ],
-    //   fillColor: "transparent",
-    //   strokeColor: "transparent",
-    //   strokeWidth: 0,
-    // });
+  //   // // Add the entire grid
+  //   // gridPolygons.push({
+  //   //   key: `all-grid`,
+  //   //   coordinates: [
+  //   //     {
+  //   //       latitude: northwestCorner.latitude,
+  //   //       longitude: northwestCorner.longitude,
+  //   //     },
+  //   //     {
+  //   //       latitude: southeastCorner.latitude,
+  //   //       longitude: northwestCorner.longitude,
+  //   //     },
+  //   //     {
+  //   //       latitude: southeastCorner.latitude,
+  //   //       longitude: southeastCorner.longitude,
+  //   //     },
+  //   //     {
+  //   //       latitude: northwestCorner.latitude,
+  //   //       longitude: southeastCorner.longitude,
+  //   //     },
+  //   //   ],
+  //   //   fillColor: "transparent",
+  //   //   strokeColor: "transparent",
+  //   //   strokeWidth: 0,
+  //   // });
 
-    for (let i = 0; i < gridRows; i++) {
-      for (let j = 0; j < gridColumns; j++) {
-        if (shouldExcludeCell(i, j)) {
-          continue;
-        }
+  //   for (let i = 0; i < gridRows; i++) {
+  //     for (let j = 0; j < gridColumns; j++) {
+  //       if (shouldExcludeCell(i, j)) {
+  //         continue;
+  //       }
 
-        const cellCoordinates = [
-          {
-            latitude: northwestCorner.latitude - latStep * i,
-            longitude: northwestCorner.longitude + lngStep * j,
-          },
-          {
-            latitude: northwestCorner.latitude - latStep * (i + 1),
-            longitude: northwestCorner.longitude + lngStep * j,
-          },
-          {
-            latitude: northwestCorner.latitude - latStep * (i + 1),
-            longitude: northwestCorner.longitude + lngStep * (j + 1),
-          },
-          {
-            latitude: northwestCorner.latitude - latStep * i,
-            longitude: northwestCorner.longitude + lngStep * (j + 1),
-          },
-        ];
+  //       const cellCoordinates = [
+  //         {
+  //           latitude: northwestCorner.latitude - latStep * i,
+  //           longitude: northwestCorner.longitude + lngStep * j,
+  //         },
+  //         {
+  //           latitude: northwestCorner.latitude - latStep * (i + 1),
+  //           longitude: northwestCorner.longitude + lngStep * j,
+  //         },
+  //         {
+  //           latitude: northwestCorner.latitude - latStep * (i + 1),
+  //           longitude: northwestCorner.longitude + lngStep * (j + 1),
+  //         },
+  //         {
+  //           latitude: northwestCorner.latitude - latStep * i,
+  //           longitude: northwestCorner.longitude + lngStep * (j + 1),
+  //         },
+  //       ];
 
-        gridPolygons.push({
-          key: `row-${i}-col-${j}`,
-          rowIndex: i,
-          columnIndex: j,
-          coordinates: cellCoordinates,
-          fillColor:  "rgba(0, 0, 0, 0.9)",
-          strokeColor: "black",
-          strokeWidth: 1,
-          explored: false
-        });
-      }
-    }
-    setGrid(gridPolygons);
-  };
+  //       gridPolygons.push({
+  //         key: `row-${i}-col-${j}`,
+  //         rowIndex: i,
+  //         columnIndex: j,
+  //         coordinates: cellCoordinates,
+  //         fillColor:  "rgba(0, 0, 0, 0.9)",
+  //         strokeColor: "black",
+  //         strokeWidth: 1,
+  //         explored: false
+  //       });
+  //     }
+  //   }
+  //   setGrid(gridPolygons);
+  // };
 
   const markers = [
     {
@@ -579,6 +594,7 @@ function MapScreen({ navigation }) {
         showsUserLocation={true}
       >
         {grid.map((cell) => (
+          
           <Polygon
             key={cell.key}
             coordinates={cell.coordinates}
@@ -586,6 +602,7 @@ function MapScreen({ navigation }) {
             strokeWidth={cell.strokeWidth}
             tappable={true}
           />
+          
         ))}
         {markers.map((marker) => (
           <Marker

@@ -207,6 +207,25 @@ app.get('/posts', async (req, res) => { // server get for posts
     }
 });
 
+app.post('/user/grid', async (req, res) => {
+    try {
+        const { userId } = req.body; // Get userId from request body
+        if (!mongoose.Types.ObjectId.isValid(userId)) {
+            return res.status(400).send({ error: 'Invalid user ID' });
+        }
+
+        const user = await UsersModel.findById(userId);
+        if (!user) {
+            return res.status(404).send({ error: 'User not found' });
+        }
+
+        res.status(200).send(user.grid);
+    } catch (error) {
+        console.error('Error fetching grid:', error);
+        res.status(500).send({ error: 'Error fetching grid' });
+    }
+});
+
 
 app.post('/test', (req, res) => {
     console.log('Received data:', req.body);
