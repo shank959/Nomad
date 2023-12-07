@@ -19,12 +19,11 @@ export default function LoginScreen({ navigation }) {
       console.log(response.data)
       if (response.data.userId) {
         setUserId(response.data.userId);
-        console.log(userId);
       }
       navigation.navigate("MainTabScreen", { screen: "MapScreen" });
     } catch (err) {
       setError(err.response?.data?.error || 'Error logging in');
-      console.log(`${error}`)
+      console.log('${error}')
     }
   };
 
@@ -56,13 +55,13 @@ export default function LoginScreen({ navigation }) {
         placeholderTextColor="grey"
       />
       <TouchableOpacity style={[styles.button, styles.loginButton]} onPress={handleLogin}>
-        <Text style={styles.buttonText}> Login </Text>
+        <Text style={styles.buttonText}>Login</Text>
       </TouchableOpacity>
       <TouchableOpacity style={[styles.button, styles.CreateAccountButton]} onPress={createAccount}>
-        <Text style={styles.CreateAccountButtonText}> Create Account </Text>
+        <Text style={styles.CreateAccountButtonText}>- Create Account -</Text>
       </TouchableOpacity>
       <TouchableOpacity style={[styles.button, styles.forgotPasswordButton]} onPress={handleForgotPassword}>
-        <Text style={styles.forgotPasswordButtonText}> Forgot Password? </Text>
+        <Text style={styles.forgotPasswordButtonText}>- Forgot Password? -</Text>
       </TouchableOpacity>
     </View>
   );
@@ -83,11 +82,9 @@ const styles = StyleSheet.create({
   input: {
     width: 300,
     height: 50,
-    borderColor: "#000000",
+    borderColor: "#ffffff",
     borderWidth: 1,
     borderRadius: 10,
-    borderBottomWidth: 0.4,
-    borderBottomColor: 'grey',
     marginVertical: 10,
     padding: 10,  
     fontSize: 18,
@@ -96,8 +93,7 @@ const styles = StyleSheet.create({
   },
   button: {
     backgroundColor: "black",
-    borderColor: "black",
-    borderBottomWidth: 2,
+    borderColor: "white",
     borderWidth: 1,
     width: 200,
     height: 40,
@@ -115,7 +111,7 @@ const styles = StyleSheet.create({
     borderColor: "black",
   },
   forgotPasswordButtonText: {
-    color: "grey",
+    color: "white",
     fontSize: 12, // Smaller font size for the forgot password button text
     fontWeight: "bold",
   },
@@ -130,7 +126,7 @@ const styles = StyleSheet.create({
     borderColor: "black",
   },
   CreateAccountButtonText:{
-    color: "grey",
+    color: "white",
     fontSize: 12,
     fontWeight: "bold",
   }
