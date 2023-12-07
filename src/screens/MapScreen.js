@@ -6,7 +6,7 @@ import MapView, { Polygon, Marker, Callout } from "react-native-maps";
 import * as Location from "expo-location";
 import axios from 'axios';
 import { storage } from '../../Firebase';
-// import * as turf from '@turf/turf';
+import * as turf from '@turf/turf';
 import { ref, uploadBytes, getDownloadURL } from 'firebase/storage';
 import { useUser } from "../../UserContext";
 
@@ -152,22 +152,16 @@ function MapScreen({ navigation }) {
         return;
       }
 
-        locationSubscription = await Location.watchPositionAsync({
-            accuracy: Location.Accuracy.High,
-            // timeInterval: 1500, // Update every 15000 milliseconds (15 seconds)
-            distanceInterval: 1000 , // Or specify distance in meters
-        }, (location) => {
-            console.log(location);
-          //   const point = turf.point([longitude, latitude]);
-          //   const polygon = turf.polygon([[
-          //     [-118.4, 34.1],
-          //     [-118.5, 34.1],
-          //     [-118.5, 34.2],
-          //     [-118.4, 34.2],
-          //     [-118.4, 34.1] // Polygon should be closed
-          // ]]);
-            // Do something with the updated location...
-        });
+      locationSubscription = await Location.watchPositionAsync(
+        {
+          accuracy: Location.Accuracy.High,
+          timeInterval: 1500,
+          distanceInterval: 1000,
+        },
+        (newLocation) => {
+          setLocation(newLocation); // Set the location state
+        }
+      );
     };
 
     subscribeToLocationUpdates();
@@ -178,6 +172,34 @@ function MapScreen({ navigation }) {
       }
     };
   }, []);
+
+  useEffect(() => {
+    if (location && grid.length > 0) {
+      const point = turf.point([location.coords.longitude, location.coords.latitude]);
+  
+      let gridUpdated = false;
+      const newGrid = grid.map((cell) => {
+        const polygon = turf.polygon([[
+          [cell.coordinates[0].longitude, cell.coordinates[0].latitude],
+          [cell.coordinates[1].longitude, cell.coordinates[1].latitude],
+          [cell.coordinates[2].longitude, cell.coordinates[2].latitude],
+          [cell.coordinates[3].longitude, cell.coordinates[3].latitude],
+          [cell.coordinates[0].longitude, cell.coordinates[0].latitude]
+          // ... other coordinates
+        ]]);
+  
+        if (turf.booleanPointInPolygon(point, polygon) && !cell.explored) {
+          gridUpdated = true; // Indicate that grid needs an update
+          return { ...cell, fillColor: "transparent", explored: true };
+        }
+        return cell;
+      });
+  
+      if (gridUpdated) {
+        setGrid(newGrid); // Update grid only if there are changes
+      }
+    }
+  }, [location, grid]);
 
   const darkMode = [
     // Define your dark map style here (as mentioned in the previous example)
@@ -341,9 +363,10 @@ function MapScreen({ navigation }) {
           rowIndex: i,
           columnIndex: j,
           coordinates: cellCoordinates,
-          fillColor: shouldLightenCell(i, j) ? "rgba(0, 0, 0, 0.3)" : "transparent",
+          fillColor:  "rgba(0, 0, 0, 0.9)",
           strokeColor: "black",
-          strokeWidth: 1
+          strokeWidth: 1,
+          explored: false
         });
       }
     }
@@ -465,11 +488,6 @@ function MapScreen({ navigation }) {
     }));
   };
 
-  const handlePress = useCallback((rowIndex, columnIndex) => {
-    updateGridCell(rowIndex, columnIndex, { fillColor: "red" });
-    console.log(`clicked ${rowIndex} ${columnIndex}`)
-  }, [updateGridCell]);
-
 
   const calloutStyles = StyleSheet.create({
     container: {
@@ -567,7 +585,6 @@ function MapScreen({ navigation }) {
             fillColor={cell.fillColor}
             strokeWidth={cell.strokeWidth}
             tappable={true}
-            onPress={() => handlePress(cell.rowIndex, cell.columnIndex)}
           />
         ))}
         {markers.map((marker) => (
@@ -670,7 +687,7 @@ function MapScreen({ navigation }) {
               <View style={styles.placeholderImage} />
             )}
           </View>
-          <KeyboardAvoidingView
+           <KeyboardAvoidingView
             behavior={Platform.OS === "ios" ? "padding" : "height"}
             style={styles.keyboardAvoidingContainer}
           >
