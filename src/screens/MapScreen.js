@@ -672,7 +672,7 @@ function MapScreen({ navigation }) {
           </View>
           <KeyboardAvoidingView
             behavior={Platform.OS === "ios" ? "padding" : "height"}
-            style={styles.keyboardAvoidingContainer}
+            style={styles.captionContainer}
           >
             <TextInput
               style={[styles.input, styles.captionInput]}
@@ -723,11 +723,11 @@ const styles = StyleSheet.create({
     width: "100%",
   },
   imageContainer: {
-    width: "100%",
-    height: 400,
+    width: "80%",
+    height: 300,
     justifyContent: "center",
     alignItems: "center",
-    marginTop: 35,
+    marginTop: 100,
   },
   image: {
     width: "100%",
@@ -785,12 +785,12 @@ const styles = StyleSheet.create({
   },
   input: {
     height: 40,
-    borderColor: "gray",
+    borderColor: "white",
     borderWidth: 1,
     borderRadius: 5,
     paddingLeft: 10,
     marginBottom: 0,
-    marginTop: 30,
+    marginTop: 10,
     color: "white",
   },
   instagramButton: {
@@ -799,7 +799,7 @@ const styles = StyleSheet.create({
     borderRadius: 10,
     width: "80%",
     alignItems: "center",
-    marginTop: 80,
+    marginTop: -60,
   },
   instagramButtonText: {
     color: "white",
@@ -816,10 +816,10 @@ const styles = StyleSheet.create({
     zIndex: 2,
     backgroundColor: "transparent", // Make the icon background transparent
   },
-  keyboardAvoidingContainer: {
+  captionContainer: {
     width: "80%",
-    marginTop: 15,
-    marginBottom: 40,
+    marginTop: -380,
+    marginBottom: 440,
     zIndex: 1,
   },
   closeIcon: {

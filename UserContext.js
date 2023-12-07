@@ -3,7 +3,7 @@
 import React, { createContext, useState, useContext } from 'react';
 
 const UserContext = createContext(null);
-const URL = "http://localhost:3000";                            // ! SET YOUR LOCAL NETWORK IP ADDRESS HERE
+const URL = "http://172.20.10.2:3000";                            // ! SET YOUR LOCAL NETWORK IP ADDRESS HERE
 
 export const useUser = () => useContext(UserContext);
 
