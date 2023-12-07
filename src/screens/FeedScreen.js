@@ -9,11 +9,10 @@ const FeedScreen = () => {
   const [postData, setPostData] = useState([]);
   const { backendURL } = useUser();
 
-
   useEffect(() => {
     const fetchPosts = async () => {
       try {
-        const response = await axios.get('http://localhost:3000/posts');
+        const response = await axios.get(`${backendURL}/posts`);
         const sortedPosts = response.data.sort((a, b) => new Date(b.createdAt) - new Date(a.createdAt));
         setPostData(sortedPosts); // updates state with fetched shit
       } catch (error) {
