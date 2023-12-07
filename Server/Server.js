@@ -312,6 +312,34 @@ app.post('/users', async (req, res) => {
     }
 });
 
+app.post('/update_cell', async (req, res) => {
+    const { userId, rowIndex, columnIndex, newProperties } = req.body;
+
+    try {
+        // Fetch the user's grid
+        const user = await UsersModel.findById(userId);
+        if (!user) {
+            return res.status(404).send({ error: 'User not found' });
+        }
+
+        // Update the specific cell
+        const cellIndex = user.grid.findIndex(cell => cell.rowIndex === rowIndex && cell.columnIndex === columnIndex);
+        // console.log(cellIndex)
+        if (cellIndex !== -1) {
+            user.grid[cellIndex].fillColor = newProperties.fillColor;
+            user.grid[cellIndex].explored = newProperties.explored;
+            // Add other properties if needed
+        }
+
+        // Save the updated user
+        await user.save();
+        res.status(200).send({ message: 'Cell updated successfully' });
+    } catch (error) {
+        console.error('Error updating cell:', error);
+        res.status(500).send({ error: 'Error updating cell' });
+    }
+});
+
 const port = process.env.PORT || 3000;
 app.listen(port, () => {
   console.log(`Server running on port ${port}`);

@@ -204,6 +204,7 @@ function MapScreen({ navigation }) {
   
         if (turf.booleanPointInPolygon(point, polygon) && !cell.explored) {
           gridUpdated = true; // Indicate that grid needs an update
+          updateGridCell(cell.rowIndex, cell.columnIndex, {fillColor: "transparent", explored: true })
           return { ...cell, fillColor: "transparent", explored: true };
         }
         return cell;
@@ -493,14 +494,39 @@ function MapScreen({ navigation }) {
     return false; // Include all cells by default
   }
 
-  const updateGridCell = (rowIndex, columnIndex, newProperties) => {
+  const updateGridCell = async (rowIndex, columnIndex, newProperties) => {
+    // First, update the grid in the local state
     setGrid(currentGrid => currentGrid.map(cell => {
       if (cell.rowIndex === rowIndex && cell.columnIndex === columnIndex) {
         return { ...cell, ...newProperties };
       }
       return cell;
     }));
+    
+  
+    // Then, send the update to the backend
+    try {
+      await updateGridCellInBackend(rowIndex, columnIndex, newProperties);
+    } catch (error) {
+      console.error("Error updating grid cell in backend:", error);
+      // Handle error (e.g., rollback the state change or show an error message)
+    }
   };
+
+  const updateGridCellInBackend = async (rowIndex, columnIndex, newProperties) => {
+    try {
+        const payload = { 
+            userId, // Assuming you have userId in the component's scope or context
+            rowIndex, 
+            columnIndex, 
+            newProperties 
+        };
+        await axios.post(`http://localhost:3000/update_cell`, payload);
+    } catch (error) {
+        console.error("Error updating cell in backend:", error);
+        // Handle error (e.g., show an alert or a message)
+    }
+};
 
   const handlePress = useCallback((rowIndex, columnIndex) => {
     updateGridCell(rowIndex, columnIndex, { fillColor: "red" });
