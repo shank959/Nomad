@@ -1,19 +1,20 @@
 // Import React and any other necessary modules
 import React, { useState } from 'react';
-import { View, Text, Image, TextInput, StyleSheet } from 'react-native';
+import { View, Text, Image, TextInput, StyleSheet, TouchableOpacity } from 'react-native';
 import { useUser } from '../../UserContext'
+import { Octicons } from '@expo/vector-icons'; 
+import { Entypo } from '@expo/vector-icons'; 
 
-// placeholder data for friends (haven't implemented backend to
-// fetch actual friend data yet)
+
+
 const friendsPlaceholders = Array.from({ length: 20 }, (_, index) => `Friend`);
-
 
 // Define your component
 const FriendsPage = () => {
     const [searchQuery, setSearchQuery] = useState('');
     const [searchResults, setSearchResults] = useState([]);
     const { backendURL } = useUser();
-
+    const [emojiStatus, setEmojiStatus] = useState(new Array(friendsPlaceholders.length).fill(false));
     const handleSearch = async (text) => {
         setSearchQuery(text);
         if (text === '') {
@@ -33,6 +34,11 @@ const FriendsPage = () => {
                 console.error(error);
             }
         }
+    };
+
+    //toggle emoji status
+    const toggleEmoji = index => {
+        setEmojiStatus(currentStatus => currentStatus.map((status, idx ) => (idx === index ? !status : status)));
     };
 
 
@@ -55,6 +61,12 @@ const FriendsPage = () => {
                         <Text style={styles.friendItem}>
                             {friendName} {index + 1}
                         </Text>
+                        <TouchableOpacity onPress={() => toggleEmoji(index)}>
+                            {emojiStatus[index] 
+                                ? <Octicons name="smiley" size={24} color="white" />
+                                : <Entypo name="emoji-neutral" size={24} color="white" />
+                            }
+                        </TouchableOpacity>
                     </View>
                 ))
                 : searchResults.map((user, index) => (
