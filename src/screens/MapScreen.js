@@ -9,7 +9,7 @@ import { storage } from '../../Firebase';
 import * as turf from '@turf/turf';
 import { ref, uploadBytes, getDownloadURL } from 'firebase/storage';
 import { useUser } from "../../UserContext";
-
+import { ProgressBar } from "react-native-progress/Bar";
 // import assets for markers
 import CenturyCity from "../../assets/century-city2.png";
 import GriffithObservatory from "../../assets/griffith-observatory2.jpeg";
@@ -37,6 +37,7 @@ function MapScreen({ navigation }) {
   const [isModalVisible, setModalVisible] = useState(false);
   const { userId, backendURL } = useUser();
 
+  const [progress, setProgress] = useState(0);
 
   //image upload external helper functions
   useEffect(() => {
@@ -598,14 +599,12 @@ function MapScreen({ navigation }) {
         showsUserLocation={true}
       >
         {grid.map((cell) => (
-          
           <Polygon
             key={cell.key}
             coordinates={cell.coordinates}
             fillColor={cell.fillColor}
             strokeWidth={cell.strokeWidth}
           />
-          
         ))}
         {markers.map((marker) => (
           <Marker
@@ -637,6 +636,13 @@ function MapScreen({ navigation }) {
       <TouchableOpacity style={styles.button} onPress={uploadImage}>
         <Text style={styles.buttonText}>+</Text>
       </TouchableOpacity>
+      <ProgressBar
+        progress={progress}
+        width={100} // Set your desired width
+        height={100} // Set your desired height
+        color={"green"} // Set your desired progress bar color
+        style={{ marginTop: 20 }}
+      />
       {/* MODAL FOR CREATE A POST SCREEN */}
       <Modal
         animationType="slide"
@@ -687,7 +693,7 @@ function MapScreen({ navigation }) {
                 language: "en",
                 components: "country:us",
                 radius: 40000,
-                location: { latitude: 34.0522, longitude: -118.2437}
+                location: { latitude: 34.0522, longitude: -118.2437 },
               }}
               styles={{
                 container: {
