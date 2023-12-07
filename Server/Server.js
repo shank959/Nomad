@@ -171,9 +171,8 @@ app.post("/test", (req, res) => {
 app.put('/update_profile', async (req, res) => {
     try {
         // Update the user's profile picture URL
-        const { pfpURL } = req.body;
-        const userId = /* extract user ID from the request, e.g., req.user._id */;
-        const updatedUser = await UsersModel.findByIdAndUpdate(userId, { pfpURL }, { new: true });
+        const { identity, profileUrl } = req.body;
+        const updatedUser = await UsersModel.findByIdAndUpdate(identity, profileUrl, { new: true });
 
         // Respond with the updated user data or a success message
         res.status(200).json(updatedUser);
@@ -182,6 +181,26 @@ app.put('/update_profile', async (req, res) => {
         console.error("Error updating profile picture:", error);
         res.status(500).json({ error: "Failed to update profile picture" });
     }
+});
+
+app.get("/get_profile_picture", async (req, res) => {
+  try {
+    const userId = req.query.userId;
+
+    // Find the user by ID
+    const user = await UsersModel.findById(userId);
+
+    if (!user) {
+      // User not found
+      return res.status(404).json({ error: "User not found" });
+    }
+
+    // Return the profile picture URL
+    res.status(200).json({ profileUrl: user.pfpURL });
+  } catch (error) {
+    console.error("Error getting profile picture:", error);
+    res.status(500).json({ error: "Failed to get profile picture" });
+  }
 });
 
 const port = process.env.PORT || 3000;

@@ -23,6 +23,21 @@ function ProfileScreen({ navigation }) {
   const [imageUrl, setImageUrl] = useState(null);
   const { userId, backendURL } = useUser();
 
+   useEffect(() => {
+     const fetchProfilePicture = async () => {
+       try {
+         const response = await axios.get(backendURL + "/get_profile_picture", {
+           params: { userId },
+         });
+         setImageUrl(response.data.profileUrl);
+       } catch (error) {
+         console.error("Error fetching profile picture:", error);
+       }
+     };
+
+     fetchProfilePicture();
+   }, [userId, backendURL]);
+   
   const handleTabSelect = (tabName) => {
     setSelectedTab(tabName);
   };
@@ -77,9 +92,10 @@ function ProfileScreen({ navigation }) {
   const uploadProfile = async (profileUrl) => {
     try {
       // Send a request to update the user's profile picture URL
+      const identity = userId;
       const response = await axios.put(
         backendURL + "/update_profile", // Update the endpoint to match your server code
-        { pfpURL: profileUrl }
+        {profileUrl, identity }
       );
 
       // Handle the response accordingly
