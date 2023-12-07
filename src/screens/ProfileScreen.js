@@ -16,7 +16,8 @@ import BadgesPage from "../Components/BadgesPage";
 import * as ImagePicker from "expo-image-picker";
 import { ref, uploadBytes, getDownloadURL } from "firebase/storage";
 import { useUser } from "../../UserContext";
-
+import axios from "axios";
+import { storage } from "../../Firebase";
 function ProfileScreen({ navigation }) {
   const [selectedTab, setSelectedTab] = useState("Posts");
   const [isModalVisible, setIsModalVisible] = useState(false);
@@ -118,7 +119,7 @@ function ProfileScreen({ navigation }) {
         {/* Profile Picture Placeholder */}
         <View style={styles.profilePicPlaceholder}>
           <Image
-            source={{ uri: imageUrl || defaultPFP }}
+            source={{ uri: imageUrl}}
             style={styles.image}
           />
         </View>
