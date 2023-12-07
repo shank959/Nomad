@@ -2,17 +2,18 @@ import React, { useState, useEffect } from 'react';
 import { FlatList, View, SafeAreaView, Image, StyleSheet} from 'react-native';
 import PostRowView from '../Components/PostRowView';
 import axios from 'axios';
+import { useUser } from "../../UserContext"
 
 const FeedScreen = () => {
   // State to store fetched posts after initialr edenrings
   const [postData, setPostData] = useState([]);
-  backend_URL = "http://localhost:3000";
+  const { backendURL } = useUser();
 
 
   useEffect(() => {
     const fetchPosts = async () => {
       try {
-        const response = await axios.get(backend_URL + "/posts");
+        const response = await axios.get(backendURL + "/posts");
         setPostData(response.data); // updates state with fetched shit
       } catch (error) {
         console.error('Error fetching posts:', error); 

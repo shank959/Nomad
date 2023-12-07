@@ -7,12 +7,11 @@ export default function LoginScreen({ navigation }) {
   const [username, setUsername] = useState("");
   const [password, setPassword] = useState("");
   const [error, setError] = useState('');
-  const { setUserId } = useUser();
-  backend_URL = "http://localhost:3000";
+  const { setUserId, backendURL } = useUser();
 
   const handleLogin = async () => {
     try {
-      const response = await axios.post(backend_URL + "/login", {
+      const response = await axios.post(backendURL + "/login", {
         username,
         password
       });
