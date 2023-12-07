@@ -18,16 +18,74 @@ mongoose.connect("mongodb+srv://Nomad:ExploreLA123@clusternomad.l4pqavm.mongodb.
 })
 .catch(err => console.error("Could not connect to MongoDB...", err));
 
+const coordinateSchema = new mongoose.Schema({
+    latitude: Number,
+    longitude: Number
+});
+
+const gridCellSchema = new mongoose.Schema({
+    key: String,
+    rowIndex: Number,
+    columnIndex: Number,
+    coordinates: [coordinateSchema], // Array of coordinates
+    fillColor: String,
+    strokeColor: String,
+    strokeWidth: Number,
+    explored: Boolean
+});
+
 
 // LOGIN MODEL AND ROUTE
 const UsersSchema = new mongoose.Schema({
     email: { type: String, required: true, unique: true },
     username: { type: String, required: true, unique: true },
     password: { type: String, required: true },
-    friends: [{ type: mongoose.Schema.Types.ObjectId, ref: 'UsersModel'}]
+    friends: [{ type: mongoose.Schema.Types.ObjectId, ref: 'UsersModel'}],
+    posts: [{ type: mongoose.Schema.Types.ObjectId, ref: 'Post'}],
+    grid: [gridCellSchema], // Array of grid cells
+    achievements: [{ type: String }] // Array of strings
 });
 
 const UsersModel = mongoose.model('Users', UsersSchema);
+
+const createGrid = (gridRows, gridColumns, northwestCorner, southeastCorner) => {
+    const gridPolygons = [];
+    const latStep = (northwestCorner.latitude - southeastCorner.latitude) / gridRows;
+    const lngStep = (southeastCorner.longitude - northwestCorner.longitude) / gridColumns;
+
+    for (let i = 0; i < gridRows; i++) {
+        for (let j = 0; j < gridColumns; j++) {
+            const cellCoordinates = [
+                { latitude: northwestCorner.latitude - latStep * i, longitude: northwestCorner.longitude + lngStep * j },
+                { latitude: northwestCorner.latitude - latStep * (i + 1), longitude: northwestCorner.longitude + lngStep * j },
+                { latitude: northwestCorner.latitude - latStep * (i + 1), longitude: northwestCorner.longitude + lngStep * (j + 1) },
+                { latitude: northwestCorner.latitude - latStep * i, longitude: northwestCorner.longitude + lngStep * (j + 1) }
+            ];
+
+            gridPolygons.push({
+                key: `row-${i}-col-${j}`,
+                rowIndex: i,
+                columnIndex: j,
+                coordinates: cellCoordinates,
+                fillColor: "rgba(0, 0, 0, 0.9)",
+                strokeColor: "black",
+                strokeWidth: 1,
+                explored: false
+            });
+        }
+    }
+
+    return gridPolygons;
+}
+
+const initializeUserGrid = async (userId, gridRows, gridColumns, northwestCorner, southeastCorner) => {
+    const grid = createGrid(gridRows, gridColumns, northwestCorner, southeastCorner);
+    await UsersModel.findByIdAndUpdate(userId, { grid: grid });
+};
+
+// Example usage:
+// initializeUserGrid('someUserId', 12, 15, { latitude: 34.215635, longitude: -118.873252 }, { latitude: 33.701912, longitude: -118.11257 });
+
 
 app.post('/create_user', async (req, res) => {
     try {
@@ -49,6 +107,7 @@ app.post('/create_user', async (req, res) => {
             password: hashedPassword // Store the hashed password
         });
         await user.save();
+        await initializeUserGrid(user._id, 12, 15, { latitude: 34.215635, longitude: -118.873252 }, { latitude: 33.701912, longitude: -118.11257 });
         res.status(201).send({ message: 'User successfully created!', userId: user._id });
     } catch(error) {
         console.error(error);
