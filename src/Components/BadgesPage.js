@@ -5,6 +5,7 @@ import { Ionicons, MaterialCommunityIcons, SimpleLineIcons, Foundation} from '@e
 import axios from 'axios';
 import { useUser } from '../../UserContext';
 
+
 // Define a function to get the appropriate icon for each badge
 const getBadgeIcon = (badgeNumber) => {
     switch (badgeNumber) {
