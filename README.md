@@ -16,7 +16,7 @@ Generate the yarn.lock file using the command:
 
 
 
-**PLACEHOLDER** - *explain how to gain access to MongoDB database*
+PLACEHOLDER - *explain how to gain access to MongoDB database*
 Next, you’ll need to connect to the database using the command:
 	node Server.js
 
