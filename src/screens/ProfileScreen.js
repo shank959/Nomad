@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import {
   View,
   Text,
@@ -16,26 +16,35 @@ import BadgesPage from "../Components/BadgesPage";
 import * as ImagePicker from "expo-image-picker";
 import { ref, uploadBytes, getDownloadURL } from "firebase/storage";
 import { useUser } from "../../UserContext";
-
+import axios from "axios";
+import { storage } from "../../Firebase";
 function ProfileScreen({ navigation }) {
   const [selectedTab, setSelectedTab] = useState("Posts");
   const [isModalVisible, setIsModalVisible] = useState(false);
-  const [imageUrl, setImageUrl] = useState(null);
+  const [imageUrl, setImageUrl] = useState("https://firebasestorage.googleapis.com/v0/b/nomad-bb690.appspot.com/o/images%2Fdefault_profile_picture.jpeg?alt=media&token=6c040cad-fb03-431e-9c32-31f28ddddc3f");
+  const [username, setUsername] = useState("@");
+  const [friendCount, setFriendCount] = useState(0);
+  const [achCount, setAchCount] = useState(0);
   const { userId, backendURL } = useUser();
 
    useEffect(() => {
-     const fetchProfilePicture = async () => {
+     const fetchUserData = async () => {
        try {
-         const response = await axios.get(backendURL + "/get_profile_picture", {
-           params: { userId },
-         });
-         setImageUrl(response.data.profileUrl);
+         const response = await axios.post(`${backendURL}/get_user_data`, { userId });
+         const userData = response.data.user;
+         setUsername(`@${userData.username}`);
+         setImageUrl(userData.pfpURL);
+         const friendList = userData.friends;
+         if (friendList) { setFriendCount(friendList.length); }
+         const achList = userData.achievements;
+         if (achList) { setAchCount(achList.length); }
+
        } catch (error) {
-         console.error("Error fetching profile picture:", error);
+         console.error("Error fetching user data:", error);
        }
      };
 
-     fetchProfilePicture();
+     fetchUserData();
    }, [userId, backendURL]);
    
   const handleTabSelect = (tabName) => {
@@ -119,7 +128,10 @@ function ProfileScreen({ navigation }) {
       <ScrollView contentContainerStyle={styles.scrollViewContent}>
         {/* Profile Picture Placeholder */}
         <View style={styles.profilePicPlaceholder}>
-          <Image source={{ uri: imageUrl }} style={styles.image} />
+          <Image
+            source={{ uri: imageUrl }}
+            style={styles.image}
+          />
         </View>
         {/* Settings Button */}
         <TouchableOpacity style={styles.settingsIcon} onPress={toggleModal}>
@@ -127,18 +139,18 @@ function ProfileScreen({ navigation }) {
         </TouchableOpacity>
 
         {/* Username */}
-        <Text style={styles.username}>@username</Text>
+        <Text style={styles.username}>{username}</Text>
 
         {/* Stats Container */}
         <View style={styles.statsContainer}>
           {/* Friends Count */}
           <View style={styles.statItem}>
-            <Text style={styles.statNumber}>0</Text>
+            <Text style={styles.statNumber}>{friendCount}</Text>
             <Text style={styles.statLabel}>Friends</Text>
           </View>
           {/* Badges Count */}
           <View style={styles.statItem}>
-            <Text style={styles.statNumber}>0</Text>
+            <Text style={styles.statNumber}>{achCount}</Text>
             <Text style={styles.statLabel}>Badges</Text>
           </View>
         </View>
@@ -174,12 +186,6 @@ function ProfileScreen({ navigation }) {
             <TouchableOpacity style={styles.modalButton} onPress={Logout}>
               <Text style={styles.modalButtonText}>Logout</Text>
             </TouchableOpacity>
-            <TouchableOpacity
-              style={styles.modalButton}
-              onPress={deleteAccount}
-            >
-              <Text style={styles.modalButtonText}>Delete Account</Text>
-            </TouchableOpacity>
           </View>
         </TouchableOpacity>
       </Modal>
@@ -202,16 +208,6 @@ const styles = StyleSheet.create({
     top: 40,
     right: 16,
     zIndex: 10,
-  },
-  profilePicPlaceholder: {
-    position: "absolute",
-    top: 50,
-    right: 30,
-    width: 150,
-    height: 150,
-    borderRadius: 75,
-    backgroundColor: "white",
-    zIndex: 5,
   },
   username: {
     position: "absolute",
@@ -277,6 +273,22 @@ const styles = StyleSheet.create({
     color: "red",
     fontWeight: "bold",
     textAlign: "center",
+  },
+  profilePicPlaceholder: {
+    position: "absolute",
+    top: 50,
+    right: 30,
+    width: 150,
+    height: 150,
+    borderRadius: 75,
+    backgroundColor: "transparent",
+    zIndex: 5,
+    overflow: "hidden", // Ensure the border radius is applied to the image
+  },
+  image: {
+    width: "100%",
+    height: "100%",
+    borderRadius: 75,
   },
 });
 

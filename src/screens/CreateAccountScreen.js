@@ -32,10 +32,11 @@ export default function CreateAccountScreen({ navigation }) {
       if (response.data.userId) {
         setUserId(response.data.userId);
       }
-      navigation.navigate("MainTabScreen", { screen: "MapScreen" });
+      navigation.navigate("LoginScreen", { screen: "LoginScreen" });
     } catch (error) {
       console.error('Error creating user:', error.response?.data?.error || error.message);
       setMessage(error.response?.data?.error || 'Error creating user');
+      alert(setMessage);
     }
 
 

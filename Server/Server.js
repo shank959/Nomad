@@ -45,7 +45,7 @@ const UsersSchema = new mongoose.Schema({
     posts: [{ type: mongoose.Schema.Types.ObjectId, ref: 'Post'}],
     grid: [gridCellSchema], // Array of grid cells
     achievements: [{ type: String }], // Array of strings,
-    pfpURL: String,
+    pfpURL: {type: String, default:"https://firebasestorage.googleapis.com/v0/b/nomad-bb690.appspot.com/o/images%2Fdefault_profile_picture.jpeg?alt=media&token=6c040cad-fb03-431e-9c32-31f28ddddc3f"},
 });
 
 const UsersModel = mongoose.model("Users", UsersSchema);
@@ -226,7 +226,8 @@ app.get('/posts', async (req, res) => {
             const user = await UsersModel.findById(post.author);
             return {
                 ...post._doc,  // Spread the post document
-                authorUsername: user ? user.username : 'Unknown'
+                authorUsername: user ? user.username : 'Unknown',
+                authorPFPURL: user ? user.pfpURL : null,
             };
         }));
 
@@ -245,7 +246,11 @@ app.put('/update_profile', async (req, res) => {
     try {
         // Update the user's profile picture URL
         const { identity, profileUrl } = req.body;
-        const updatedUser = await UsersModel.findByIdAndUpdate(identity, profileUrl, { new: true });
+        const updatedUser = await UsersModel.findByIdAndUpdate(
+          identity,
+          { pfpURL: profileUrl },
+          { new: true }
+        );
 
         // Respond with the updated user data or a success message
         res.status(200).json(updatedUser);
@@ -295,8 +300,26 @@ app.post('/user/grid', async (req, res) => {
     }
 });
 
+app.post('/user/achievements', async (req, res) => {
+    try {
+        const { userId } = req.body;
+        
+        // Find the user by ID and retrieve achievements
+        const user = await UsersModel.findById(userId);
+        if (!user) {
+            return res.status(404).send({ error: 'User not found' });
+        }
+
+        // Send the user's achievements
+        res.json({ achievements: user.achievements });
+    } catch (error) {
+        console.error('Error fetching achievements:', error);
+        res.status(500).send('Error fetching achievements');
+    }
+});
+
 // POST ROUTE FOR POSTSPAGE
-app.post('/users', async (req, res) => {
+app.post('/get_user_data', async (req, res) => {
     try {
         const { userId } = req.body;
         const user = await UsersModel.findById(userId);
@@ -304,11 +327,25 @@ app.post('/users', async (req, res) => {
         if (!user) {
             return res.status(404).send({ message: 'User not found' });
         }
-        const userData = { posts: user.posts };
-        res.status(200).json(userData);
+        //const userData = { posts: user.posts };
+        res.status(200).json({ user });
     } catch (error) {
         console.error(error);
         res.status(500).send({ message: 'Error fetching user data' });
+    }
+});
+app.post('/get_user_posts', async (req, res) => {
+    try {
+        const { postId } = req.body;
+        const post = await Post.findById(postId);
+
+        if (!post) {
+            return res.status(404).send({ message: 'Post not found' });
+        }
+        res.json(post);
+    } catch (error) {
+        console.error(error);
+        res.status(500).send({ message: 'Error fetching post' });
     }
 });
 
@@ -374,7 +411,7 @@ app.post('/user/explore', async (req, res) => {
     }
 });
 
-app.post('/user/achievements', async (req, res) => {
+app.post('/user/achievementsformap', async (req, res) => {
     const { userId } = req.body;
 
     if (!userId) {

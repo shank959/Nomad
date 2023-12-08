@@ -14,7 +14,6 @@ const firebaseConfig = {
 
 
 // Initialize Firebase
-// Check if Firebase has already been initialized to avoid duplicates
 const app = initializeApp(firebaseConfig);
 
 export const storage = getStorage(app);

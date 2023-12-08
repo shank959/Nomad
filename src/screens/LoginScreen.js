@@ -23,7 +23,7 @@ export default function LoginScreen({ navigation }) {
       navigation.navigate("MainTabScreen", { screen: "MapScreen" });
     } catch (err) {
       setError(err.response?.data?.error || 'Error logging in');
-      console.log('${error}')
+      alert(`Error logging in`)
     }
   };
 
@@ -55,13 +55,13 @@ export default function LoginScreen({ navigation }) {
         placeholderTextColor="grey"
       />
       <TouchableOpacity style={[styles.button, styles.loginButton]} onPress={handleLogin}>
-        <Text style={styles.buttonText}>Login</Text>
+        <Text style={styles.buttonText}> Login </Text>
       </TouchableOpacity>
       <TouchableOpacity style={[styles.button, styles.CreateAccountButton]} onPress={createAccount}>
-        <Text style={styles.CreateAccountButtonText}>- Create Account -</Text>
+        <Text style={styles.CreateAccountButtonText}> Create Account </Text>
       </TouchableOpacity>
       <TouchableOpacity style={[styles.button, styles.forgotPasswordButton]} onPress={handleForgotPassword}>
-        <Text style={styles.forgotPasswordButtonText}>- Forgot Password? -</Text>
+        <Text style={styles.forgotPasswordButtonText}> Forgot Password? </Text>
       </TouchableOpacity>
     </View>
   );
@@ -82,9 +82,11 @@ const styles = StyleSheet.create({
   input: {
     width: 300,
     height: 50,
-    borderColor: "#ffffff",
+    borderColor: "#000000",
     borderWidth: 1,
     borderRadius: 10,
+    borderBottomWidth: 0.4,
+    borderBottomColor: 'grey',
     marginVertical: 10,
     padding: 10,  
     fontSize: 18,
@@ -93,7 +95,8 @@ const styles = StyleSheet.create({
   },
   button: {
     backgroundColor: "black",
-    borderColor: "white",
+    borderColor: "black",
+    borderBottomWidth: 2,
     borderWidth: 1,
     width: 200,
     height: 40,
@@ -111,7 +114,7 @@ const styles = StyleSheet.create({
     borderColor: "black",
   },
   forgotPasswordButtonText: {
-    color: "white",
+    color: "grey",
     fontSize: 12, // Smaller font size for the forgot password button text
     fontWeight: "bold",
   },
@@ -126,7 +129,7 @@ const styles = StyleSheet.create({
     borderColor: "black",
   },
   CreateAccountButtonText:{
-    color: "white",
+    color: "grey",
     fontSize: 12,
     fontWeight: "bold",
   }
