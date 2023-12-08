@@ -114,7 +114,7 @@ function MapScreen({ navigation }) {
   const createPost = async (postContent) => {
     try {
       const response = await axios.post(
-        backendURL + "/posts",       // PUT LOCAL NETWORK IP ADDRESS HERE
+        `${backendURL}/posts`,    
         postContent
       );
 
@@ -264,7 +264,7 @@ function isCloseToMarker(currentLat, currentLon, markerLat, markerLon, threshold
 
 const addMarkerToAchievements = async (userId, markerTitle) => {
   try {
-      const response = await axios.post(`http://localhost:3000/user/explore`, {
+      const response = await axios.post(`${backendURL}/user/explore`, {
           userId,
           markerTitle
       });
@@ -283,7 +283,7 @@ useEffect(() => {
 
 const fetchAchievements = async () => {
   try {
-      const response = await axios.post(`http://localhost:3000/user/achievementsformap`, { userId });
+      const response = await axios.post(`${backendURL}/user/achievementsformap`, { userId });
       setAchievements(response.data);
   } catch (error) {
       console.error('Error fetching achievements:', error.response.data);
@@ -628,7 +628,7 @@ const fetchAchievements = async () => {
             columnIndex, 
             newProperties 
         };
-        await axios.post(`http://localhost:3000/update_cell`, payload);
+        await axios.post(`${backendURL}/update_cell`, payload);
     } catch (error) {
         console.error("Error updating cell in backend:", error);
         // Handle error (e.g., show an alert or a message)
