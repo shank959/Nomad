@@ -18,6 +18,7 @@ import { ref, uploadBytes, getDownloadURL } from "firebase/storage";
 import { useUser } from "../../UserContext";
 import axios from "axios";
 import { storage } from "../../Firebase";
+import { useFocusEffect } from '@react-navigation/native';
 function ProfileScreen({ navigation }) {
   const [selectedTab, setSelectedTab] = useState("Posts");
   const [isModalVisible, setIsModalVisible] = useState(false);
@@ -27,25 +28,26 @@ function ProfileScreen({ navigation }) {
   const [achCount, setAchCount] = useState(0);
   const { userId, backendURL } = useUser();
 
-   useEffect(() => {
-     const fetchUserData = async () => {
-       try {
-         const response = await axios.post(`${backendURL}/get_user_data`, { userId });
-         const userData = response.data.user;
-         setUsername(`@${userData.username}`);
-         setImageUrl(userData.pfpURL);
-         const friendList = userData.friends;
-         if (friendList) { setFriendCount(friendList.length); }
-         const achList = userData.achievements;
-         if (achList) { setAchCount(achList.length); }
-
-       } catch (error) {
-         console.error("Error fetching user data:", error);
-       }
-     };
-
-     fetchUserData();
-   }, [userId, backendURL]);
+  useFocusEffect(
+    React.useCallback(() => {
+      const fetchUserData = async () => {
+        try {
+          const response = await axios.post(`${backendURL}/get_user_data`, { userId });
+          const userData = response.data.user;
+          setUsername(`@${userData.username}`);
+          setImageUrl(userData.pfpURL);
+          const friendList = userData.friends;
+          if (friendList) { setFriendCount(friendList.length); }
+          const achList = userData.achievements;
+          if (achList) { setAchCount(achList.length); }
+        } catch (error) {
+          console.error("Error fetching user data:", error);
+        }
+      };
+  
+      fetchUserData();
+    }, [userId, backendURL])
+  );
    
   const handleTabSelect = (tabName) => {
     setSelectedTab(tabName);

@@ -170,7 +170,7 @@ app.post('/posts', async (req, res) => {
     const { imageUrl, caption, location, coordinates, author } = req.body;
 
     // Basic validation for required fields
-    if (!imageUrl || !location || !coordinates) {
+    if (!imageUrl || location || !coordinates) {
         return res.status(400).json({ message: 'Image, location, and coordinates are required' });
     }
 

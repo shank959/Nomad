@@ -4,6 +4,7 @@ import { View, Text, StyleSheet } from 'react-native';
 import { Ionicons, MaterialCommunityIcons, SimpleLineIcons, Foundation} from '@expo/vector-icons';
 import axios from 'axios';
 import { useUser } from '../../UserContext';
+import { useFocusEffect } from '@react-navigation/native';
 
 
 // Define a function to get the appropriate icon for each badge
@@ -41,19 +42,21 @@ const BadgesPage = () => {
     const [userAchievements, setUserAchievements] = useState([]);
     const { userId, backendURL } = useUser();
 
-    useEffect(() => {
-        const fetchAchievements = async () => {
-            try {
-                const response = await axios.post(backendURL + '/user/achievements', { userId });
-                console.log(response.data.achievements);
-                setUserAchievements(response.data.achievements);
-            } catch (error) {
-                console.error('Error fetching achievements:', error);
-            }
-        };
+    useFocusEffect(
+        React.useCallback(() => {
+            const fetchAchievements = async () => {
+                try {
+                    const response = await axios.post(`${backendURL}/user/achievements`, { userId });
+                    console.log(response.data.achievements);
+                    setUserAchievements(response.data.achievements);
+                } catch (error) {
+                    console.error('Error fetching achievements:', error);
+                }
+            };
 
-        fetchAchievements();
-    }, []);
+            fetchAchievements();
+        }, [])
+    );
 
     const isAchievementCompleted = (achievementTitleString) => {
         // Check if the achievement is in the user's completed achievements

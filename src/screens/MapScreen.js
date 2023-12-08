@@ -91,6 +91,7 @@ function MapScreen({ navigation }) {
   // state declarations for create post
   const [caption, setCaption] = useState(null);
   const [location, setLocation] = useState(null);
+  const [userLocation, setUserLocation] = useState(null);
 
   const onPostSubmit = () => {
     const author = userId;
@@ -175,7 +176,7 @@ function MapScreen({ navigation }) {
           distanceInterval: 100,
         },
         (newLocation) => {
-          setLocation(newLocation); // Set the location state
+          setUserLocation(newLocation); // Set the location state
         }
       );
     };
@@ -190,11 +191,12 @@ function MapScreen({ navigation }) {
   }, []);
 
   useEffect(() => {
-    if (location && grid.length > 0) {
-      const point = turf.point([location.coords.longitude, location.coords.latitude]);
+    if (userLocation && grid.length > 0) {
+      console.log(userLocation)
+      const point = turf.point([userLocation.coords.longitude, userLocation.coords.latitude]);
       
       markers.forEach(marker => {
-        if (isCloseToMarker(location.coords.latitude, location.coords.longitude, marker.coordinate.latitude, marker.coordinate.longitude, 0.1)) {
+        if (isCloseToMarker(userLocation.coords.latitude, userLocation.coords.longitude, marker.coordinate.latitude, marker.coordinate.longitude, 0.1)) {
           // Check if the marker is already unlocked or in achievements
           if (!marker.unlocked && !achievements.includes(marker.title)) {
               // If not, add it to achievements and update its status
@@ -226,7 +228,7 @@ function MapScreen({ navigation }) {
         setGrid(newGrid); // Update grid only if there are changes
       }
     }
-  }, [location, grid]);
+  }, [userLocation, grid]);
 
   // Function to convert degrees to radians
 function toRadians(degrees) {
