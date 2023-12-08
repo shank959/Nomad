@@ -1,10 +1,12 @@
-import React from 'react';
+import React, {useState} from 'react';
 import { View, Text, Image, StyleSheet, TouchableOpacity } from 'react-native';
 import { Ionicons, AntDesign, FontAwesome, FontAwesome5, Feather } from '@expo/vector-icons';
 
 const PostRowView = ({post}) => {
-  // Arrow Functions to handle button presses defined here
-  console.log(post);
+  const [Liked, setLiked] = useState(false);
+  const toggleLike = () => {
+    setLiked(!Liked);
+  };
   const timeSince = (date) => {
     const postDate = new Date(date);
     const now = new Date();
@@ -13,7 +15,6 @@ const PostRowView = ({post}) => {
     const minutes = Math.floor(difference / 60000);
     const hours = Math.floor(minutes / 60);
     const days = Math.floor(hours / 24);
-
     if (days > 0) {
       return `${days}d`;
     } else if (hours > 0) {
@@ -64,8 +65,11 @@ const PostRowView = ({post}) => {
       <View style={{ flex: 1 }} />
 
       <View style={styles.actionsRow}>
-        <TouchableOpacity style={styles.actionRowButton} onPress={() => {/* like button action */}}>
-          <AntDesign name="hearto" size={24} color="black" />
+        <TouchableOpacity style={styles.actionRowButton} onPress = {toggleLike}>
+        <AntDesign name={Liked ? "heart" : "hearto"}
+            size={24} 
+            color={Liked ? "red" : "black"} 
+            />
         </TouchableOpacity>
         
       </View>
