@@ -144,10 +144,18 @@ function MapScreen({ navigation }) {
 
   const fetchGridData = async () => {
     try {
+      let exploredCells = 0;
       const response = await axios.post(`${backendURL}/user/grid`, {userId});
       correctedGrid = response.data.filter((cell) => {
         return !shouldExcludeCell(cell.rowIndex, cell.columnIndex);
       })
+      correctedGrid.forEach((cell) => {
+        if (cell.explored){
+          exploredCells++;
+        }
+    });
+      let exploredCellsPercent = exploredCells / 97;
+      setProgress(exploredCellsPercent);
       setGrid(correctedGrid); // Assuming the backend sends the grid in this format
     } catch (error) {
       console.error("Error fetching grid data:", error);
@@ -703,14 +711,14 @@ const fetchAchievements = async () => {
     }
   };
 
-  useEffect(() => {
-    const progressInterval = setInterval(() => {
-      setProgress((prevProgress) =>
-        prevProgress < 1 ? prevProgress + 0.1 : 0
-      );
-    }, 1000);
-    return () => clearInterval(progressInterval);
-  }, []);
+  // useEffect(() => {
+  //   const progressInterval = setInterval(() => {
+  //     setProgress((prevProgress) =>
+  //       prevProgress < 1 ? prevProgress + 0.1 : 0
+  //     );
+  //   }, 1000);
+  //   return () => clearInterval(progressInterval);
+  // }, []);
 
   return (
     <View style={styles.container}>
