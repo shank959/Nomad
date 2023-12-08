@@ -3,11 +3,6 @@ import React, { useState } from 'react';
 import { View, Text, Image, TextInput, StyleSheet } from 'react-native';
 import { useUser } from '../../UserContext';
 
-// placeholder data for friends (haven't implemented backend to
-// fetch actual friend data yet)
-const friendsPlaceholders = Array.from({ length: 0 }, (_, index) => `Friend`);
-
-
 // Define your component
 const FriendsPage = () => {
     const [searchQuery, setSearchQuery] = useState('');
@@ -45,21 +40,12 @@ const FriendsPage = () => {
                 onChangeText={handleSearch}
                 value={searchQuery}
             />
-            {searchQuery.length === 0 
-                ? friendsPlaceholders.map((friendName, index) => (
+            {searchResults.map((user, index) => (
                     <View key={index} style={styles.friendBox}>
-                        <Image 
-                            source={{ uri: 'https://i.redd.it/zuqwgy86xsa41.jpg' }} 
+                        <Image
+                            source={user.authorPFPURL ? { uri: user.authorPFPURL } : require('../../assets/icon.png')}
                             style={styles.profilePic}
-                        />
-                        <Text style={styles.friendItem}>
-                            {friendName} {index + 1}
-                        </Text>
-                    </View>
-                ))
-                : searchResults.map((user, index) => (
-                    <View key={index} style={styles.friendBox}>
-                        {/* Display search results */}
+                          />
                         <Text style={styles.friendItem}>
                             {user.username}
                         </Text>
