@@ -202,7 +202,7 @@ app.post("/search", async (req, res) => {
     // Update the query to match the structure of your UsersModel
     const users = await UsersModel.find({
       username: { $regex: req.body.query, $options: "i" },
-    });
+    }).select('username pfpURL progress');
     res.json({ users });
   } catch (error) {
     res.status(500).send(error);
