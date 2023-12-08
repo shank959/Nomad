@@ -594,12 +594,21 @@ const fetchAchievements = async () => {
 
   const updateGridCell = async (rowIndex, columnIndex, newProperties) => {
     // First, update the grid in the local state
-    setGrid(currentGrid => currentGrid.map(cell => {
+    const updatedGrid = grid.map(cell => {
       if (cell.rowIndex === rowIndex && cell.columnIndex === columnIndex) {
         return { ...cell, ...newProperties };
       }
       return cell;
-    }));
+    });
+    let exploredCells = 0;
+    updatedGrid.forEach((cell) => {
+      if (cell.explored){
+        exploredCells++;
+      }
+  });
+    exploredCellsPercent = exploredCells / 97;
+    setProgress(exploredCellsPercent);
+    setGrid(updatedGrid);
     
   
     // Then, send the update to the backend
