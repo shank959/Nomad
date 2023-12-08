@@ -889,8 +889,8 @@ const styles = StyleSheet.create({
   },
   progressBarContainer: {
     position: "absolute",
-    bottom: 650, // Adjust the distance from the bottom as needed
-    left: 11, // Adjust the distance from the left as needed
+    top: 50, // Adjust the distance from the bottom as needed
+  // Adjust the distance from the left as needed
     backgroundColor: "rgba(255, 255, 255, 0)", // Semi-transparent white background
     padding: 10,
     borderRadius: 10,
