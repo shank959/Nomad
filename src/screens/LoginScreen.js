@@ -20,10 +20,11 @@ export default function LoginScreen({ navigation }) {
       if (response.data.userId) {
         setUserId(response.data.userId);
       }
+      alert("Successfully created account")
       navigation.navigate("MainTabScreen", { screen: "MapScreen" });
     } catch (err) {
       setError(err.response?.data?.error || 'Error logging in');
-      console.log(`${error}`)
+      alert(`${error}`)
     }
   };
 
