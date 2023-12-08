@@ -190,7 +190,13 @@ function MapScreen({ navigation }) {
   useEffect(() => {
     if (location && grid.length > 0) {
       const point = turf.point([location.coords.longitude, location.coords.latitude]);
-  
+      
+      markers.forEach(marker => {
+        if (isCloseToMarker(location.coords.latitude, location.coords.longitude, marker.coordinate.latitude, marker.coordinate.longitude,
+          0.1)){
+            updateMarker(marker.id, {unlocked: true})
+          }
+      });
       let gridUpdated = false;
       const newGrid = grid.map((cell) => {
         const polygon = turf.polygon([[
@@ -215,6 +221,30 @@ function MapScreen({ navigation }) {
       }
     }
   }, [location, grid]);
+
+  // Function to convert degrees to radians
+function toRadians(degrees) {
+  return degrees * Math.PI / 180;
+}
+
+// Haversine formula to calculate distance between two coordinates in km
+function calculateDistance(lat1, lon1, lat2, lon2) {
+  const R = 6371; // Radius of the Earth in km
+  const dLat = toRadians(lat2 - lat1);
+  const dLon = toRadians(lon2 - lon1);
+  const a = 
+    Math.sin(dLat/2) * Math.sin(dLat/2) +
+    Math.cos(toRadians(lat1)) * Math.cos(toRadians(lat2)) * 
+    Math.sin(dLon/2) * Math.sin(dLon/2); 
+  const c = 2 * Math.atan2(Math.sqrt(a), Math.sqrt(1-a)); 
+  return R * c; // Distance in km
+}
+
+// Check if the current location is close to the marker
+function isCloseToMarker(currentLat, currentLon, markerLat, markerLon, thresholdInKm) {
+  const distance = calculateDistance(currentLat, currentLon, markerLat, markerLon);
+  return distance <= thresholdInKm;
+}
 
   const darkMode = [
     // Define your dark map style here (as mentioned in the previous example)
@@ -386,15 +416,16 @@ function MapScreen({ navigation }) {
   //     }
   //   }
   //   setGrid(gridPolygons);
-  // };
+  // }; 
 
-  const markers = [
+  const [markers, setMarkers] = useState([
     {
       id: 1,
       coordinate: { latitude: 34.1184, longitude: -118.3004 }, // Griffith Observatory
       title: "Griffith Observatory",
       description: "Planetarium and Observatory with beautiful views of LA.",
       image: GriffithObservatory,
+      unlocked: false
     },
     {
       id: 2,
@@ -403,6 +434,7 @@ function MapScreen({ navigation }) {
       description:
         "Santa Monica Beach's famous pier that includes an amusement park.",
       image: SantaMonicaPier,
+      unlocked: false
     },
     {
       id: 3,
@@ -410,6 +442,7 @@ function MapScreen({ navigation }) {
       title: "Bruin Bear",
       description: "Mascot of the best school in LA!",
       image: BruinBear,
+      unlocked: false
     },
     {
       id: 4,
@@ -417,6 +450,7 @@ function MapScreen({ navigation }) {
       title: "Universal Studios",
       description: "The famous Universal Studios Hollywood theme park.",
       image: UniversalStudios,
+      unlocked: false
     },
     {
       id: 5,
@@ -424,6 +458,7 @@ function MapScreen({ navigation }) {
       title: "Walk of Fame",
       description: "The Hollywood Walk of Fame featuring celebrity stars.",
       image: WalkOfFame,
+      unlocked: false
     },
     {
       id: 6,
@@ -431,6 +466,7 @@ function MapScreen({ navigation }) {
       title: "Hollywood Sign",
       description: "The iconic Hollywood Sign in the Hollywood Hills.",
       image: HollywoodSign,
+      unlocked: false
     },
     {
       id: 7,
@@ -438,6 +474,7 @@ function MapScreen({ navigation }) {
       title: "Crypto.com Arena",
       description: "Home to the Lakers, Clippers, Kings, and Sparks.",
       image: CryptoArena,
+      unlocked: false
     },
     {
       id: 8,
@@ -445,6 +482,7 @@ function MapScreen({ navigation }) {
       title: "Dodgers Stadium",
       description: "The home stadium of the Los Angeles Dodgers.",
       image: DodgersStadium,
+      unlocked: false
     },
     {
       id: 9,
@@ -452,6 +490,7 @@ function MapScreen({ navigation }) {
       title: "Grand Central Market",
       description: "A historic public market with diverse food vendors.",
       image: GrandCentralMarket,
+      unlocked: false
     },
     {
       id: 10,
@@ -460,6 +499,7 @@ function MapScreen({ navigation }) {
       description:
         "120,000 square meter three-level shopping mall in Century City.",
       image: CenturyCity,
+      unlocked: false
     },
     {
       id: 11,
@@ -468,8 +508,21 @@ function MapScreen({ navigation }) {
       description:
         "A popular sports bar and restaurant that UCLA students frequent.",
       image: RoccosTavern,
+      unlocked: false
     },
-  ];
+  ]);
+
+  function updateMarker(markerId, newDetails) {
+    setMarkers(currentMarkers => {
+      return currentMarkers.map(marker => {
+        if (marker.id === markerId) {
+          // Return a new object with the updated details
+          return { ...marker, ...newDetails };
+        }
+        return marker;
+      });
+    });
+  }
 
   function shouldExcludeCell(rowIndex, columnIndex) {
     // Define the logic to exclude cells (if any)
@@ -637,6 +690,7 @@ function MapScreen({ navigation }) {
           <Marker
             key={marker.id}
             coordinate={marker.coordinate}
+            pinColor={marker.unlocked ? "green" : "red"}
             onPress={() => setSelectedMarker(marker)}
           />
         ))}
