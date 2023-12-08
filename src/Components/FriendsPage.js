@@ -54,8 +54,8 @@ const FriendsPage = () => {
             {searchQuery.length === 0 
                 ? friendsPlaceholders.map((friendName, index) => (
                     <View key={index} style={styles.friendBox}>
-                        <Image 
-                            source={{ uri: 'https://i.redd.it/zuqwgy86xsa41.jpg' }} 
+                        <Image                             source={{ uri: 'https://firebasestorage.googleapis.com/v0/b/nomad-bb690.appspot.com/o/images%2Fdefault_profile_picture.jpeg?alt=media&token=6c040cad-fb03-431e-9c32-31f28ddddc3f' }} 
+
                             style={styles.profilePic}
                         />
                         <Text style={styles.friendItem}>
@@ -63,7 +63,7 @@ const FriendsPage = () => {
                         </Text>
                         <TouchableOpacity onPress={() => toggleEmoji(index)}>
                             {emojiStatus[index] 
-                                ? <Octicons name="smiley" size={24} color="white" />
+                                ? <Octicons name="smiley" size={24} color="green" />
                                 : <Entypo name="emoji-neutral" size={24} color="white" />
                             }
                         </TouchableOpacity>
