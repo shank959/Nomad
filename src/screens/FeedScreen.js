@@ -10,19 +10,21 @@ const FeedScreen = () => {
   const [postData, setPostData] = useState([]);
   const { backendURL } = useUser();
 
-  useEffect(() => {
-    const fetchPosts = async () => {
-      try {
-        const response = await axios.get(`${backendURL}/posts`);
-        const sortedPosts = response.data.sort((a, b) => new Date(b.createdAt) - new Date(a.createdAt));
-        setPostData(sortedPosts); // updates state with fetched shit
-      } catch (error) {
-        console.error('Error fetching posts:', error); 
-      }
-    };
-
-    fetchPosts();
-  }, []); // ensures effect runs once, after initial render
+  useFocusEffect(
+    React.useCallback(() => {
+      const fetchPosts = async () => {
+        try {
+          const response = await axios.get(`${backendURL}/posts`);
+          const sortedPosts = response.data.sort((a, b) => new Date(b.createdAt) - new Date(a.createdAt));
+          setPostData(sortedPosts); // updates state with fetched posts
+        } catch (error) {
+          console.error('Error fetching posts:', error);
+        }
+      };
+  
+      fetchPosts();
+    }, [backendURL]) // Dependencies for useCallback
+  );
 
   // Render each PostRowView in a FlatList
   const renderItem = ({ item }) => ( // rudimentary render for now

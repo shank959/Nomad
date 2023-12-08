@@ -99,7 +99,7 @@ function MapScreen({ navigation }) {
       latitude: region.latitude, 
       longitude: region.longitude,
     };
-
+    
     const postContent = {
       imageUrl,
       caption,
@@ -117,9 +117,24 @@ function MapScreen({ navigation }) {
         `${backendURL}/posts`,    
         postContent
       );
-
+      const point = turf.point([postContent.coordinates.longitude, postContent.coordinates.latitude]);
+      const newGrid = grid.map((cell) => {
+        const polygon = turf.polygon([[
+          [cell.coordinates[0].longitude, cell.coordinates[0].latitude],
+          [cell.coordinates[1].longitude, cell.coordinates[1].latitude],
+          [cell.coordinates[2].longitude, cell.coordinates[2].latitude],
+          [cell.coordinates[3].longitude, cell.coordinates[3].latitude],
+          [cell.coordinates[0].longitude, cell.coordinates[0].latitude]
+          // ... other coordinates
+        ]]);
+  
+        if (turf.booleanPointInPolygon(point, polygon) && !cell.explored) {
+          updateGridCell(cell.rowIndex, cell.columnIndex, {fillColor: "transparent", explored: true })
+        }
+      });
       Alert.alert("Success", "Post created successfully");
       setCaption(""); // Reset caption input after successful post
+      navigation.navigate("MainTabScreen", { screen: "FeedScreen" });
       toggleModal();
     } catch (error) {
       // Handle the error case

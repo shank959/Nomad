@@ -2,6 +2,7 @@
 import React, { useState, useEffect} from 'react';
 import { FlatList, View, Text, Image, SafeAreaView, StyleSheet, LogBox } from 'react-native';
 import axios from 'axios';
+import { useFocusEffect } from '@react-navigation/native';
 
 import { useUser } from '../../UserContext';
 
@@ -9,19 +10,22 @@ const PostsPage = () => {
     const [userPosts, setUserPosts] = useState([]);
     const { userId, backendURL } = useUser();
 
-    useEffect(() => {
-        fetchUserPosts();
-    }, []);
-
-    const fetchUserPosts = async () => {
-        try {
-            const response = await axios.get(`${backendURL}/posts`);
-            const posts = response.data.filter(post => post.author === userId); // Filter posts by the current user's ID
-            setUserPosts(posts);
-        } catch (error) {
-            console.error('Error fetching posts:', error);
-        }
-    };
+    useFocusEffect(
+        React.useCallback(() => {
+          const fetchUserPosts = async () => {
+            try {
+              const response = await axios.get(`${backendURL}/posts`);
+              const posts = response.data.filter(post => post.author === userId); // Filter posts by the current user's ID
+              setUserPosts(posts);
+            } catch (error) {
+              console.error('Error fetching posts:', error);
+            }
+          };
+      
+          fetchUserPosts();
+        }, [backendURL, userId]) // Dependencies for useCallback
+      );
+   
 
     const renderItem = ({ item }) => (
         <View style={styles.postContainer}>
