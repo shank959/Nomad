@@ -46,6 +46,7 @@ const UsersSchema = new mongoose.Schema({
     grid: [gridCellSchema], // Array of grid cells
     achievements: [{ type: String }], // Array of strings,
     pfpURL: {type: String, default:"https://firebasestorage.googleapis.com/v0/b/nomad-bb690.appspot.com/o/images%2Fdefault_profile_picture.jpeg?alt=media&token=6c040cad-fb03-431e-9c32-31f28ddddc3f"},
+    progress: { type: Number, default: 0 }
 });
 
 const UsersModel = mongoose.model("Users", UsersSchema);
@@ -428,6 +429,34 @@ app.post('/user/achievementsformap', async (req, res) => {
     } catch (error) {
         console.error('Error fetching user achievements:', error);
         res.status(500).send({ error: 'Error fetching user achievements' });
+    }
+});
+
+app.post('/update_progress', async (req, res) => {
+    const { userId, newProgress } = req.body;
+
+    // Validate the input
+    if (!userId || newProgress === undefined) {
+        return res.status(400).json({ error: 'User ID and new progress are required' });
+    }
+
+    try {
+        // Find the user by ID and update the progress
+        const updatedUser = await UsersModel.findByIdAndUpdate(
+            userId,
+            { progress: newProgress },
+            { new: true } // Return the updated document
+        );
+
+        if (!updatedUser) {
+            return res.status(404).json({ error: 'User not found' });
+        }
+
+        // Send back the updated user data
+        res.status(200).json({message: "Progress succesfully updated!"});
+    } catch (error) {
+        console.error('Error updating user progress:', error);
+        res.status(500).json({ error: 'Error updating user progress' });
     }
 });
 
