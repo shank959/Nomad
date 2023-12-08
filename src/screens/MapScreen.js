@@ -29,7 +29,7 @@ import { AntDesign } from "@expo/vector-icons";
 function MapScreen({ navigation }) {
   const [region, setRegion] = useState({
     latitude: 34.0522,
-    longitude: -118.2437,
+    longitude: -118.4,
     latitudeDelta: 0.6,
     longitudeDelta: 0.6,
   });
@@ -215,7 +215,7 @@ function MapScreen({ navigation }) {
 
   useEffect(() => {
     if (userLocation && grid.length > 0) {
-      console.log(userLocation)
+      
       const point = turf.point([userLocation.coords.longitude, userLocation.coords.latitude]);
       
       markers.forEach(marker => {
@@ -758,6 +758,7 @@ const fetchAchievements = async () => {
             key={cell.key}
             coordinates={cell.coordinates}
             fillColor={cell.fillColor}
+            strokeColor = "transparent"
             strokeWidth={cell.strokeWidth}
           />
         ))}
