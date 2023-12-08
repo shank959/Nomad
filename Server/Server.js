@@ -322,8 +322,6 @@ app.post('/user/achievements', async (req, res) => {
 app.post('/get_user_data', async (req, res) => {
     try {
         const { userId } = req.body;
-        console.log("VOXI")
-        console.log(userId)
         const user = await UsersModel.findById(userId);
 
         if (!user) {
@@ -364,7 +362,7 @@ app.post('/get_user_data', async (req, res) => {
 app.post('/get_user_posts', async (req, res) => {
     try {
         const { postId } = req.body;
-        const post = await PostModel.findById(postId);
+        const post = await Post.findById(postId);
 
         if (!post) {
             return res.status(404).send({ message: 'Post not found' });

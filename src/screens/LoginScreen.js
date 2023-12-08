@@ -20,7 +20,7 @@ export default function LoginScreen({ navigation }) {
       if (response.data.userId) {
         setUserId(response.data.userId);
       }
-      navigation.navigate("MainTabScreen", { screen: "MapScreen" });
+      navigation.navigate("MainTabScreen", { screen: "FeedScreen" });
     } catch (err) {
       setError(err.response?.data?.error || 'Error logging in');
       console.log(`${error}`)

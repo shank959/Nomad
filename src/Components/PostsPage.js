@@ -16,6 +16,8 @@ const PostsPage = () => {
             try {
                 const response = await axios.post(`${backendURL}/get_user_data`, { userId });
                 const userData = response.data.user;
+                console.log("VOXUM")
+                console.log(userData.posts)
                 fetchUserPosts(userData.posts);
             } catch (error) {
                 // Something happened in setting up the request that triggered an Error
@@ -34,6 +36,8 @@ const PostsPage = () => {
                 postIds.map(id => axios.post(`${backendURL}/get_user_posts`, { postId: id }))
             );
             const posts = postsResponses.map(response => response.data || []);
+            console.log("XOVA")
+            console.log(posts)
             setUserPosts(posts);
         } catch (error) {
             if (error.response) {
@@ -50,14 +54,22 @@ const PostsPage = () => {
         }
     };
 
+        // renderItem function tells the FlatList how to render each item
+    const renderItem = ({ item }) => (
+        <PostRowView post={item} />
+    );
+
+    // Assuming userPosts is an array of post objects
     return (
         <SafeAreaView style={styles.container}>
-            {userPosts && userPosts.map(post => (
-                <PostRowView key={post._id.toString()} post={post} />
-            ))}
+          {userPosts.map(post => (
+            <PostRowView key={post._id} post={post} />
+          ))}
         </SafeAreaView>
     );
 };
+
+
 
 const styles = StyleSheet.create({
     image: {
