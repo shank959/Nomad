@@ -13,7 +13,7 @@ const FriendsPage = () => {
   const [searchResults, setSearchResults] = useState([]);
   const { backendURL } = useUser();
   const defaultProfilePic = require("../../assets/icon.png");
-
+  
   const handleSearch = async (text) => {
     setSearchQuery(text);
     if (text === "") {
@@ -44,6 +44,9 @@ const FriendsPage = () => {
         onChangeText={handleSearch}
         value={searchQuery}
       />
+      <View style={styles.titleSection}>
+        <Text style={styles.title}>User{'                                               '}Progress Bar</Text>
+      </View>
       {searchResults.map((user, index) => (
         <View key={index} style={styles.friendBox}>
           <Image
@@ -53,7 +56,8 @@ const FriendsPage = () => {
           <Text style={styles.friendItem}>{user.username}</Text>
           <View style={styles.progressBarContainer}>
             <ProgressBar
-              progress={10}
+              progress={user.progress}
+              style={{ marginRight: 20}}
               width={100}
               height={20}
               color="#229631" // Green color
@@ -121,6 +125,19 @@ const styles = StyleSheet.create({
     borderRadius: 10,
     alignItems: "center",
   },
+  titleSection: {
+    flexDirection: 'row',
+    justifyContent: 'space-between',
+    alightItems: 'center',
+    width: '90%',
+    marginTop: 10,
+    marginBottom: 10,
+    },
+  title: {
+    color: 'white',
+    fontSize: 16,
+    fontWeight: 'bold',
+    },
 });
 
 // Export the component
