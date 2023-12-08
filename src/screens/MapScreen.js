@@ -36,6 +36,7 @@ function MapScreen({ navigation }) {
   const [imageUrl, setImageUrl] = useState(null);
   const [isModalVisible, setModalVisible] = useState(false);
   const { userId, backendURL } = useUser();
+  const [achievements, setAchievements] = useState([]);
 
 
   //image upload external helper functions
@@ -192,11 +193,14 @@ function MapScreen({ navigation }) {
       const point = turf.point([location.coords.longitude, location.coords.latitude]);
       
       markers.forEach(marker => {
-        if (isCloseToMarker(location.coords.latitude, location.coords.longitude, marker.coordinate.latitude, marker.coordinate.longitude,
-          0.1)){
-            addMarkerToAchievements(userId, marker.title);
-            updateMarker(marker.id, {unlocked: true})
+        if (isCloseToMarker(location.coords.latitude, location.coords.longitude, marker.coordinate.latitude, marker.coordinate.longitude, 0.1)) {
+          // Check if the marker is already unlocked or in achievements
+          if (!marker.unlocked && !achievements.includes(marker.title)) {
+              // If not, add it to achievements and update its status
+              addMarkerToAchievements(userId, marker.title);
+              updateMarker(marker.id, { unlocked: true });
           }
+      }
       });
       let gridUpdated = false;
       const newGrid = grid.map((cell) => {
@@ -256,7 +260,22 @@ const addMarkerToAchievements = async (userId, markerTitle) => {
       console.log(response.data.message); // Log success message
       // Optionally, handle any UI updates or alerts based on success
   } catch (error) {
-      console.error('Error adding marker to achievements:', error);
+      console.log('Error adding marker to achievements:', error.response.data);
+      // Optionally, handle UI updates or alerts based on failure
+  }
+};
+
+useEffect(() => {
+  fetchAchievements();
+  // ... (other useEffect content)
+}, []);
+
+const fetchAchievements = async () => {
+  try {
+      const response = await axios.post(`http://localhost:3000/user/achievements`, { userId });
+      setAchievements(response.data);
+  } catch (error) {
+      console.error('Error fetching achievements:', error);
       // Optionally, handle UI updates or alerts based on failure
   }
 };
@@ -705,7 +724,7 @@ const addMarkerToAchievements = async (userId, markerTitle) => {
           <Marker
             key={marker.id}
             coordinate={marker.coordinate}
-            pinColor={marker.unlocked ? "green" : "red"}
+            pinColor={marker.unlocked || achievements.includes(marker.title) ? "green" : "red"}
             onPress={() => setSelectedMarker(marker)}
           />
         ))}

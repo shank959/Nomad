@@ -349,22 +349,48 @@ app.post('/user/explore', async (req, res) => {
     }
 
     try {
+        // Using findOneAndUpdate to atomically add the markerTitle to achievements if it doesn't already exist
+        const updateResult = await UsersModel.findOneAndUpdate(
+            { 
+                _id: userId, 
+                achievements: { $ne: markerTitle }  // Check if markerTitle is not already in achievements
+            },
+            {
+                $push: { achievements: markerTitle }  // Add markerTitle to achievements
+            },
+            {
+                new: true  // Return the updated document
+            }
+        );
+
+        if (!updateResult) {
+            return res.status(404).send({ error: 'User not found or marker title already in achievements' });
+        }
+
+        res.status(200).send({ message: 'Marker title added to achievements' });
+    } catch (error) {
+        console.error('Error updating user achievements:', error);
+        res.status(500).send({ error: 'Error updating user achievements' });
+    }
+});
+
+app.post('/user/achievements', async (req, res) => {
+    const { userId } = req.body;
+
+    if (!userId) {
+        return res.status(400).send({ error: 'User ID is required' });
+    }
+
+    try {
         const user = await UsersModel.findById(userId);
         if (!user) {
             return res.status(404).send({ error: 'User not found' });
         }
 
-        // Check if the marker title already exists in the achievements
-        if (!user.achievements.includes(markerTitle)) {
-            user.achievements.push(markerTitle); // Add the marker title to achievements
-            await user.save();
-            res.status(200).send({ message: 'Marker title added to achievements' });
-        } else {
-            res.status(200).send({ message: 'Marker title already in achievements' });
-        }
+        res.status(200).send(user.achievements);
     } catch (error) {
-        console.error('Error updating user achievements:', error);
-        res.status(500).send({ error: 'Error updating user achievements' });
+        console.error('Error fetching user achievements:', error);
+        res.status(500).send({ error: 'Error fetching user achievements' });
     }
 });
 
