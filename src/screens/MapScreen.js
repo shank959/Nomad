@@ -9,7 +9,7 @@ import { storage } from '../../Firebase';
 import * as turf from '@turf/turf';
 import { ref, uploadBytes, getDownloadURL } from 'firebase/storage';
 import { useUser } from "../../UserContext";
-
+import ProgressBar from "react-native-progress/Bar";
 // import assets for markers
 import CenturyCity from "../../assets/century-city2.png";
 import GriffithObservatory from "../../assets/griffith-observatory2.jpeg";
@@ -142,7 +142,7 @@ function MapScreen({ navigation }) {
 
   const fetchGridData = async () => {
     try {
-      const response = await axios.post(`http://localhost:3000/user/grid`, { userId });
+      const response = await axios.post(`${backendURL}/user/grid`, {userId});
       correctedGrid = response.data.filter((cell) => {
         return !shouldExcludeCell(cell.rowIndex, cell.columnIndex);
       })
@@ -151,7 +151,7 @@ function MapScreen({ navigation }) {
       console.error("Error fetching grid data:", error);
       // Handle error (e.g., show an alert or a message)
     }
-};
+  };
 
   useEffect(() => {
     fetchGridData();
@@ -588,6 +588,14 @@ function MapScreen({ navigation }) {
     }
   };
 
+  useEffect(() => {
+    const progressInterval = setInterval(() => {
+      setProgress((prevProgress) =>
+        prevProgress < 1 ? prevProgress + 0.1 : 0
+      );
+    }, 1000);
+    return () => clearInterval(progressInterval);
+  }, []);
 
   return (
     <View style={styles.container}>
@@ -633,6 +641,18 @@ function MapScreen({ navigation }) {
           </TouchableOpacity>
         </View>
       )}
+      <View style = {styles.progressBarContainer}> 
+        <Text style={styles.text}> Map Progress: {Math.round(progress * 100)}%</Text>
+        <ProgressBar
+          progress={progress}
+          width={350}
+          height={25}
+          color="#229631" // Green color
+          borderColor="#999999"
+          borderRadius={20}
+          borderWidth = {5}
+        />
+      </View>
       <TouchableOpacity style={styles.button} onPress={uploadImage}>
         <Text style={styles.buttonText}>+</Text>
       </TouchableOpacity>
@@ -866,6 +886,21 @@ const styles = StyleSheet.create({
   closeIcon: {
     position: "absolute",
     top: 15,
+  },
+  progressBarContainer: {
+    position: "absolute",
+    bottom: 650, // Adjust the distance from the bottom as needed
+    left: 11, // Adjust the distance from the left as needed
+    backgroundColor: "rgba(255, 255, 255, 0)", // Semi-transparent white background
+    padding: 10,
+    borderRadius: 10,
+    alignItems: "center",
+  },
+  text: {
+    marginBottom: 5,
+    color: "#999999", // White color for text
+    fontWeight: "bold",
+    left: -5,
   },
 });
 

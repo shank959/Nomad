@@ -1,5 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { FlatList, View, SafeAreaView, Image, StyleSheet} from 'react-native';
+import { useFocusEffect } from '@react-navigation/native';
 import PostRowView from '../Components/PostRowView';
 import axios from 'axios';
 import { useUser } from "../../UserContext"
