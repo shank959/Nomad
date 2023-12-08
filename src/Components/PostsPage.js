@@ -1,6 +1,6 @@
 // Import React and any other necessary modules
 import React, { useState, useEffect} from 'react';
-import { FlatList, View, Text, Image, SafeAreaView, StyleSheet} from 'react-native';
+import { FlatList, View, Text, Image, SafeAreaView, StyleSheet, LogBox } from 'react-native';
 import axios from 'axios';
 
 import { useUser } from '../../UserContext';
@@ -46,6 +46,7 @@ const PostsPage = () => {
 };
 
 
+
 const styles = StyleSheet.create({
     image: {
       width: '100%', // You can adjust the width as needed
@@ -86,6 +87,5 @@ const styles = StyleSheet.create({
     backgroundColor: 'gray',
     marginVertical: 8,
     },
-});
-
+});LogBox.ignoreLogs(['VirtualizedLists should never be nested']);
 export default PostsPage;
