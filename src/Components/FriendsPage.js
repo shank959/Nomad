@@ -38,8 +38,18 @@ const FriendsPage = () => {
 
     //toggle emoji status
     const toggleEmoji = index => {
-        setEmojiStatus(currentStatus => currentStatus.map((status, idx ) => (idx === index ? !status : status)));
+        setEmojiStatus(currentStatus => 
+            currentStatus.map((status, idx) => {
+                if (idx === index) {
+                    status ? alert("Friend request unsent") : alert("Friend request sent");
+                    return !status;
+                }
+                return status;
+            })
+        );
     };
+
+
 
 
     return (
@@ -54,7 +64,7 @@ const FriendsPage = () => {
             {searchQuery.length === 0 
                 ? friendsPlaceholders.map((friendName, index) => (
                     <View key={index} style={styles.friendBox}>
-                        <Image                             source={{ uri: 'https://firebasestorage.googleapis.com/v0/b/nomad-bb690.appspot.com/o/images%2Fdefault_profile_picture.jpeg?alt=media&token=6c040cad-fb03-431e-9c32-31f28ddddc3f' }} 
+                        <Image  source={{ uri: 'https://firebasestorage.googleapis.com/v0/b/nomad-bb690.appspot.com/o/images%2Fdefault_profile_picture.jpeg?alt=media&token=6c040cad-fb03-431e-9c32-31f28ddddc3f' }} 
 
                             style={styles.profilePic}
                         />
@@ -63,8 +73,8 @@ const FriendsPage = () => {
                         </Text>
                         <TouchableOpacity onPress={() => toggleEmoji(index)}>
                             {emojiStatus[index] 
-                                ? <Octicons name="smiley" size={24} color="green" />
-                                : <Entypo name="emoji-neutral" size={24} color="white" />
+                                ? <Octicons name="smiley" size={35} color="green" />
+                                : <Entypo name="emoji-neutral" size={35} color="white" />
                             }
                         </TouchableOpacity>
                     </View>
@@ -127,6 +137,24 @@ const styles = StyleSheet.create({
         fontSize: 20,
         lineHeight: 50,
     },
+    friendBox: {
+        flexDirection: 'row',
+        alignItems: 'center',
+        justifyContent: 'space-between', 
+        padding: 15,
+        marginVertical: 5,
+        width: '90%', 
+        backgroundColor: 'black', 
+    },
+    emojiButton: {
+        marginLeft: 'auto', 
+    },
+    friendItem: {
+        color: 'white',
+        fontSize: 20,
+        lineHeight: 50,
+        marginLeft: -170
+    }
 });
 
 // Export the component
