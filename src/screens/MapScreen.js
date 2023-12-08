@@ -170,7 +170,7 @@ function MapScreen({ navigation }) {
         {
           accuracy: Location.Accuracy.High,
           timeInterval: 1500,
-          distanceInterval: 1000,
+          distanceInterval: 100,
         },
         (newLocation) => {
           setLocation(newLocation); // Set the location state
@@ -194,6 +194,7 @@ function MapScreen({ navigation }) {
       markers.forEach(marker => {
         if (isCloseToMarker(location.coords.latitude, location.coords.longitude, marker.coordinate.latitude, marker.coordinate.longitude,
           0.1)){
+            addMarkerToAchievements(userId, marker.title);
             updateMarker(marker.id, {unlocked: true})
           }
       });
@@ -245,6 +246,20 @@ function isCloseToMarker(currentLat, currentLon, markerLat, markerLon, threshold
   const distance = calculateDistance(currentLat, currentLon, markerLat, markerLon);
   return distance <= thresholdInKm;
 }
+
+const addMarkerToAchievements = async (userId, markerTitle) => {
+  try {
+      const response = await axios.post(`http://localhost:3000/user/explore`, {
+          userId,
+          markerTitle
+      });
+      console.log(response.data.message); // Log success message
+      // Optionally, handle any UI updates or alerts based on success
+  } catch (error) {
+      console.error('Error adding marker to achievements:', error);
+      // Optionally, handle UI updates or alerts based on failure
+  }
+};
 
   const darkMode = [
     // Define your dark map style here (as mentioned in the previous example)

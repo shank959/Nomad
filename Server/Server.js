@@ -340,6 +340,34 @@ app.post('/update_cell', async (req, res) => {
     }
 });
 
+
+app.post('/user/explore', async (req, res) => {
+    const { userId, markerTitle } = req.body;
+
+    if (!userId || !markerTitle) {
+        return res.status(400).send({ error: 'User ID and marker title are required' });
+    }
+
+    try {
+        const user = await UsersModel.findById(userId);
+        if (!user) {
+            return res.status(404).send({ error: 'User not found' });
+        }
+
+        // Check if the marker title already exists in the achievements
+        if (!user.achievements.includes(markerTitle)) {
+            user.achievements.push(markerTitle); // Add the marker title to achievements
+            await user.save();
+            res.status(200).send({ message: 'Marker title added to achievements' });
+        } else {
+            res.status(200).send({ message: 'Marker title already in achievements' });
+        }
+    } catch (error) {
+        console.error('Error updating user achievements:', error);
+        res.status(500).send({ error: 'Error updating user achievements' });
+    }
+});
+
 const port = process.env.PORT || 3000;
 app.listen(port, () => {
   console.log(`Server running on port ${port}`);
