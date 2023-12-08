@@ -45,7 +45,7 @@ const FriendsPage = () => {
         value={searchQuery}
       />
       <View style={styles.titleSection}>
-        <Text style={styles.title}>User{'                                               '}Progress Bar</Text>
+        <Text style={styles.title}>User{'                                                        '}Progress Bar</Text>
       </View>
       {searchResults.map((user, index) => (
         <View key={index} style={styles.friendBox}>
