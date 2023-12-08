@@ -9,7 +9,7 @@ import { storage } from '../../Firebase';
 import * as turf from '@turf/turf';
 import { ref, uploadBytes, getDownloadURL } from 'firebase/storage';
 import { useUser } from "../../UserContext";
-import { ProgressBar } from "react-native-progress/Bar";
+
 // import assets for markers
 import CenturyCity from "../../assets/century-city2.png";
 import GriffithObservatory from "../../assets/griffith-observatory2.jpeg";
@@ -636,13 +636,6 @@ function MapScreen({ navigation }) {
       <TouchableOpacity style={styles.button} onPress={uploadImage}>
         <Text style={styles.buttonText}>+</Text>
       </TouchableOpacity>
-      <ProgressBar
-        progress={progress}
-        width={100} // Set your desired width
-        height={100} // Set your desired height
-        color={"green"} // Set your desired progress bar color
-        style={{ marginTop: 20 }}
-      />
       {/* MODAL FOR CREATE A POST SCREEN */}
       <Modal
         animationType="slide"
