@@ -17,12 +17,15 @@ Then, install yarn using the command:
 	npm install --global yarn
 Generate the yarn.lock file using the command:  
 
-	yarn
+	yarn install
+
+The Application is already connected to the mongoDB database. The server string is included within Server files.
+
+To run the application, begin by starting the Node JS application defined within the Server.js. To do so, navigate to the Server directory of the project's working files:
 
 
 
-PLACEHOLDER - *explain how to gain access to MongoDB database*  
-Next, you’ll need to connect to the database using the command:  
+Next, you’ll need to connect to thusing the command:  
 
 	node Server.js
 
