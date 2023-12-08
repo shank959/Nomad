@@ -822,6 +822,16 @@ const fetchAchievements = async () => {
               style={styles.closeIcon}
             />
           </TouchableOpacity>
+          <View
+            style={styles.captionContainer}
+          >
+            <TextInput
+              style={[styles.input, styles.captionInput]}
+              placeholder="Caption"
+              value={caption}
+              onChangeText={setCaption}
+            />
+          </View>
           <View style={styles.inputContainer}>
             <FontAwesome5
               name="search-location"
@@ -879,17 +889,6 @@ const fetchAchievements = async () => {
               <View style={styles.placeholderImage} />
             )}
           </View>
-          <KeyboardAvoidingView
-            behavior={Platform.OS === "ios" ? "padding" : "height"}
-            style={styles.captionContainer}
-          >
-            <TextInput
-              style={[styles.input, styles.captionInput]}
-              placeholder="Caption"
-              value={caption}
-              onChangeText={setCaption}
-            />
-          </KeyboardAvoidingView>
           <TouchableOpacity
             style={styles.instagramButton}
             onPress={onPostSubmit}
@@ -989,7 +988,7 @@ const styles = StyleSheet.create({
   inputContainer: {
     width: "80%",
     marginTop: 15,
-    marginBottom: 40,
+    marginBottom: 0,
     zIndex: 1,
   },
   input: {
@@ -1008,7 +1007,7 @@ const styles = StyleSheet.create({
     borderRadius: 10,
     width: "80%",
     alignItems: "center",
-    marginTop: -60,
+    marginTop: 50,
   },
   instagramButtonText: {
     color: "white",
@@ -1027,8 +1026,8 @@ const styles = StyleSheet.create({
   },
   captionContainer: {
     width: "80%",
-    marginTop: -380,
-    marginBottom: 440,
+    marginTop: 10,
+    marginBottom: 5,
     zIndex: 1,
   },
   closeIcon: {

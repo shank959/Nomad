@@ -24,7 +24,7 @@ function ProfileScreen({ navigation }) {
   const [isModalVisible, setIsModalVisible] = useState(false);
   const [imageUrl, setImageUrl] = useState("https://firebasestorage.googleapis.com/v0/b/nomad-bb690.appspot.com/o/images%2Fdefault_profile_picture.jpeg?alt=media&token=6c040cad-fb03-431e-9c32-31f28ddddc3f");
   const [username, setUsername] = useState("@");
-  const [friendCount, setFriendCount] = useState(0);
+  const [postCount, setPostCount] = useState(0);
   const [achCount, setAchCount] = useState(0);
   const { userId, backendURL } = useUser();
 
@@ -36,8 +36,8 @@ function ProfileScreen({ navigation }) {
           const userData = response.data.user;
           setUsername(`@${userData.username}`);
           setImageUrl(userData.pfpURL);
-          const friendList = userData.friends;
-          if (friendList) { setFriendCount(friendList.length); }
+          const postList = userData.posts;
+          if (postList) { setPostCount(postList.length); }
           const achList = userData.achievements;
           if (achList) { setAchCount(achList.length); }
         } catch (error) {
@@ -145,10 +145,10 @@ function ProfileScreen({ navigation }) {
 
         {/* Stats Container */}
         <View style={styles.statsContainer}>
-          {/* Friends Count */}
+          {/* Post Count */}
           <View style={styles.statItem}>
-            <Text style={styles.statNumber}>{friendCount}</Text>
-            <Text style={styles.statLabel}>Friends</Text>
+            <Text style={styles.statNumber}>{postCount}</Text>
+            <Text style={styles.statLabel}>Posts</Text>
           </View>
           {/* Badges Count */}
           <View style={styles.statItem}>
