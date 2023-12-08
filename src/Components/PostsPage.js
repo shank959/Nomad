@@ -1,74 +1,49 @@
 // Import React and any other necessary modules
-import React, { useState, useEffect } from 'react';
-import { FlatList, SafeAreaView, StyleSheet} from 'react-native';
+import React, { useState, useEffect} from 'react';
+import { FlatList, View, Text, Image, SafeAreaView, StyleSheet} from 'react-native';
 import axios from 'axios';
 
-import PostRowView from './PostRowView';
 import { useUser } from '../../UserContext';
 
-// Define your component
 const PostsPage = () => {
     const [userPosts, setUserPosts] = useState([]);
     const { userId, backendURL } = useUser();
 
     useEffect(() => {
-        const fetchUserData = async () => {
-            try {
-                const response = await axios.post(`${backendURL}/get_user_data`, { userId });
-                const userData = response.data.user;
-                console.log("VOXUM")
-                console.log(userData.posts)
-                fetchUserPosts(userData.posts);
-            } catch (error) {
-                // Something happened in setting up the request that triggered an Error
-                console.error('Error message:', error.message);
-                }
-            };
-    
-        if (userId) {   // initializes this effect when the user logs in
-            fetchUserData();
-        }
-    }, [userId]);
+        fetchUserPosts();
+    }, []);
 
-    const fetchUserPosts = async (postIds) => {
+    const fetchUserPosts = async () => {
         try {
-            const postsResponses = await Promise.all(
-                postIds.map(id => axios.post(`${backendURL}/get_user_posts`, { postId: id }))
-            );
-            const posts = postsResponses.map(response => response.data || []);
-            console.log("XOVA")
-            console.log(posts)
+            const response = await axios.get(`${backendURL}/posts`);
+            const posts = response.data.filter(post => post.author === userId); // Filter posts by the current user's ID
             setUserPosts(posts);
         } catch (error) {
-            if (error.response) {
-                // The request was made and the server responded with a status code that falls out of the range of 2xx
-                console.error('Error response:', error.response.data);
-                console.error('Error status:', error.response.status);
-            } else if (error.request) {
-                // The request was made but no response was received
-                console.error('Error request:', error.request);
-            } else {
-                // Something happened in setting up the request that triggered an Error
-                console.error('Error message:', error.message);
-            }
+            console.error('Error fetching posts:', error);
         }
     };
 
-        // renderItem function tells the FlatList how to render each item
     const renderItem = ({ item }) => (
-        <PostRowView post={item} />
+        <View style={styles.postContainer}>
+            <Image source={{ uri: item.imageUrl }} style={styles.postImage} />
+            <View style={styles.captionContainer}>
+                <Text style={styles.boldText}>{item.authorUsername} </Text>
+                <Text style={styles.caption}>{item.caption}</Text>
+            </View>
+            <View style={styles.divider} />
+        </View>
     );
 
-    // Assuming userPosts is an array of post objects
     return (
         <SafeAreaView style={styles.container}>
-          {userPosts.map(post => (
-            <PostRowView key={post._id} post={post} />
-          ))}
+            <FlatList
+                data={userPosts}
+                renderItem={renderItem}
+                keyExtractor={item => item._id.toString()}
+            />
         </SafeAreaView>
     );
 };
-
 
 
 const styles = StyleSheet.create({
@@ -77,8 +52,40 @@ const styles = StyleSheet.create({
       height: 200,    // Adjust the height as needed
       marginBottom: 10,
       resizeMode: 'cover' // Or 'contain', depending on your needs
-    }
+    },
+    container: {
+        flex: 1,
+    },
+    postContainer: {
+        flexDirection: 'column',
+        marginBottom: 10,
+    },
+    postImage: {
+        width: '100%',
+        aspectRatio: 1,
+        marginBottom: 10,
+    },
+    captionContainer: {
+        flexDirection: 'row',
+        padding: 7,
+        marginLeft: 8,
+        alignItems: 'center',
+    },
+    caption: {
+        fontSize: 16,
+        color: 'white',
+        flexShrink: 1,
+    },
+    boldText: {
+        fontWeight: 'bold',
+        fontSize: 16,
+        color: 'white',
+    },
+    divider: {
+    height: 1,
+    backgroundColor: 'gray',
+    marginVertical: 8,
+    },
 });
-
 
 export default PostsPage;
