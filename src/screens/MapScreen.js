@@ -171,6 +171,7 @@ function MapScreen({ navigation }) {
     });
       let exploredCellsPercent = exploredCells / 97;
       setProgress(exploredCellsPercent);
+      updateProgress(exploredCellsPercent);
       setGrid(correctedGrid); // Assuming the backend sends the grid in this format
     } catch (error) {
       console.error("Error fetching grid data:", error);
@@ -215,7 +216,7 @@ function MapScreen({ navigation }) {
 
   useEffect(() => {
     if (userLocation && grid.length > 0) {
-      
+
       const point = turf.point([userLocation.coords.longitude, userLocation.coords.latitude]);
       
       markers.forEach(marker => {
@@ -303,6 +304,22 @@ const fetchAchievements = async () => {
   } catch (error) {
       console.error('Error fetching achievements:', error.response.data);
       // Optionally, handle UI updates or alerts based on failure
+  }
+};
+
+const updateProgress = async (newProgress) => {
+  try {
+      const response = await axios.post(`${backendURL}/update_progress`, {
+          userId: userId,
+          newProgress: newProgress
+      });
+
+      console.log('Progress updated:', response.data);
+      // Handle the successful update (e.g., update state or show a message)
+  } catch (error) {
+      console.error('Error updating progress:', error);
+      // Handle the error case
+      Alert.alert("Error", "Failed to update progress.");
   }
 };
 
@@ -623,6 +640,7 @@ const fetchAchievements = async () => {
   });
     exploredCellsPercent = exploredCells / 97;
     setProgress(exploredCellsPercent);
+    updateProgress(exploredCellsPercent);
     setGrid(updatedGrid);
     
   
