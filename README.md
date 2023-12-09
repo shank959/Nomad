@@ -55,5 +55,6 @@ Start by checking that you have XCode installed on your Mac. If you do not, visi
 Once you see a "Logs for your project will appear below." message in your terminal, press 'i' on your keyboard, and you will be able to run our app in Xcode's iOS simulator and interact with it as you please.
 
 
+Thank you for taking the time to checkout our app, we hope you enjoy it! :)
 
 
